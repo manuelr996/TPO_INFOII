@@ -1,11 +1,13 @@
 #ifndef KITINIC_H_
 #define KITINIC_H_
 #include"DR_tipos.h"
+#include"DR_PCONP.h"
+
 	//!< ///////////////////   PCONP   //////////////////////////
 	//!<  Power Control for Peripherals register (PCONP - 0x400F C0C4) [pag. 62 user manual LPC1769]
 	//!< 0x400FC0C4UL : Direccion de inicio del registro de habilitación de dispositivos:
-	#define 	PCONP	(* ( ( __RW uint32_t  * ) 0x400FC0C4UL ))
-		#define 	PCADC	12
+	//#define 	PCONP	(* ( ( __RW uint32_t  * ) 0x400FC0C4UL ))
+	//	#define 	PCADC	12
 
 	//!< ///////////////////   PCLKSEL   //////////////////////////
 	//!< Peripheral Clock Selection registers 0 and 1 (PCLKSEL0 -0x400F C1A8 and PCLKSEL1 - 0x400F C1AC) [pag. 56 user manual]

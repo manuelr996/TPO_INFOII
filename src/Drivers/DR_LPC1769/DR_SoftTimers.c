@@ -1,16 +1,16 @@
 /*******************************************************************************************************************************//**
  *
- * @file		Infotronic.c
- * @brief		Drivers de GPIO LPC1769
- * @date		23-03-16
- * @author		Marcelo Trujillo
+ * @file		DR_SoftTimers.c
+ * @brief		Descripcion del modulo
+ * @date		23 jul. 2017
+ * @author		Tomás Bautista Ordóñez
  *
  **********************************************************************************************************************************/
 
 /***********************************************************************************************************************************
  *** INCLUDES
  **********************************************************************************************************************************/
-#include "DR_gpio.h"
+#include "DR_SoftTimers.h"
 
 /***********************************************************************************************************************************
  *** DEFINES PRIVADOS AL MODULO
@@ -31,7 +31,11 @@
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PUBLICAS
  **********************************************************************************************************************************/
-
+extern volatile	uint32_t Tmr_Run[ N_TIMERS ];
+extern volatile	uint8_t  TMR_Events[ N_TIMERS ];
+extern void 	 	(* TMR_handlers [N_TIMERS]) (void);
+extern volatile uint8_t  TMR_StandBy[ N_TIMERS ];
+extern volatile uint8_t  Tmr_Base[ N_TIMERS ];
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -48,86 +52,39 @@
  *** FUNCIONES GLOBALES AL MODULO
  **********************************************************************************************************************************/
 /**
-	\fn  void SetDIR ( uint8_t puerto , uint8_t bit , uint8_t dir )
-	\brief Selecciona si el GPIO sera entrada o salida
- 	\author Ing. Marcelo Trujillo
- 	\date 30/03/2016
- 	\param [in] puerto Numero del puerto seleccionado
- 	\param [in] bit Numero del bit seleccionado
- 	\param [in] dir seleccion entre entrada o salida
-
+	\fn  	void TimerEvent (void)
+	\brief 	Ejecuta las funciones de los eventos vencidos
+ 	\author Tomás Bautista Ordóñez
+ 	\date 	23 jul. 2017
 	\return void
 */
-void SetDIR ( uint8_t puerto , uint8_t bit , uint8_t dir )
+void TimerEvent (void)
 {
-	__RW uint32_t *p = ( __RW uint32_t * )  0x2009C000 ;
+    uint8_t i;
 
-	if ( dir )
-		*( p + puerto * 8 ) = *( p + puerto * 8 ) | ( 1 << bit );
-	else
-		*( p + puerto * 8 ) = *( p + puerto * 8 ) & ( ~ ( 1 << bit ) );
-
+    for(i=0 ; i < N_TIMERS ; i++)
+        if(TMR_Events[i])
+        {
+            TMR_handlers[i]();
+            TMR_Events[i] = 0;
+        }
 }
-
 /**
-	\fn  void SetPIN ( uint8_t puerto , uint8_t bit , uint8_t estado )
-	\brief Activa/Desactiva un pin
- 	\author Ing. Marcelo Trujillo
- 	\date 30/03/2016
- 	\param [in] puerto Numero del puerto seleccionado
- 	\param [in] bit Numero del bit seleccionado
- 	\param [in] estado 1: ON 2:OFF
-
+	\fn  	void AnalizarTimer (void)
+	\brief 	Descuenta ticks y marca los eventos vencidos
+ 	\author Tomás Bautista Ordóñez
+ 	\date 	23 jul. 2017
 	\return void
 */
-void SetPIN ( uint8_t puerto , uint8_t bit , uint8_t estado )
+void AnalizarTimer (void)
 {
-	__RW uint32_t *set = ( __RW uint32_t * )  0x2009C018 ;
-	__RW uint32_t *clear = ( __RW uint32_t * )  0x2009C01C ;
+    uint8_t i;
 
-	if (estado)
-		*( set + puerto * 8 ) = *( set + puerto * 8 ) | ( 1 << bit );
-	else
-		*( clear + puerto * 8 ) = *( clear + puerto * 8 ) | ( 1 << bit );
-
+    for(i=0 ; i< N_TIMERS ; i++)
+        if(Tmr_Run[i] && !TMR_StandBy[i])
+        {
+            Tmr_Run[i]--;
+            if(!Tmr_Run[i])
+                TMR_Events[i] = 1;
+        }
 }
-
-/**
-	\fn  void SetMODE ( uint8_t puerto , uint8_t bit , uint8_t modo )
-	\brief Activa/Desactiva un pin
- 	\author Ing. Marcelo Trujillo
- 	\date 30/03/2016
- 	\param [in] puerto Numero del puerto seleccionado
- 	\param [in] bit Numero del bit seleccionado
- 	\param [in] modo Selecciona entre los 4 modos de funcionamiento
-		<ul>
-			<li> Dirección de los ports
-			<ol>
-			<li> MODO0: SALIDA
-			<li> MODO1: SALIDA
-			<li> MODO2: ENTRADA
-			<li> MODO3: ENTRADA
-			</ol>
-		</ul>
-	\return void
-*/
-void SetMODE ( uint8_t puerto , uint8_t bit , uint8_t modo )
-{
-	__RW uint32_t *p = ( __RW uint32_t * )  0x4002C040 ;
-
-	*( p + puerto * 2 + bit / 16 ) = *( p + puerto * 2 + bit / 16 ) & ~( 0x3 << (2 * bit));
-	*( p + puerto * 2 + bit / 16 ) = *( p + puerto * 2 + bit / 16 ) | ( modo << (2 * (bit % 16)));
-
-}
-
-uint8_t GetPIN( uint8_t puerto , uint8_t bit , uint8_t actividad )
-{
-	__RW uint32_t *p = ( __RW uint32_t * )  0x2009C014 ;
-	uint8_t r;
-
-	r = ( *( p + puerto * 8 ) >> bit ) & 1;
-	if ( actividad )
-		return r;
-	return !r;
-}
-

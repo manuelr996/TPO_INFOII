@@ -1,18 +1,16 @@
 /*******************************************************************************************************************************//**
  *
- * @file		DR_SysTick.c
+ * @file		PR_Infotronic.c
  * @brief		Descripcion del modulo
- * @date		4 de may. de 2016
- * @author		Ing. Marcelo Trujillo
+ * @date		30 nov. 2017
+ * @author		Tomás Bautista Ordóñez
  *
  **********************************************************************************************************************************/
 
 /***********************************************************************************************************************************
  *** INCLUDES
  **********************************************************************************************************************************/
-
-#include "DR_SysTick.h"
-#include "PR_Timers.h"
+#include "PR_Boton.h"
 
 /***********************************************************************************************************************************
  *** DEFINES PRIVADOS AL MODULO
@@ -33,7 +31,6 @@
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PUBLICAS
  **********************************************************************************************************************************/
-uint8_t flag;
 
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
@@ -50,23 +47,18 @@ uint8_t flag;
  /***********************************************************************************************************************************
  *** FUNCIONES GLOBALES AL MODULO
  **********************************************************************************************************************************/
-/** @fn void SysTickInic ( void )
- * @details Inicializacion del systick
- * @details No Portable
- * @param 	void
- * @return 	void.
- */
-void SysTick_Inicializacion ( void )
+/**
+	\fn  getTecla
+	\brief Devuelve el valor de la ultima tecla presionada y limpia el buffer
+ 	\author Tomás Bautista Ordóñez
+ 	\date 30 nov. 2017
+	\return uint8_t retorna el valor del buffer y lo limpia
+*/
+uint8_t getTecla ( void )
 {
-	STRELOAD = ( STCALIB / 4) - 1;
-	STCURR = 0;
+	uint8_t auxiliar = tecla;
 
-	CLKSOURCE = 1;
-	ENABLE = 1;
-	TICKINT = 1;
-}
+	tecla = NO_KEY;
 
-void SysTick_Handler(void)
-{
-	AnalizarTimer();
+	return auxiliar;
 }

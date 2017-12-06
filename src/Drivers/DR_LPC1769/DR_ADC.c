@@ -1,34 +1,25 @@
-/*
- * Kit_Inic.c
- *
- *  Created on: 06/05/2016
- *      Author: Usuario
- */
-
-
-
 /*******************************************************************************************************************************//**
  *
- * @file		Kit_Inic.c
- * @brief		Inicialización del Kit
- * @date		8/05/2016
- * @author		INFORMATICA II
+ * @file		DR_ADC.c
+ * @brief		Descripcion del modulo
+ * @date		9 oct. 2017
+ * @author		Tomás Bautista Ordóñez
  *
  **********************************************************************************************************************************/
 
 /***********************************************************************************************************************************
  *** INCLUDES
  **********************************************************************************************************************************/
-#include "DR_PLL.h"
+#include "DR_ADC.h"
 
 /***********************************************************************************************************************************
  *** DEFINES PRIVADOS AL MODULO
  **********************************************************************************************************************************/
-
+#define 	FUNCION1 	1
 /***********************************************************************************************************************************
  *** MACROS PRIVADAS AL MODULO
  **********************************************************************************************************************************/
-
+#define		AD02		0,25
 /***********************************************************************************************************************************
  *** TIPOS DE DATOS PRIVADOS AL MODULO
  **********************************************************************************************************************************/
@@ -40,6 +31,11 @@
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PUBLICAS
  **********************************************************************************************************************************/
+volatile uint32_t 	HumedadSuelo;
+volatile uint32_t	HumedadMaxima;
+volatile uint32_t	HumedadMinima;
+
+volatile uint32_t	vPotenciometro;
 
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
@@ -52,67 +48,69 @@
  /***********************************************************************************************************************************
  *** FUNCIONES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
- 
+
  /***********************************************************************************************************************************
  *** FUNCIONES GLOBALES AL MODULO
  **********************************************************************************************************************************/
+/**
+	\fn  Nombre de la Funcion
+	\brief Descripcion
+ 	\author Tomás Bautista Ordóñez
+ 	\date 9 oct. 2017
+ 	\param [in] parametros de entrada
+ 	\param [out] parametros de salida
+	\return tipo y descripcion de retorno
+*/
 
-void InitPLL ( void )
+void InitADC ( void )
 {
+	//Power:
+	PCONP->bits._PCADC = 1;		//Prendo el periferico ADC
 
-	//Este bloque de codigo habilita el oscilador externo como fuente de clk
-	//del micro, y configura un dispositivo conocido como PLL (Phase Locked Loop)
-	//para generar un clock interno de 100MHz a partir del oscilador conectado
+	//Clock:
+	PCLKSEL0 |= ~( 0x03 << PCLKADC );		//PCLK del ADC a 25MHz
+	ADCCLKDIV = 1;						//Frecuencia muestreo adc en 200KHz
 
-	SCS       = SCS_Value;
+	//Canales:
+	ADCSEL = 0x04;					//Selecciono el canal 2 como objeto de conversion
+	ADCBURST = 0;					//Conversion controlada por software al canal seleccionado en ADCSEL
 
-	if (SCS_Value & (1 << 5))               /* If Main Oscillator is enabled      */
-		while ((SCS & (1<<6)) == 0);/* Wait for Oscillator to be ready    */
+	//Pines:
+	SetPINSEL( AD02 , FUNCION1 );		//Configuro el pin con el que voy a convertir con funcionADC
+	SetMODE( AD02 , NONE );				//Configuro el pin con neither pull-up nor pull-down
 
-	CCLKCFG   = CCLKCFG_Value;      /* Setup Clock Divider                */
+	//Interrupciones:
+	AD0INTEN &= ~( 1 << ADINTEN_GLOB );		//Interrumpen los canales seleccionados luego
+	AD0INTEN |=  ( 1 << ADINTEN_CH2  );		//Interrumpe el canal 2
+	AD0INTEN |=  ( 1 << ADINTEN_CH0  );
+	ISER0 |= (1 << NVIC_ADC);				//Habilito la interrupcion de ADC en el NVIC
 
-	PCLKSEL0  = PCLKSEL0_Value;     /* Peripheral Clock Selection         */
-	PCLKSEL1  = PCLKSEL1_Value;
-
-	CLKSRCSEL = CLKSRCSEL_Value;    /* Select Clock Source for PLL0       */
-
-	PLL0CFG   = PLL0CFG_Value;      /* configure PLL0                     */
-	PLL0FEED  = 0xAA;
-	PLL0FEED  = 0x55;
-
-	PLL0CON   = 0x01;             /* PLL0 Enable                        */
-	PLL0FEED  = 0xAA;
-	PLL0FEED  = 0x55;
-
-	while (!(PLL0STAT & (1<<26)));/* Wait for PLOCK0                    */
-
-	PLL0CON   = 0x03;             /* PLL0 Enable & Connect              */
-	PLL0FEED  = 0xAA;
-	PLL0FEED  = 0x55;
-
-	while (!(PLL0STAT & ((1<<25) | (1<<24))));/* Wait for PLLC0_STAT & PLLE0_STAT */
-
-	PLL1CFG   = PLL1CFG_Value;
-	PLL1FEED  = 0xAA;
-	PLL1FEED  = 0x55;
-
-	PLL1CON   = 0x01;             /* PLL1 Enable                        */
-	PLL1FEED  = 0xAA;
-	PLL1FEED  = 0x55;
-
-	while (!(PLL1STAT & (1<<10)));/* Wait for PLOCK1                    */
-
-	PLL1CON   = 0x03;             /* PLL1 Enable & Connect              */
-	PLL1FEED  = 0xAA;
-	PLL1FEED  = 0x55;
-
-	while (!(PLL1STAT & ((1<< 9) | (1<< 8))));/* Wait for PLLC1_STAT & PLLE1_STAT */
-
-	PCONP     = PCONP_Value;        /* Power Control for Peripherals      */
-
-	CLKOUTCFG = CLKOUTCFG_Value;    /* Clock Output Configuration         */
-
-	FLASHCFG  = (FLASHCFG & ~0x0000F000) | FLASHCFG_Value;
+	//Activacion y disparo del ADC:
+	ADCPDN = 1;						//Prendido
+	ADCSTART = 0;					//Dejo el adc en stop, para que sea disparado con maquinaria de timers
+									//para manejar mejor la frecuencia de muestreo
 }
 
+void ADC_IRQHandler( void )
+{
+	uint32_t conversion = 0;
+
+	if( AD0STAT & 0x04 )			//Si interrumpio el canal 2
+	{
+		conversion = ( (ADDR2) >> ADDR_RESULT ) & 0xFFF;	//Dejo el dato de la conversion bien expresado
+		HumedadSuelo = 100 - conversion/41;		//Cargo la conversion al buffer
+	}
+	if( AD0STAT &0x01 )				//Si interrumpio el canal 0
+	{
+		conversion = ( (ADDR2) >> ADDR_RESULT ) & 0xFFF;	//Dejo el dato de la conversion bien expresado
+		vPotenciometro = conversion;
+	}
+
+}
+
+void CambiarCanal (uint8_t ch)
+{
+	ADCSEL &= ~(0x0);		//Apago todos los caneles
+	ADCSEL |= (0x01 << ch);  		//Prendo el Canal ch
+}
 

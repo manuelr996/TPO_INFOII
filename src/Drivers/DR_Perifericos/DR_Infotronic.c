@@ -1,16 +1,16 @@
 /*******************************************************************************************************************************//**
  *
- * @file		PR_Timers.c
- * @brief		Maquinaria de timers
- * @date		2 de jun. de 2017
- * @author		Ing. Marcelo Trujillo
+ * @file		DR_Infotronic.c
+ * @brief		Descripcion del modulo
+ * @date		26 nov. 2017
+ * @author		Tomás Bautista Ordóñez
  *
  **********************************************************************************************************************************/
 
 /***********************************************************************************************************************************
  *** INCLUDES
  **********************************************************************************************************************************/
-#include "PR_Timers.h"
+#include "DR_Infotronic.h"
 
 /***********************************************************************************************************************************
  *** DEFINES PRIVADOS AL MODULO
@@ -31,14 +31,11 @@
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PUBLICAS
  **********************************************************************************************************************************/
-volatile 	uint32_t Tmr_Run[ N_TIMERS ];
-volatile 	uint8_t  TMR_Events[ N_TIMERS ];
-void 	 	(* TMR_handlers [N_TIMERS]) (void);
-volatile 	uint8_t  TMR_StandBy[ N_TIMERS ];
-volatile 	uint8_t  Tmr_Base[ N_TIMERS ];
+
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
+
 /***********************************************************************************************************************************
  *** PROTOTIPO DE FUNCIONES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -51,134 +48,72 @@ volatile 	uint8_t  Tmr_Base[ N_TIMERS ];
  *** FUNCIONES GLOBALES AL MODULO
  **********************************************************************************************************************************/
 /**
-	\fn void TimerStart(uint8_t event, timer_t t, void (*handler)(void))
-	\brief Inicia un timer
- 	\details Inicia el timer \a e al transcurrir el tiempo especificado por \a t se llama a la funcion apuntada por \a handler
- 	\param [in] event Numero de evento entre 0 y 31
- 	\param [in] t Tiempo del evento. Dependiente de la base de tiempos
- 	\param [in] handler Callback del evento
-	\return void
+	\fn  InitInfotronic
+	\brief Inicializa el hardware del kit infotronic
+ 	\author Tomás Bautista Ordóñez
+ 	\date 26 nov. 2017
 */
-void TimerStart(uint8_t event, uint32_t time, Timer_Handler handler , uint8_t base )
+void InitInfotrinic ( void )
 {
-	switch ( base )
-	{
-		case DEC:
-			time *= DECIMAS;
-			break;
-		case SEG:
-			time *= ( SEGUNDOS * DECIMAS );
-			break;
-		case MIN:
-			time *= ( MINUTOS * SEGUNDOS * DECIMAS );
-			break;
-	}
-
-	Tmr_Base[event] = base;
-
-	if(time != 0)	//el tiempo no es 0, lo cargo
-	{
-		Tmr_Run[event] = time;
-		TMR_Events[event] = 0;
-	}
-	else	//el tiempo es cero, el timer vence automáticamente
-	{
-		Tmr_Run[event] = 0;
-		TMR_Events[event] = 1;
-	}
-	TMR_handlers[event] = handler;
+	InitTeclado();
+	InitRGB();
+	TimerStart( ADCevent , ADCtime , leerHumedad , ADCbase );	//Inicio un timer para leer el ADC02 segun el tiempo determinado
 }
 
 /**
-	\fn void SetTimer( uint8_t event , timer_t t )
-	\brief Inicia un timer
- 	\details Reinicia el timer con el valor t (no lo resetea)
- 	\param [in] event Numero de evento entre 0 y 31
- 	\param [in] t Tiempo del evento. Dependiente de la base de tiempos
- 	\return void
+	\fn  InitTeclado
+	\brief Inicializa el teclado de 5x1 ubicado en el infotronic
+ 	\author Tomás Bautista Ordóñez
+ 	\date 26 nov. 2017
 */
-void SetTimer( uint8_t event, uint32_t time )
+void InitTeclado ( void )
 {
-	switch ( Tmr_Base[event] )
-	{
-		case DEC:
-			time *= DECIMAS;
-			break;
-		case SEG:
-			time *= ( SEGUNDOS * DECIMAS );
-			break;
-		case MIN:
-			time *= ( MINUTOS * SEGUNDOS * DECIMAS );
-			break;
-	}
-	Tmr_Run[event] = time;
+	//Configuro mediante setPINSEL los pines como GPIO
+	SetPINSEL( TECLADO_0 , FUNCION_GPIO );
+	SetPINSEL( TECLADO_1 , FUNCION_GPIO );
+	SetPINSEL( TECLADO_2 , FUNCION_GPIO );
+	SetPINSEL( TECLADO_3 , FUNCION_GPIO );
+	SetPINSEL( TECLADO_4 , FUNCION_GPIO );
+
+	//Configuro mediante setDIR los pines como entrada
+	SetDIR( TECLADO_0 , ENTRADA );
+	SetDIR( TECLADO_1 , ENTRADA );
+	SetDIR( TECLADO_2 , ENTRADA );
+	SetDIR( TECLADO_3 , ENTRADA );
+	SetDIR( TECLADO_4 , ENTRADA );
+
+	//Configuro mediante setMODE los pines con una resistencia pull-up
+	SetMODE( TECLADO_0 , PULLUP );
+	SetMODE( TECLADO_1 , PULLUP );
+	SetMODE( TECLADO_2 , PULLUP );
+	//SetMODE( TECLADO_3 , PULLUP );	No hace falta, ya tiene pull-up por hardware
+	//SetMODE( TECLADO_4 , PULLUP );	No hace falta, ya tiene pull-up por hardware
 }
-
 /**
-	\fn  GetTimer( uint8_t event )
-	\brief Toma el valor al vuelo del timer en cuestion
- 	\details Lee el timer
- 	\param [in] event Numero de evento entre 0 y 31
- 	\return valor del timer
+	\fn  InitRGB
+	\brief Inicializa el led RGB ubicado en el Infotronic
+ 	\author Tomás Bautista Ordóñez
+ 	\date 26 nov. 2017
 */
-uint32_t GetTimer( uint8_t event )
+void InitRGB ( void )
 {
-	uint32_t time = Tmr_Run[event];
+	//Configuro mediante setPINSEL los pines como GPIO
+	SetPINSEL( LEDrgb_R , FUNCION_GPIO );
+	SetPINSEL( LEDrgb_G , FUNCION_GPIO );
+	SetPINSEL( LEDrgb_B , FUNCION_GPIO );
 
-	switch ( Tmr_Base[event] )
-	{
-		case DEC:
-			time /= DECIMAS;
-			break;
-		case SEG:
-			time /= ( SEGUNDOS * DECIMAS );
-			break;
-		case MIN:
-			time /= ( MINUTOS * SEGUNDOS * DECIMAS );
-			break;
-	}
-	return time;
-}
+	//Configuro mediante setDIR los pines como salida
+	SetDIR( LEDrgb_R , SALIDA );
+	SetDIR( LEDrgb_G , SALIDA );
+	SetDIR( LEDrgb_B , SALIDA );
 
-/**
-	\fn  StandByTimer( uint8_t event , uint8_t accion)
-	\brief Detiene/Arranca el timer, NO lo resetea
- 	\details lo pone o lo saca de stand by
- 	\param [in] event Numero de evento entre 0 y 31
- 	\param [in] accion RUN lo arranca, PAUSE lo pone en stand by
- 	\return void
-*/
-void StandByTimer( uint8_t event , uint8_t accion)
-{
-	TMR_StandBy[ event ] = accion;
-}
+	//Configuro mediante setMODEOD los pines en modo normal
+	SetMODEOD( LEDrgb_R , NORMAL);
+	SetMODEOD( LEDrgb_G , NORMAL);
+	SetMODEOD( LEDrgb_B , NORMAL);
 
-/**
-	\fn void Timer_Stop(Eventos e)
-	\brief Detiene un timer
- 	\details Detiene el timer \a e
- 	\param [in] e Numero de evento entre 0 y 31
-	\return void
-*/
-void TimerStop(uint8_t event)
-{
-	Tmr_Run[ event ] = 0;
-	TMR_Events[ event ] = 0;
-	TMR_handlers[ event ] = NULL;
-	Tmr_Base[ event ] = 0;
-	TMR_StandBy[ event ] = RUN;
-}
-
-/**
-	\fn void Timer_Close(void)
-	\brief Detiene los timers
- 	\details Detiene todos los timers
-	\return void
-*/
-void TimerClose(void)
-{
-	uint32_t i;
-
-	for( i=0 ; i < N_TIMERS ; i++ )
-		TimerStop( i );
+	//Apago todos los leds
+	SetPIN( LEDrgb_B , BAJO );
+	SetPIN( LEDrgb_G , BAJO );
+	SetPIN( LEDrgb_R , BAJO );
 }
