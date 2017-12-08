@@ -19,10 +19,10 @@
  **********************************************************************************************************************************/
 #include "DR_Infotronic.h"
 #include "PR_SoftTimers.h"
+#include "DR_SalidasDigitales.h"
 /***********************************************************************************************************************************
  *** DEFINES GLOBALES
  **********************************************************************************************************************************/
-#define		VALVULA 	SD4
 
 #define 	RIEGO_Tevent 	1
 #define 	RIEGO_Tbase 	SEG
@@ -49,8 +49,6 @@ extern uint32_t RIEGO_AtimeON;
 /***********************************************************************************************************************************
  *** PROTOTIPOS DE FUNCIONES GLOBALES
  **********************************************************************************************************************************/
-void ElectroValvula_On( void );
-void ElectroValvula_Off( void );
 uint8_t EstadoElectroValvula ( void );
 void IniciarCicloDeRiegoTemporizado ( void );
 void DetenerCicloDeRiegoTemporizado ( void );

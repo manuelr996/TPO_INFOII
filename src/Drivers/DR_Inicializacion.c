@@ -48,13 +48,10 @@
  *** FUNCIONES GLOBALES AL MODULO
  **********************************************************************************************************************************/
 /**
-	\fn  Nombre de la Funcion
-	\brief Descripcion
+	\fn  Inicializacion
+	\brief Da los valores iniciales  y las rutinas necesarias para el correcto funcionamiento del proyecto
  	\author Tomás Bautista Ordóñez
  	\date 8 sept. 2017
- 	\param [in] parametros de entrada
- 	\param [out] parametros de salida
-	\return tipo y descripcion de retorno
 */
 void Inicializacion ( void )
 {
@@ -67,37 +64,9 @@ void Inicializacion ( void )
 
 	ElectroValvula_Off();
 
-	InitGPIOS();		//LEDs(Stick)
 	InitPLL();			//PLL
 	InitSysTick();		//SysTick
-	//InitTimer0();
 	InitADC();			//Conversor Analogo/Digital
 	InitExtIntGPIO();  	//Interrupciones de GPIO
 	InitInfotrinic();  	//Sensores, Teclado, LEDs(placa), Relays
-}
-
-void InitGPIOS( void )
-{
-
-	SetPINSEL( LED_AZUL	, FUNCION_GPIO );
-	SetPINSEL( LED_ROJO	, FUNCION_GPIO );
-	SetPINSEL( LED_VERDE, FUNCION_GPIO );
-
-	//SetPINSEL( SW2, FUNCION_GPIO );
-
-	SetDIR( LED_AZUL, SALIDA );
-	SetDIR( LED_ROJO, SALIDA );
-	SetDIR( LED_VERDE, SALIDA );
-
-	//SetDIR( SW2, ENTRADA );
-
-	SetMODEOD(LED_AZUL, NORMAL);
-	SetMODEOD(LED_ROJO, NORMAL);
-	SetMODEOD(LED_VERDE, NORMAL);
-
-	//SetMODE( SW2, PULLUP );
-
-	SetPIN( LED_AZUL , ALTO);
-	SetPIN( LED_ROJO , ALTO);
-	SetPIN( LED_VERDE , ALTO);
 }

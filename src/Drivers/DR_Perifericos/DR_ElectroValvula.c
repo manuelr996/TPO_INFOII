@@ -49,27 +49,6 @@ uint32_t RIEGO_AtimeON;
  *** FUNCIONES GLOBALES AL MODULO
  **********************************************************************************************************************************/
 /**
-	\fn  ElectroValvula_On
-	\brief Enciende la electro-valvula
- 	\author Tomás Bautista Ordóñez
- 	\date 30 nov. 2017
-*/
-void ElectroValvula_On( void )
-{
-	SetPIN( VALVULA , ALTO );
-}
-
-/**
-	\fn  ElectroValvula_Off
-	\brief Apaga la electro-valvula
- 	\author Tomás Bautista Ordóñez
- 	\date 30 nov. 2017
-*/
-void ElectroValvula_Off( void )
-{
-	SetPIN( VALVULA , BAJO );
-}
-/**
 	\fn  EstadoElectroValvula
 	\brief Devuelve el estado actual de la electro-valvula
  	\author Tomás Bautista Ordóñez

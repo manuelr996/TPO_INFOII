@@ -48,36 +48,26 @@
  *** FUNCIONES GLOBALES AL MODULO
  **********************************************************************************************************************************/
 /**
-	\fn  Nombre de la Funcion
-	\brief Descripcion
+	\fn  MostrarSensores
+	\brief Funcion que muestra al usuario el estado de los diferentes sensores
  	\author Tomás Bautista Ordóñez
  	\date 26 oct. 2017
- 	\param [in] parametros de entrada
- 	\param [out] parametros de salida
-	\return tipo y descripcion de retorno
 */
-void PrenderLedStick( void  )
+void MostrarSensores( void )
 {
-	SetPIN( LED_AZUL , BAJO );
-	SetPIN( LED_VERDE , BAJO );
+	FuncLluvia();
+	Display( HumedadSuelo , DSP1 );
 }
-
-void ApagarLedStick( void )
-{
-	SetPIN( LED_AZUL , ALTO );
-	SetPIN( LED_VERDE , ALTO );
-}
-
+/**
+	\fn  FuncLluvia
+	\brief Refleja al exterior el estado de la variable Lluvia
+ 	\author Tomás Bautista Ordóñez
+ 	\date 26 oct. 2017
+*/
 void FuncLluvia( void )
 {
-	if( Lluvia == ON )
-		PrenderLedStick();
+	 if( Lluvia == ON )
+		LedLluvia_On();
 	else
-		ApagarLedStick();
+		LedLluvia_Off();
 }
-/*
- *void LeerSensores( void )
-{
-//	if(Lluvia)
-//		printf("Esta Lloviendo\n");
-}*/

@@ -1,17 +1,16 @@
 /*******************************************************************************************************************************//**
  *
- * @file		DR_SysTick.c
+ * @file		DR_SalidasDigitales.c
  * @brief		Descripcion del modulo
- * @date		4 de may. de 2016
- * @author		Ing. Marcelo Trujillo
+ * @date		8 dic. 2017
+ * @author		Tomás Bautista Ordóñez
  *
  **********************************************************************************************************************************/
 
 /***********************************************************************************************************************************
  *** INCLUDES
  **********************************************************************************************************************************/
-
-#include "DR_SysTick.h"
+#include "DR_SalidasDigitales.h"
 
 /***********************************************************************************************************************************
  *** DEFINES PRIVADOS AL MODULO
@@ -48,25 +47,61 @@
  /***********************************************************************************************************************************
  *** FUNCIONES GLOBALES AL MODULO
  **********************************************************************************************************************************/
-/** @fn void SysTickInic ( void )
- * @details Inicializacion del systick
- * @details No Portable
- * @param 	void
- * @return 	void.
- */
-void InitSysTick ( void )
+/**
+	\fn  PrenderLedLluvia
+	\brief Prende un led como indicacion de que esta lloviendo
+ 	\author Tomás Bautista Ordóñez
+ 	\date 8 dic. 2017
+*/
+void LedLluvia_On( void )
 {
-	STRELOAD = ( STCALIB / 4) - 1;
-	STCURR = 0;
-
-	CLKSOURCE = 1;
-	ENABLE = 1;
-	TICKINT = 1;
+	SetPIN( LEDLLUVIA , ALTO );
+}
+/**
+	\fn  ApagarLedLluvia
+	\brief Apaga un led como indicacion de que no esta lloviendo
+ 	\author Tomás Bautista Ordóñez
+ 	\date 8 dic. 2017
+*/
+void LedLluvia_Off( void )
+{
+	SetPIN( LEDLLUVIA , BAJO );
 }
 
-void SysTick_Handler(void)
+/**
+	\fn  ElectroValvula_On
+	\brief Enciende la electro-valvula
+ 	\author Tomás Bautista Ordóñez
+ 	\date 30 nov. 2017
+*/
+void ElectroValvula_On( void )
 {
-	Debounce();
-	AnalizarTimer();
-	BarridoDisplay();
+	SetPIN( VALVULA , ALTO );
+}
+
+/**
+	\fn  ElectroValvula_Off
+	\brief Apaga la electro-valvula
+ 	\author Tomás Bautista Ordóñez
+ 	\date 30 nov. 2017
+*/
+void ElectroValvula_Off( void )
+{
+	SetPIN( VALVULA , BAJO );
+}
+/**
+	\fn  InitSalidasDigitales
+	\brief Inicializa los pines correspondientes a la electrovalvula y al led de lluvia
+ 	\author Tomás Bautista Ordóñez
+ 	\date 30 nov. 2017
+*/
+void InitSalidasDigitales ( void )
+{
+	SetPINSEL( LEDLLUVIA , FUNCION_GPIO );
+	SetDIR( LEDLLUVIA , SALIDA );
+	SetMODEOD( LEDLLUVIA , NORMAL );
+
+	SetPINSEL( VALVULA , FUNCION_GPIO );
+	SetDIR( VALVULA , SALIDA );
+	//SetMODEOD( VALVULA , NORMAL );
 }

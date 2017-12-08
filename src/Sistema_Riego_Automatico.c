@@ -29,8 +29,7 @@ int main(void)
     {
 		MaquinaGeneral();
 		TimerEvent();
-		FuncLluvia();
-		//LeerSensores();
+		MostrarSensores();
     }
 	return 0;
 }
