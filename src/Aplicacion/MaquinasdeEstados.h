@@ -22,6 +22,7 @@
 #include "PR_Boton.h"
 #include "PR_Leds.h"
 #include "DR_ElectroValvula.h"
+#include "DR_ADC.h"
 #include "DR_gpio.h"
 /***********************************************************************************************************************************
  *** DEFINES GLOBALES
@@ -59,7 +60,7 @@ typedef enum
 	INIT_CONFIGURACION = 0,
 	HUMEDADMINIMA,
 	HUMEDADMAXIMA,
-	TIEMPOTEMPORIZADOR,
+	TEMPORIZADOR,
 	CERRAR_CONFIGURACION
 }EstadosConfiguracion;
 
@@ -77,5 +78,11 @@ extern EstadosAutomatico EstadoAutomatico;
 
 void RiegoOn(void);
 void RiegoOff(void);
+
+void ConfiguracionInicializada(void);
+void SetHumedadMinima(void);
+void SetHumedadMaxima(void);
+void SetTemporizador(void);
+void ConfiguracionFinalizada(void);
 
 #endif /* APLICACION_MAQUINASDEESTADOS_H_ */

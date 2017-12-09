@@ -60,15 +60,12 @@ void InitConfiguracion( void )
 {
 	ApagarLeds();
 	PrenderLed(ROJO);
-
 	IniciarPotenciometro();
-
-
 	//Mostrar por LCD "Bienvenido al Modo de Configuracion \n Presione ok para continuar"
-
 }
 
-void InitManual ( void )
+void CloseConfiguracion(void)
 {
-
+	DetenerPotenciometro();
+	//To-Do: Volver al Estado Anterior
 }

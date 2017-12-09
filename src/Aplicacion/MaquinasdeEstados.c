@@ -15,6 +15,7 @@
 /***********************************************************************************************************************************
  *** DEFINES PRIVADOS AL MODULO
  **********************************************************************************************************************************/
+#define B_Riego MIN;
 
 /***********************************************************************************************************************************
  *** MACROS PRIVADAS AL MODULO
@@ -35,12 +36,12 @@ EstadosConfiguracion EstadoConfiguracion;
 EstadosManual EstadoManual;
 EstadosTemporizado EstadoTemporizado;
 EstadosAutomatico EstadoAutomatico;
-
-
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
 uint8_t btn;
+
+uint8_t T_Riego;
 /***********************************************************************************************************************************
  *** PROTOTIPO DE FUNCIONES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -70,6 +71,7 @@ void RiegoOn ( void )
 	EV_RIEGO_ON;
 	if(btn == B_OK)
 	{
+		//Mostrar por LCD: "Riego Apagado"
 		EstadoManual = RIEGO_OFF;
 	}
 }
@@ -80,11 +82,64 @@ void RiegoOff ( void )
 	EV_RIEGO_OFF;
 	if(btn == B_OK)
 	{
+		//Mostrar por LCD: "Riego Encendido"
 		EstadoManual = RIEGO_ON;
 	}
 }
 /////////////////////////////////AUTOMATICO/////////////////////////////////
-void
-
 ////////////////////////////////CONFIGURACION///////////////////////////////
-/////////////////////////////////TEMPORIZADO////////////////////////////////
+void ConfiguracionInicializada (void)
+{
+	btn = getTecla();
+	if(btn == B_OK)
+	{
+		//DisplayLCD: "Configurando Humedad Minima\nHumedad Minima: %%%"
+		EstadoConfiguracion = HUMEDADMINIMA;
+	}
+}
+
+void SetHumedadMinima (void)
+{
+	//Display LCD: (actualizar los %%% para que muestren el valor del potenciometro)
+	btn = getTecla();
+	if(btn == B_OK)
+	{
+		HumedadMinima = vPotenciometro;
+		//DisplayLCD: "Configurando Humedad Minima\nHumedad Maxima: %%%"
+		EstadoConfiguracion = HUMEDADMAXIMA;
+	}
+}
+
+void SetHumedadMaxima (void)
+{
+	//Display LCD: (actualizar los %%% para que muestren el valor del potenciometro)
+	btn = getTecla();
+	if(btn == B_OK)
+	{
+		HumedadMaxima = vPotenciometro;
+		//Display LCD: "Configurando Temporizador:\n Tiempo: %%%m
+		EstadoConfiguracion = TEMPORIZADOR;
+	}
+}
+
+void SetTemporizador(void)
+{
+	//Display LCD: (actualizar los %%% para que muestren el valor del potenciometro)
+	btn = getTecla();
+	if(btn == B_OK)
+	{
+		T_Riego = vPotenciometro;
+		//Display LCD: "Cerrando Configuraciones Presione OK para continuar
+		EstadoConfiguracion = CERRAR_CONFIGURACION;
+	}
+}
+
+void ConfiguracionFinalizada (void)
+{
+	btn = getTecla();
+	if(btn == B_OK)
+	{
+		CloseConfiguracion();
+	}
+}
+////////////////////////////////TEMPORIZADO////////////////////////////////
