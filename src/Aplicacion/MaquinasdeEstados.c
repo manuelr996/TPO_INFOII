@@ -67,22 +67,22 @@ uint8_t T_Riego;
 ///////////////////////////////////MANUAL///////////////////////////////////
 void RiegoOn ( void )
 {
-	btn = getTecla();
+	//btn = getTecla();
 	EV_RIEGO_ON;
 	if(btn == B_OK)
 	{
-		//Mostrar por LCD: "Riego Apagado"
+		Display_LCD( "Off" , RENGLON_1 , 13 );
 		EstadoManual = RIEGO_OFF;
 	}
 }
 
 void RiegoOff ( void )
 {
-	btn = getTecla();
+	//btn = getTecla();
 	EV_RIEGO_OFF;
 	if(btn == B_OK)
 	{
-		//Mostrar por LCD: "Riego Encendido"
+		Display_LCD( "On " , RENGLON_1 , 13 );
 		EstadoManual = RIEGO_ON;
 	}
 }

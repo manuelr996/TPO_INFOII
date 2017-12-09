@@ -1,16 +1,16 @@
 /*******************************************************************************************************************************//**
  *
- * @file		MaquinaGeneral.c
+ * @file		AP_LCD.c
  * @brief		Descripcion del modulo
- * @date		Dec 8, 2017
- * @author		Manuel A. Rafaele
+ * @date		9 dic. 2017
+ * @author		Tomás Bautista Ordóñez
  *
  **********************************************************************************************************************************/
 
 /***********************************************************************************************************************************
  *** INCLUDES
  **********************************************************************************************************************************/
-#include "MaquinaGeneral.h"
+#include "AP_LCD.h"
 
 /***********************************************************************************************************************************
  *** DEFINES PRIVADOS AL MODULO
@@ -35,12 +35,7 @@
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
-EstadosGenerales Estado;
 
-void (*MaquinaConfiguracion[])(void) = {};
-void (*MaquinaManual[])(void) = {RiegoOff, RiegoOn};
-void (*MaquinaTemporizado[])(void) = {};
-void (*MaquinaAutomatico[])(void) = {};
 /***********************************************************************************************************************************
  *** PROTOTIPO DE FUNCIONES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -55,70 +50,17 @@ void (*MaquinaAutomatico[])(void) = {};
 /**
 	\fn  Nombre de la Funcion
 	\brief Descripcion
- 	\author Manuel A. Rafaele
- 	\date Dec 8, 2017
+ 	\author Tomás Bautista Ordóñez
+ 	\date 9 dic. 2017
  	\param [in] parametros de entrada
  	\param [out] parametros de salida
 	\return tipo y descripcion de retorno
 */
-void MaquinaGeneral (void)
+void SecuenciaBienvenidaLCD ( void )
 {
-	//uint8_t btn = NO_KEY;
+	char mensaje1[]="Sistema de riego";
+	char mensaje2[]="   Automatico   ";
 
-	btn = getTecla();
-
-	switch(Estado)
-	{
-	case RESET_G:
-		Estado = MANUAL;
-		btn = B_MANUAL;
-		break;
-	case CONFIGURACION:
-		//MaquinaConfiguracion[EstadoConfiguracion];
-		break;
-	case MANUAL:
-		MaquinaManual[EstadoManual]();
-		break;
-	case TEMPORIZADO:
-		//MaquinaConfiguracion[EstadoConfiguracion];
-		break;
-	case AUTOMATICO:
-		//MaquinaAutomatico[EstadoAutomatico];
-		break;
-	default:
-		Estado = RESET_G;
-		break;
-	}
-
-	switch(btn)
-	{
-	case B_AUTOMATICO:
-		ApagarLeds();
-		PrenderLed(VERDE);
-		Estado = AUTOMATICO;
-		btn = NO_KEY;
-		break;
-	case B_CONFIGURACION:
-		InitConfiguracion();
-		Estado = CONFIGURACION;
-		btn = NO_KEY;
-		break;
-	case B_MANUAL:
-		ApagarLeds();
-		PrenderLed(AZUL);
-		//to-do: InitTemporizado();
-		Display_LCD( "MANUAL Riego:   " , RENGLON_1 , 0 );
-		Display_LCD( "Temp  Humedad   " , RENGLON_2 , 0 );
-		Estado = MANUAL;
-		btn = NO_KEY;
-		break;
-	case B_TEMPORIZADO:
-		ApagarLeds();
-		PrenderLed(ROJO);
-		PrenderLed(VERDE);
-		//to-do: InitTemporizado();
-		Estado = TEMPORIZADO;
-		btn = NO_KEY;
-		break;
-	}
+	//Display_LCD(mensaje1,RENGLON_1,0);
+	//Display_LCD(mensaje2,RENGLON_2,0);
 }

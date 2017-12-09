@@ -55,7 +55,7 @@
 */
 void LedLluvia_On( void )
 {
-	SetPIN( LEDLLUVIA , ALTO );
+	SetPIN( LEDLLUVIA , BAJO );
 }
 /**
 	\fn  ApagarLedLluvia
@@ -65,7 +65,7 @@ void LedLluvia_On( void )
 */
 void LedLluvia_Off( void )
 {
-	SetPIN( LEDLLUVIA , BAJO );
+	SetPIN( LEDLLUVIA , ALTO );
 }
 
 /**
@@ -97,11 +97,10 @@ void ElectroValvula_Off( void )
 */
 void InitSalidasDigitales ( void )
 {
-	SetPINSEL( LEDLLUVIA , FUNCION_GPIO );
+	SetPINSEL( LEDLLUVIA , FUNCION_GPIO ); //LEDLLUVIA=SD4=PORT0,28
 	SetDIR( LEDLLUVIA , SALIDA );
-	SetMODEOD( LEDLLUVIA , NORMAL );
 
 	SetPINSEL( VALVULA , FUNCION_GPIO );
 	SetDIR( VALVULA , SALIDA );
-	//SetMODEOD( VALVULA , NORMAL );
+
 }

@@ -72,6 +72,8 @@ extern EstadosConfiguracion EstadoConfiguracion;
 extern EstadosManual EstadoManual;
 extern EstadosTemporizado EstadoTemporizado;
 extern EstadosAutomatico EstadoAutomatico;
+
+extern uint8_t btn;
 /***********************************************************************************************************************************
  *** PROTOTIPOS DE FUNCIONES GLOBALES
  **********************************************************************************************************************************/
