@@ -55,6 +55,9 @@
 */
 void Inicializacion ( void )
 {
+	char mensaje1[]="Sistema de riego";
+	char mensaje2[]="   Automatico   ";
+
 	Estado = RESET_G;
 	Lluvia 	= OFF;
 	tecla 	= NO_KEY;
@@ -69,4 +72,8 @@ void Inicializacion ( void )
 	InitADC();			//Conversor Analogo/Digital
 	InitExtIntGPIO();  	//Interrupciones de GPIO
 	InitInfotrinic();  	//Sensores, Teclado, LEDs(placa), Relays
+	InitLCD ();
+
+	Display_LCD(mensaje1,RENGLON_1,0);
+	Display_LCD(mensaje2,RENGLON_2,0);
 }
