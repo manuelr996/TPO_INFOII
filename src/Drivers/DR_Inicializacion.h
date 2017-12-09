@@ -23,7 +23,7 @@
 #include "DR_SysTick.h"
 #include "PR_SoftTimers.h"
 #include "DR_ElectroValvula.h"
-#include "MaquinasdeEstados.h"
+#include "MaquinaGeneral.h"
 #include "DR_Infotronic.h"
 /***********************************************************************************************************************************
  *** DEFINES GLOBALES
