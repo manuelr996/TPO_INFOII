@@ -109,3 +109,4 @@ void DetenerPotenciometro(void)
 	CambiarCanal(2);
 	TimerStart(ADCevent, ADCtime, leerHumedad, ADCbase);
 }
+

@@ -71,6 +71,7 @@ void Inicializacion ( void )
 	InitInfotrinic();  	//Sensores, Teclado, LEDs(placa), Relays
 	InitLCD ();			//LCD
 
+	TimerStart( ADCevent , ADCtime , DispararConversion , ADCbase );	//Inicio un timer para disparar el ADC segun el tiempo determinado
 	ElectroValvula_Off();
 	SecuenciaBienvenidaLCD();	//Se inicia una secuencia de bienvenida en el LCD
 }

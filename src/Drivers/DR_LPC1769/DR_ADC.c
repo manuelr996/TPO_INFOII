@@ -19,7 +19,7 @@
 /***********************************************************************************************************************************
  *** MACROS PRIVADAS AL MODULO
  **********************************************************************************************************************************/
-#define		AD02		0,25
+
 /***********************************************************************************************************************************
  *** TIPOS DE DATOS PRIVADOS AL MODULO
  **********************************************************************************************************************************/
@@ -37,6 +37,7 @@ volatile uint32_t	HumedadMinima;
 
 volatile uint32_t	vPotenciometro;
 
+volatile uint8_t 	CanalAConvertir;
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -65,52 +66,84 @@ volatile uint32_t	vPotenciometro;
 void InitADC ( void )
 {
 	//Power:
-	PCONP->bits._PCADC = 1;		//Prendo el periferico ADC
+	PCONP->bits._PCADC = 1;					//Prendo el periferico ADC
 
 	//Clock:
 	PCLKSEL0 |= ~( 0x03 << PCLKADC );		//PCLK del ADC a 25MHz
-	ADCCLKDIV = 1;						//Frecuencia muestreo adc en 200KHz
+	ADCCLKDIV = 1;							//Frecuencia muestreo adc en 200KHz
 
 	//Canales:
-	ADCSEL = 0x04;					//Selecciono el canal 2 como objeto de conversion
-	ADCBURST = 0;					//Conversion controlada por software al canal seleccionado en ADCSEL
+	ADCSEL = 0;								//Limpio ADCSEL
+	//ADCSEL |= CH2SEL;						//Selecciono el canal 2 (Sensor Humedad) como objeto de conversion
+	ADCBURST = 0;							//Conversion controlada por software al canal seleccionado en ADCSEL
 
 	//Pines:
-	SetPINSEL( AD02 , FUNCION1 );		//Configuro el pin con el que voy a convertir con funcionADC
-	SetMODE( AD02 , NONE );				//Configuro el pin con neither pull-up nor pull-down
+	SetPINSEL( AD02 , PINSEL_FUNC1 );		//Configuro el pin con el que voy a convertir con funcionADC (Sensor de Humedad)
+	SetMODE( AD02 , NONE );					//Configuro el pin con neither pull-up nor pull-down
+	SetPINSEL( AD05 , PINSEL_FUNC3 );		//Configuro el pin con el que voy a convertir con funcionADC (Potenciometro)
+	SetMODE( AD05 , NONE );					//Configuro el pin con neither pull-up nor pull-down
 
 	//Interrupciones:
-	AD0INTEN &= ~( 1 << ADINTEN_GLOB );		//Interrumpen los canales seleccionados luego
-	AD0INTEN |=  ( 1 << ADINTEN_CH2  );		//Interrumpe el canal 2
-	AD0INTEN |=  ( 1 << ADINTEN_CH0  );
+	AD0INTEN = ( 1 << ADINTEN_GLOB );		//Interrumpen el bit DONE del registro general
+	//AD0INTEN |=  ( 1 << ADINTEN_CH2  );		//Interrumpe el canal 2	(Sensor de Humedad)
+	//AD0INTEN |=  ( 1 << ADINTEN_CH5  );		//Interrumpe el canal 5 (Potenciometro)
 	ISER0 |= (1 << NVIC_ADC);				//Habilito la interrupcion de ADC en el NVIC
 
 	//Activacion y disparo del ADC:
-	ADCPDN = 1;						//Prendido
-	ADCSTART = 0;					//Dejo el adc en stop, para que sea disparado con maquinaria de timers
-									//para manejar mejor la frecuencia de muestreo
-}
+	//ADCPDN = 1;								//Prendido
+	ADCSTART = 0;							/*Dejo el adc en stop, para que sea disparado con maquinaria de timers
+											//para manejar mejor la frecuencia de muestreo*/
+	}
 
 void ADC_IRQHandler( void )
 {
+	uint32_t lectura = AD0GDR;
 	uint32_t conversion = 0;
 
-	if( AD0STAT & 0x04 )			//Si interrumpio el canal 2
+	if( ( (lectura >> CHIN) & 0x00000007 ) == S_HUMEDAD )	//Si interrumpio el canal 2
 	{
-		conversion = ( (ADDR2) >> ADDR_RESULT ) & 0xFFF;	//Dejo el dato de la conversion bien expresado
-		HumedadSuelo = 100 - conversion/41;		//Cargo la conversion al buffer
+		conversion = ( lectura >> ADDR_RESULT ) & 0xFFF;	//Dejo el dato de la conversion bien expresado
+		HumedadSuelo = 100 - (conversion / 409);					//Cargo la conversion al buffer
 	}
-	if( AD0STAT &0x01 )				//Si interrumpio el canal 0
+	if( ( (lectura >> CHIN) & 0x00000007 ) == POTE )		//Si interrumpio el canal 5
 	{
-		conversion = ( (ADDR2) >> ADDR_RESULT ) & 0xFFF;	//Dejo el dato de la conversion bien expresado
-		vPotenciometro = conversion;
+		conversion = ( lectura >> ADDR_RESULT ) & 0xFFF;	//Dejo el dato de la conversion bien expresado
+		vPotenciometro = conversion / 409;					//Cargo la conversion al buffer
 	}
 
 }
 
 void CambiarCanal (uint8_t ch)
 {
-	ADCSEL &= ~(0x0);		//Apago todos los caneles
-	ADCSEL |= (0x01 << ch);  		//Prendo el Canal ch
+	ADCSEL = 0;								//Ningun canal es objeto de conversion
+	ADCSEL |= (0x01 << ch);  				//El canal ch es objeto de conversion
 }
 
+/**
+	\fn  DispararConversion
+	\brief Habilita el canal a convertir segun el flag CanalAConvertir, dispara una conversion y se resetea
+ 	\author Tomás Bautista Ordóñez
+ 	\date 9 de dic. de 2017
+*/
+void DispararConversion ( void )
+{
+	ADCSTART = STOP;						//Pausado
+	ADCPDN = 0;								//Apagado
+
+	if( CanalAConvertir == POTE )
+	{
+		CambiarCanal( POTE );
+		CanalAConvertir = S_HUMEDAD;
+	}
+	else
+	{
+		CambiarCanal( S_HUMEDAD );
+		CanalAConvertir = POTE;
+	}
+
+	ADCPDN = 1;								//Prendido
+	ADCSTART = STOP;						//Disparo
+	ADCSTART = TRIGGER;
+
+	SetTimer(ADCevent, ADCtime);			//Reseteo
+}

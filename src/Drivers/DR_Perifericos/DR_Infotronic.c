@@ -59,7 +59,6 @@ void InitInfotrinic ( void )
 	InitRGB();
 	InitExp2();
 	InitSalidasDigitales();
-	TimerStart( ADCevent , ADCtime , leerHumedad , ADCbase );	//Inicio un timer para leer el ADC02 segun el tiempo determinado
 }
 
 /**

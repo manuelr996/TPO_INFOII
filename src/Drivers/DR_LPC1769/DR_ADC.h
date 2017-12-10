@@ -54,6 +54,9 @@
 
 #define		ADTRIM		ADC0[12]
 
+#define		CH2SEL			0x04
+#define		CH5SEL			0x20
+
 #define 	PCONPADC		12
 #define 	PCLKADC			24
 #define		ADINTEN_GLOB	8
@@ -68,6 +71,14 @@
 
 #define		STOP		0
 #define		TRIGGER		1
+
+#define		AD02		PORT0,25
+#define		AD05		PORT1,31
+
+#define 	CHIN 			24
+
+#define 	POTE 			5
+#define 	S_HUMEDAD 		2
 /***********************************************************************************************************************************
  *** MACROS GLOBALES
  **********************************************************************************************************************************/
@@ -101,10 +112,11 @@ extern volatile uint32_t 	HumedadSuelo;
 extern volatile uint32_t	HumedadMaxima;
 extern volatile uint32_t	HumedadMinima;
 extern volatile uint32_t	vPotenciometro;
+extern volatile uint8_t 	CanalAConvertir;
 /***********************************************************************************************************************************
  *** PROTOTIPOS DE FUNCIONES GLOBALES
  **********************************************************************************************************************************/
 void InitADC ( void );
 void CambiarCanal (uint8_t);
-
+void DispararConversion ( void );
 #endif /* DR_ADC_H_ */
