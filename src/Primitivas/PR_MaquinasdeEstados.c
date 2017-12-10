@@ -61,7 +61,9 @@ void InitConfiguracion( void )
 	ApagarLeds();
 	PrenderLed(ROJO);
 	IniciarPotenciometro();
-	//Mostrar por LCD "Bienvenido al Modo de Configuracion \n Presione ok para continuar"
+	Display_LCD("Configuracion   ", RENGLON_1, 0);
+	Display_LCD("OK p/continuar  ", RENGLON_2, 0);
+
 }
 
 void CloseConfiguracion(void)

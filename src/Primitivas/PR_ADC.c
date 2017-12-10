@@ -88,25 +88,24 @@ void leerHumedad( void )
 */
 void IniciarPotenciometro(void)
 {
-	TimerStop(ADCevent); 	//desactivo el disparador del conversor de Humedad
-	CambiarCanal(0);
-	TimerStart( ADCevent , ADCtime , leerPotenciometro , ADCbase );
+	TimerStop(ADCevent); 			//desactivo el disparador del conversor de Humedad
+	CambiarCanal( POTE );			//Potenciometro como objeto de conversion
+	TimerStart( ADCevent , ADCtime , DispararConversion , ADCbase );
 }
 
 void leerPotenciometro(void)
 {
-	ADCSTART = STOP;
+	ADCPDN = 1;								//Prendido
+	ADCSTART = STOP;						//Disparo
 	ADCSTART = TRIGGER;
-	
-	SetTimer(ADCevent, ADCtime);
-	
-//	printf("Potenciometro: %d\n", vPotenciometro);
+
+	SetTimer(ADCevent, ADCtime);			//Reseteo
 }
 
 void DetenerPotenciometro(void)
 {
 	TimerStop(ADCevent);
-	CambiarCanal(2);
-	TimerStart(ADCevent, ADCtime, leerHumedad, ADCbase);
+	CambiarCanal( S_HUMEDAD );
+	TimerStart(ADCevent, ADCtime, DispararConversion, ADCbase);
 }
 

@@ -72,6 +72,9 @@ void MaquinaGeneral (void)
 	case RESET_G:
 		Estado = MANUAL;
 		btn = B_MANUAL;
+		Display_LCD("Valv:OFF" , RENGLON_1 , 8 );
+		Display_LCD("Pote:" , RENGLON_2 , 0 );
+		Display_LCD("Humedad:" , RENGLON_2 , 8 );
 		break;
 	case CONFIGURACION:
 		//MaquinaConfiguracion[EstadoConfiguracion];
@@ -95,6 +98,9 @@ void MaquinaGeneral (void)
 	case B_AUTOMATICO:
 		ApagarLeds();
 		PrenderLed(VERDE);
+		Display_LCD("Auto    Valv:OFF" , RENGLON_1 , 0 );
+		Display_LCD("Pote:  " , RENGLON_2 , 0 );
+		Display_LCD("Humedad:" , RENGLON_2 , 8 );
 		Estado = AUTOMATICO;
 		btn = NO_KEY;
 		break;
@@ -107,8 +113,10 @@ void MaquinaGeneral (void)
 		ApagarLeds();
 		PrenderLed(AZUL);
 		//to-do: InitTemporizado();
-		Display_LCD( "MANUAL Riego:   " , RENGLON_1 , 0 );
-		Display_LCD( "Temp  Humedad   " , RENGLON_2 , 0 );
+		Display_LCD("Manual  " , RENGLON_1 , 0 );
+		Display_LCD("Valv:OFF" , RENGLON_1 , 8 );
+		Display_LCD("Pote:" , RENGLON_2 , 0 );
+		Display_LCD("Humedad:" , RENGLON_2 , 8 );
 		Estado = MANUAL;
 		btn = NO_KEY;
 		break;
@@ -117,6 +125,10 @@ void MaquinaGeneral (void)
 		PrenderLed(ROJO);
 		PrenderLed(VERDE);
 		//to-do: InitTemporizado();
+		Display_LCD("Tempo   " , RENGLON_1 , 0 );
+		Display_LCD("Valv:OFF" , RENGLON_1 , 8 );
+		Display_LCD("Pote:" , RENGLON_2 , 0 );
+		Display_LCD("Humedad:" , RENGLON_2 , 8 );
 		Estado = TEMPORIZADO;
 		btn = NO_KEY;
 		break;

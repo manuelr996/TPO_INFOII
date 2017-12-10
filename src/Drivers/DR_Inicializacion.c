@@ -61,7 +61,7 @@ void Inicializacion ( void )
 	RIEGO_Ttime = RIEGO_TtimeRESET;
 	RIEGO_AtimeON = RIEGO_AtimeRESET;
 	HumedadSuelo = HumedadSueloRESET;
-
+	vPotenciometro = vPotenciometroRESET;
 
 
 	InitPLL();			//PLL
@@ -73,5 +73,5 @@ void Inicializacion ( void )
 
 	TimerStart( ADCevent , ADCtime , DispararConversion , ADCbase );	//Inicio un timer para disparar el ADC segun el tiempo determinado
 	ElectroValvula_Off();
-	SecuenciaBienvenidaLCD();	//Se inicia una secuencia de bienvenida en el LCD
+	//SecuenciaBienvenidaLCD();	//Se inicia una secuencia de bienvenida en el LCD
 }

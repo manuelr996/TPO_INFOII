@@ -71,7 +71,7 @@ void RiegoOn ( void )
 	EV_RIEGO_ON;
 	if(btn == B_OK)
 	{
-		Display_LCD( "Off" , RENGLON_1 , 13 );
+		Display_LCD("OFF" , RENGLON_1 , 13 );
 		EstadoManual = RIEGO_OFF;
 	}
 }
@@ -82,7 +82,7 @@ void RiegoOff ( void )
 	EV_RIEGO_OFF;
 	if(btn == B_OK)
 	{
-		Display_LCD( "On " , RENGLON_1 , 13 );
+		Display_LCD("ON " , RENGLON_1 , 13 );
 		EstadoManual = RIEGO_ON;
 	}
 }
@@ -90,10 +90,12 @@ void RiegoOff ( void )
 ////////////////////////////////CONFIGURACION///////////////////////////////
 void ConfiguracionInicializada (void)
 {
-	btn = getTecla();
+	//btn = getTecla();
 	if(btn == B_OK)
 	{
 		//DisplayLCD: "Configurando Humedad Minima\nHumedad Minima: %%%"
+		Display_LCD("Config HumMin   ", RENGLON_1 , 0 );
+		Display_LCD("Humedad Min=    ", RENGLON_2 , 0 );
 		EstadoConfiguracion = HUMEDADMINIMA;
 	}
 }
@@ -101,11 +103,13 @@ void ConfiguracionInicializada (void)
 void SetHumedadMinima (void)
 {
 	//Display LCD: (actualizar los %%% para que muestren el valor del potenciometro)
-	btn = getTecla();
+	//btn = getTecla();
 	if(btn == B_OK)
 	{
 		HumedadMinima = vPotenciometro;
 		//DisplayLCD: "Configurando Humedad Minima\nHumedad Maxima: %%%"
+		Display_LCD( "Config HumMax   " , RENGLON_1 , 0 );
+		Display_LCD( "Humedad Max=    " , RENGLON_2 , 0 );
 		EstadoConfiguracion = HUMEDADMAXIMA;
 	}
 }
@@ -113,11 +117,13 @@ void SetHumedadMinima (void)
 void SetHumedadMaxima (void)
 {
 	//Display LCD: (actualizar los %%% para que muestren el valor del potenciometro)
-	btn = getTecla();
+	//btn = getTecla();
 	if(btn == B_OK)
 	{
 		HumedadMaxima = vPotenciometro;
 		//Display LCD: "Configurando Temporizador:\n Tiempo: %%%m
+		Display_LCD( "Config Temporiza" , RENGLON_1 , 0 );
+		Display_LCD( "Tiempo=         " , RENGLON_2 , 0 );
 		EstadoConfiguracion = TEMPORIZADOR;
 	}
 }
@@ -125,18 +131,20 @@ void SetHumedadMaxima (void)
 void SetTemporizador(void)
 {
 	//Display LCD: (actualizar los %%% para que muestren el valor del potenciometro)
-	btn = getTecla();
+	//btn = getTecla();
 	if(btn == B_OK)
 	{
 		T_Riego = vPotenciometro;
 		//Display LCD: "Cerrando Configuraciones Presione OK para continuar
+		Display_LCD( "Cerrando config " , RENGLON_1 , 0 );
+		Display_LCD( "Ok p/continuar  " , RENGLON_2 , 0 );
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
 	}
 }
 
 void ConfiguracionFinalizada (void)
 {
-	btn = getTecla();
+	//btn = getTecla();
 	if(btn == B_OK)
 	{
 		CloseConfiguracion();

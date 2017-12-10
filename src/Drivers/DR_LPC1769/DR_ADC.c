@@ -74,7 +74,7 @@ void InitADC ( void )
 
 	//Canales:
 	ADCSEL = 0;								//Limpio ADCSEL
-	//ADCSEL |= CH2SEL;						//Selecciono el canal 2 (Sensor Humedad) como objeto de conversion
+	ADCSEL |= CH2SEL;						//Selecciono el canal 2 (Sensor Humedad) como objeto de conversion
 	ADCBURST = 0;							//Conversion controlada por software al canal seleccionado en ADCSEL
 
 	//Pines:
@@ -90,7 +90,7 @@ void InitADC ( void )
 	ISER0 |= (1 << NVIC_ADC);				//Habilito la interrupcion de ADC en el NVIC
 
 	//Activacion y disparo del ADC:
-	//ADCPDN = 1;								//Prendido
+	ADCPDN = 1;								//Prendido
 	ADCSTART = 0;							/*Dejo el adc en stop, para que sea disparado con maquinaria de timers
 											//para manejar mejor la frecuencia de muestreo*/
 	}
@@ -115,6 +115,9 @@ void ADC_IRQHandler( void )
 
 void CambiarCanal (uint8_t ch)
 {
+	ADCSTART = STOP;						//Pausado
+	ADCPDN = 0;								//Apagado
+
 	ADCSEL = 0;								//Ningun canal es objeto de conversion
 	ADCSEL |= (0x01 << ch);  				//El canal ch es objeto de conversion
 }
@@ -127,20 +130,6 @@ void CambiarCanal (uint8_t ch)
 */
 void DispararConversion ( void )
 {
-	ADCSTART = STOP;						//Pausado
-	ADCPDN = 0;								//Apagado
-
-	if( CanalAConvertir == POTE )
-	{
-		CambiarCanal( POTE );
-		CanalAConvertir = S_HUMEDAD;
-	}
-	else
-	{
-		CambiarCanal( S_HUMEDAD );
-		CanalAConvertir = POTE;
-	}
-
 	ADCPDN = 1;								//Prendido
 	ADCSTART = STOP;						//Disparo
 	ADCSTART = TRIGGER;

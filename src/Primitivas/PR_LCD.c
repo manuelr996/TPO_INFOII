@@ -157,3 +157,8 @@ void GuardarMensajeLCD( char *mensaje, char *lugar ){
 	lugar[17] = 0;
 
 }
+
+void PantallaPrincipal ( void )
+{
+
+}
