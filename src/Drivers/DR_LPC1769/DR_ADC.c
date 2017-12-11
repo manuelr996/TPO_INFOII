@@ -33,8 +33,6 @@
  **********************************************************************************************************************************/
 volatile uint32_t 	HumedadSuelo;
 volatile uint32_t	vPotenciometro;
-
-volatile uint8_t 	CanalAConvertir;
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -97,15 +95,15 @@ void ADC_IRQHandler( void )
 	uint32_t lectura = AD0GDR;
 	uint32_t conversion = 0;
 
-	if( ( (lectura >> CHIN) & 0x00000007 ) == S_HUMEDAD )	//Si interrumpio el canal 2
+	if( ( (lectura >> CHINBIT) & CHINMASK ) == S_HUMEDAD )	//Si interrumpio el canal 2
 	{
-		conversion = ( lectura >> ADDR_RESULT ) & 0xFFF;	//Dejo el dato de la conversion bien expresado
-		HumedadSuelo = 100 - (conversion / 409);					//Cargo la conversion al buffer
+		conversion = ( lectura >> ADDR_RESULTBIT ) & ADDR_RESULTMASK;	//Dejo el dato de la conversion bien expresado
+		HumedadSuelo = 100 - (conversion / 409);						//Cargo la conversion al buffer
 	}
-	if( ( (lectura >> CHIN) & 0x00000007 ) == POTE )		//Si interrumpio el canal 5
+	if( ( (lectura >> CHINBIT) & CHINMASK ) == POTE )		//Si interrumpio el canal 5
 	{
-		conversion = ( lectura >> ADDR_RESULT ) & 0xFFF;	//Dejo el dato de la conversion bien expresado
-		vPotenciometro = conversion / 409;					//Cargo la conversion al buffer
+		conversion = ( lectura >> ADDR_RESULTBIT ) & ADDR_RESULTMASK;	//Dejo el dato de la conversion bien expresado
+		vPotenciometro = conversion / 409;								//Cargo la conversion al buffer
 	}
 
 }

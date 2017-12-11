@@ -70,7 +70,7 @@ void leerHumedad( void )
 	//Disparamos la conversion
 	ADCSTART =	STOP;
 	ADCSTART =	TRIGGER;
-
+}
 ////////////////////////POTENCIOMETRO//////////////////////////////
 /**
 	\fn  IniciarPotenciometro

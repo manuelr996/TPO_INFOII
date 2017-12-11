@@ -69,16 +69,20 @@
 #define 	ADCtime			2
 #define		ADCbase			SEG
 
-#define		STOP		0
-#define		TRIGGER		1
+#define		STOP			0
+#define		TRIGGER			1
 
-#define		AD02		PORT0,25
-#define		AD05		PORT1,31
+#define		AD02				PORT0,25
+#define		AD05				PORT1,31
 
-#define 	CHIN 			24
+#define 	CHINBIT 			24
+#define 	CHINMASK			0x00000007
 
-#define 	POTE 			5
-#define 	S_HUMEDAD 		2
+#define		ADDR_RESULTBIT		4
+#define		ADDR_RESULTMASK		0xFFF
+
+#define 	POTE 				5
+#define 	S_HUMEDAD 			2
 /***********************************************************************************************************************************
  *** MACROS GLOBALES
  **********************************************************************************************************************************/
