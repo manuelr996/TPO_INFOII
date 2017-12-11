@@ -81,10 +81,16 @@ extern uint8_t btn;
 void RiegoOn(void);
 void RiegoOff(void);
 
+void RiegoAutomaticoOn(void);
+void RiegoAutomaticoOff(void);
+
 void ConfiguracionInicializada(void);
 void SetHumedadMinima(void);
 void SetHumedadMaxima(void);
 void SetTemporizador(void);
 void ConfiguracionFinalizada(void);
 
+void AguardandoOk(void);
+void VolverAguardando(void);
+void RiegoTemporizado(void);
 #endif /* APLICACION_MAQUINASDEESTADOS_H_ */

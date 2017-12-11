@@ -15,8 +15,8 @@
 /***********************************************************************************************************************************
  *** DEFINES PRIVADOS AL MODULO
  **********************************************************************************************************************************/
-#define B_Riego MIN;
-
+#define B_Riego MIN
+#define E_Riego (uint8_t)1
 /***********************************************************************************************************************************
  *** MACROS PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -42,7 +42,6 @@ EstadosAutomatico EstadoAutomatico;
 uint8_t btn;
 
 uint8_t T_Riego;
-
 /***********************************************************************************************************************************
  *** PROTOTIPO DE FUNCIONES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -93,7 +92,7 @@ void RiegoAutomaticoOn( void )
 	EV_RIEGO_ON;
 	if(CondicionesFin())
 	{
-		//DisplayLCD: "Riego: OFF"
+		Display_LCD("OFF" , RENGLON_1 , 13 );
 		EstadoAutomatico = NO_REGANDO;
 	}
 }
@@ -103,7 +102,7 @@ void RiegoAutomaticoOff( void )
 	EV_RIEGO_OFF;
 	if(CondicionesInicio())
 	{
-		//DisplayLCD: "Riego: ON"
+		Display_LCD("ON " , RENGLON_1 , 13 );
 		EstadoAutomatico = REGANDO;
 	}
 }
@@ -115,7 +114,7 @@ void ConfiguracionInicializada (void)
 	{
 		//DisplayLCD: "Configurando Humedad Minima\nHumedad Minima: %%%"
 		Display_LCD("Config HumMin   ", RENGLON_1 , 0 );
-		Display_LCD("Humedad Min=    ", RENGLON_2 , 0 );
+		Display_LCD("Humedad Min=   %", RENGLON_2 , 0 );
 		EstadoConfiguracion = HUMEDADMINIMA;
 	}
 }
@@ -129,21 +128,21 @@ void SetHumedadMinima (void)
 		HumedadMinima = vPotenciometro;
 		//DisplayLCD: "Configurando Humedad Minima\nHumedad Maxima: %%%"
 		Display_LCD( "Config HumMax   " , RENGLON_1 , 0 );
-		Display_LCD( "Humedad Max=    " , RENGLON_2 , 0 );
+		Display_LCD( "Humedad Max=000%" , RENGLON_2 , 0 );
 		EstadoConfiguracion = HUMEDADMAXIMA;
 	}
 }
 
 void SetHumedadMaxima (void)
 {
-	//Display LCD: (actualizar los %%% para que muestren el valor del potenciometro)
+	Display_LCD("%d", RENGLON_2, 11);
 	//btn = getTecla();
 	if(btn == B_OK)
 	{
 		HumedadMaxima = vPotenciometro;
 		//Display LCD: "Configurando Temporizador:\n Tiempo: %%%m
 		Display_LCD( "Config Temporiza" , RENGLON_1 , 0 );
-		Display_LCD( "Tiempo=         " , RENGLON_2 , 0 );
+		Display_LCD( "Tiempo=     000m" , RENGLON_2 , 0 );
 		EstadoConfiguracion = TEMPORIZADOR;
 	}
 }
@@ -171,3 +170,22 @@ void ConfiguracionFinalizada (void)
 	}
 }
 ////////////////////////////////TEMPORIZADO////////////////////////////////
+void AguardandoOk(void)
+{
+	if(btn == B_OK)
+	{
+		Display_LCD("Regando - Tiempo", RENGLON_1, 0);
+		Display_LCD("Restante:   TTTs", RENGLON_1, 0);
+		TimerStart(E_Riego, T_Riego, VolverAguardando, B_Riego);
+	}
+}
+
+void VolverAguardando(void)
+{
+	EstadoTemporizado = AGUARDANDO_OK;
+}
+
+void RiegoTemporizado(void)
+{
+
+}

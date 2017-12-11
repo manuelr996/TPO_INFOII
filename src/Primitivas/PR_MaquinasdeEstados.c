@@ -71,3 +71,30 @@ void CloseConfiguracion(void)
 	DetenerPotenciometro();
 	//To-Do: Volver al Estado Anterior
 }
+
+
+void InitAutomatico(void)
+{
+	ApagarLeds();
+	PrenderLed(VERDE);
+	Display_LCD("Auto    Valv:OFF" , RENGLON_1 , 0 );
+	Display_LCD("Pote:   Humedad:" , RENGLON_2 , 0 );
+}
+
+void InitManual(void)
+{
+	ApagarLeds();
+	PrenderLed(AZUL);
+	//to-do: InitTemporizado();
+	Display_LCD("Manual  Valv:OFF" , RENGLON_1 , 0 );
+	Display_LCD("Pote:   Humedad:" , RENGLON_2 , 0 );
+}
+
+void InitTemporizado(void)
+{
+	ApagarLeds();
+	PrenderLed(ROJO);
+	PrenderLed(VERDE);
+	Display_LCD("Tempo   Valv:OFF" , RENGLON_1 , 0 );
+	Display_LCD("Pote:   Humedad:" , RENGLON_2 , 0 );
+}

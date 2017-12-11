@@ -113,8 +113,6 @@ typedef struct
  **********************************************************************************************************************************/
 // extern tipo nombreVariable;
 extern volatile uint32_t 	HumedadSuelo;
-extern volatile uint32_t	HumedadMaxima;
-extern volatile uint32_t	HumedadMinima;
 extern volatile uint32_t	vPotenciometro;
 extern volatile uint8_t 	CanalAConvertir;
 /***********************************************************************************************************************************

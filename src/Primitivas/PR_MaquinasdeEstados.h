@@ -41,6 +41,10 @@
 /***********************************************************************************************************************************
  *** PROTOTIPOS DE FUNCIONES GLOBALES
  **********************************************************************************************************************************/
+void InitManual(void);
+void InitAutomatico(void);
+void InitTemporizado(void);
 void InitConfiguracion(void);
 void CloseConfiguracion(void);
+
 #endif /* PRIMITIVAS_PR_MAQUINASDEESTADOS_H_ */

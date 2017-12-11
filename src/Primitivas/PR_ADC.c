@@ -65,11 +65,10 @@
  	\param void
 	\return void
 */
-void leerHumedad( void )
+
+uint8_t GetHumedadSuelo(void)
 {
-	//Disparamos la conversion
-	ADCSTART =	STOP;
-	ADCSTART =	TRIGGER;
+	return HumedadSuelo;
 }
 ////////////////////////POTENCIOMETRO//////////////////////////////
 /**
