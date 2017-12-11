@@ -56,6 +56,14 @@ volatile uint8_t Lluvia;
  	\param [out] parametros de salida
 	\return tipo y descripcion de retorno
 */
+/**
+	\fn  	SetRising
+	\brief 	Activa/Desactiva interrupciones por rising edge
+ 	\author Tomás Bautista Ordóñez
+ 	\date 	11 dic. 2017
+ 	\param [in] puerto, pin y estado( ACTIVADO o DESACTIVADO )
+	\return void
+*/
 void SetRising( uint8_t puerto, uint8_t bit, uint8_t estado)
 {
     uint32_t *p = DIRIO0IntEnR;
@@ -68,7 +76,14 @@ void SetRising( uint8_t puerto, uint8_t bit, uint8_t estado)
     else                            //    o
     	*p &= ~( 0x01 << bit );    	//Pongo el 0
 }
-
+/**
+	\fn  	SetFalling
+	\brief 	Activa/Desactiva interrupciones por falling edge
+ 	\author Tomás Bautista Ordóñez
+ 	\date 	11 dic. 2017
+ 	\param [in] puerto, pin y estado( ACTIVADO o DESACTIVADO )
+	\return void
+*/
 void SetFalling( uint8_t puerto, uint8_t bit, uint8_t estado)
 {
     uint32_t *p = DIRIO0IntEnF;
@@ -81,7 +96,14 @@ void SetFalling( uint8_t puerto, uint8_t bit, uint8_t estado)
     else                            //    o
         *p &= ~( 0x01 << bit );     //Pongo el 0
 }
-
+/**
+	\fn  	GetRFStatus
+	\brief 	Devuelve si interrumpio o no y debido a que flanco
+ 	\author Tomás Bautista Ordóñez
+ 	\date 	11 dic. 2017
+ 	\param [in] puerto, pin
+	\return uint8_t RISING, FALLING o NO_INTERRUMPIO
+*/
 uint8_t GetRFStatus( uint8_t puerto, uint8_t bit )
 {
     uint32_t *p = DIRIO0IntStatR;
@@ -97,9 +119,16 @@ uint8_t GetRFStatus( uint8_t puerto, uint8_t bit )
     if( *p & ( 0x01 << bit ) )      //Si fue por Falling retorno
     	return FALLING;
 
-    return 0;						//Si no interrumpio por Rising o Falling retorno un 0
+    return NO_INTERRUMPIO;			//Si no interrumpio por Rising o Falling retorno NO_INTERRUMPIO
 }
-
+/**
+	\fn  	ClearGPIOInt
+	\brief 	Limpia los flags de interrupcion
+ 	\author Tomás Bautista Ordóñez
+ 	\date 	11 dic. 2017
+ 	\param [in] puerto, pin
+	\return void
+*/
 void ClearGPIOInt( uint8_t puerto, uint8_t bit )
 {
     uint32_t *p = DIRIO0IntClr;
@@ -109,7 +138,13 @@ void ClearGPIOInt( uint8_t puerto, uint8_t bit )
 
     *p |= ( 0x01 << bit );          //Escribo un 1 en el bit y borro la interrupcion
 }
-
+/**
+	\fn  	InitExtIntGPIO
+	\brief 	Inicializa las interrupciones externas por GPIO
+ 	\author Tomás Bautista Ordóñez
+ 	\date 	11 dic. 2017
+	\return void
+*/
 void InitExtIntGPIO ( void )
 {
     //Pin:
@@ -124,7 +159,13 @@ void InitExtIntGPIO ( void )
     //Interrupciones:
     ISER0 |= ( 0x01 << ISE_EINT3 );            	//Habilito la interrupcion para EINT3
 }
-
+/**
+	\fn  	EINT3_IRQHandler
+	\brief 	Rutina de interrupcion de las interrupciones externas3 y GPIO
+ 	\author Tomás Bautista Ordóñez
+ 	\date 	11 dic. 2017
+	\return void
+*/
 void EINT3_IRQHandler( void )
 {
 	uint8_t flanco;
