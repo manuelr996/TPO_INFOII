@@ -139,18 +139,21 @@ void Display_LCD( char *msg , char r , char p )
  * @param lugar Puntero al lugar donde se quiere guardar el mensaje pasado
  */
 
-void GuardarMensajeLCD( char *mensaje, char *lugar ){
+void GuardarMensajeLCD( char *mensaje, char *lugar )
+{
 	uint8_t i;
 
-	for( i = 0; mensaje[i] != 0; i++ ){
+	for( i = 0; mensaje[i] != 0; i++ )
+	{
 		lugar[i] = mensaje[i];
 	}
 
-	for( ; i < 16; i++ ){
+	for( ; i < 3; i++ )
+	{
 		lugar[i] = ' ';
 	}
 
-	lugar[17] = 0;
+	lugar[3] = 0;
 
 }
 

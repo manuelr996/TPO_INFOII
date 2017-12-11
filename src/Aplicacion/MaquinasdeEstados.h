@@ -85,6 +85,7 @@ void RiegoOff(void);
 void RiegoAutomaticoOn(void);
 void RiegoAutomaticoOff(void);
 
+void PrintPotenciometro(void);
 void ConfiguracionInicializada(void);
 void SetHumedadMinima(void);
 void SetHumedadMaxima(void);

@@ -98,12 +98,12 @@ void ADC_IRQHandler( void )
 	if( ( (lectura >> CHINBIT) & CHINMASK ) == S_HUMEDAD )	//Si interrumpio el canal 2
 	{
 		conversion = ( lectura >> ADDR_RESULTBIT ) & ADDR_RESULTMASK;	//Dejo el dato de la conversion bien expresado
-		HumedadSuelo = 100 - (conversion / 409);						//Cargo la conversion al buffer
+		HumedadSuelo = 100 - (conversion / 41);						//Cargo la conversion al buffer
 	}
 	if( ( (lectura >> CHINBIT) & CHINMASK ) == POTE )		//Si interrumpio el canal 5
 	{
 		conversion = ( lectura >> ADDR_RESULTBIT ) & ADDR_RESULTMASK;	//Dejo el dato de la conversion bien expresado
-		vPotenciometro = conversion / 409;								//Cargo la conversion al buffer
+		vPotenciometro = conversion / 41;								//Cargo la conversion al buffer
 	}
 
 }

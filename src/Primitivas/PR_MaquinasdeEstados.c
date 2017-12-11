@@ -35,7 +35,7 @@
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
-
+uint8_t EstadoAnterior;
 /***********************************************************************************************************************************
  *** PROTOTIPO DE FUNCIONES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -63,13 +63,41 @@ void InitConfiguracion( void )
 	IniciarPotenciometro();
 	Display_LCD("Configuracion   ", RENGLON_1, 0);
 	Display_LCD("OK p/continuar  ", RENGLON_2, 0);
+	EstadoAnterior = Estado;
 
 }
 
 void CloseConfiguracion(void)
 {
 	DetenerPotenciometro();
-	//To-Do: Volver al Estado Anterior
+
+	switch(EstadoAnterior)
+	{
+	case AUTOMATICO:
+		InitAutomatico();
+		Estado = AUTOMATICO;
+		EstadoAutomatico = NO_REGANDO;
+		btn = NO_KEY;
+		break;
+	case CONFIGURACION:
+		InitConfiguracion();
+		Estado = CONFIGURACION;
+		EstadoConfiguracion = INIT_CONFIGURACION;
+		btn = NO_KEY;
+		break;
+	case MANUAL:
+		InitManual();
+		Estado = MANUAL;
+		EstadoManual = RIEGO_OFF;
+		btn = NO_KEY;
+		break;
+	case TEMPORIZADO:
+		InitTemporizado();
+		Estado = TEMPORIZADO;
+		EstadoTemporizado = AGUARDANDO_OK;
+		btn = NO_KEY;
+		break;
+	}
 }
 
 

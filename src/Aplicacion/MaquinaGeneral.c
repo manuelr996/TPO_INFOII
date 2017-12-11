@@ -76,16 +76,16 @@ void MaquinaGeneral (void)
 		Display_LCD("Pote:   Humedad:" , RENGLON_2 , 0 );
 		break;
 	case CONFIGURACION:
-		MaquinaConfiguracion[EstadoConfiguracion];
+		MaquinaConfiguracion[EstadoConfiguracion]();
 		break;
 	case MANUAL:
 		MaquinaManual[EstadoManual]();
 		break;
 	case TEMPORIZADO:
-		MaquinaTemporizado[EstadoTemporizado];
+		MaquinaTemporizado[EstadoTemporizado]();
 		break;
 	case AUTOMATICO:
-		MaquinaAutomatico[EstadoAutomatico];
+		MaquinaAutomatico[EstadoAutomatico]();
 		break;
 	default:
 		Estado = RESET_G;
