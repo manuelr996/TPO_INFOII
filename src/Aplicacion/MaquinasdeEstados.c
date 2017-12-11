@@ -40,7 +40,7 @@ EstadosAutomatico EstadoAutomatico;
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
 uint8_t btn;
-
+char vString[4];
 uint8_t T_Riego;
 /***********************************************************************************************************************************
  *** PROTOTIPO DE FUNCIONES PRIVADAS AL MODULO
@@ -112,7 +112,6 @@ void ConfiguracionInicializada (void)
 	//btn = getTecla();
 	if(btn == B_OK)
 	{
-		//DisplayLCD: "Configurando Humedad Minima\nHumedad Minima: %%%"
 		Display_LCD("Config HumMin   ", RENGLON_1 , 0 );
 		Display_LCD("Humedad Min=   %", RENGLON_2 , 0 );
 		EstadoConfiguracion = HUMEDADMINIMA;
@@ -121,42 +120,44 @@ void ConfiguracionInicializada (void)
 
 void SetHumedadMinima (void)
 {
-	//Display LCD: (actualizar los %%% para que muestren el valor del potenciometro)
-	//btn = getTecla();
+	itoa(vPotenciometro, vString, 10);
+	Display_LCD(vString, RENGLON_2, 11);
+
 	if(btn == B_OK)
 	{
 		HumedadMinima = vPotenciometro;
 		//DisplayLCD: "Configurando Humedad Minima\nHumedad Maxima: %%%"
 		Display_LCD( "Config HumMax   " , RENGLON_1 , 0 );
-		Display_LCD( "Humedad Max=000%" , RENGLON_2 , 0 );
+		Display_LCD( "Humedad Max=   %" , RENGLON_2 , 0 );
 		EstadoConfiguracion = HUMEDADMAXIMA;
 	}
 }
 
 void SetHumedadMaxima (void)
 {
-	Display_LCD("%d", RENGLON_2, 11);
+	itoa(vPotenciometro, vString, 10);
+	Display_LCD(vString, RENGLON_2, 11);
 	//btn = getTecla();
 	if(btn == B_OK)
 	{
 		HumedadMaxima = vPotenciometro;
 		//Display LCD: "Configurando Temporizador:\n Tiempo: %%%m
 		Display_LCD( "Config Temporiza" , RENGLON_1 , 0 );
-		Display_LCD( "Tiempo=     000m" , RENGLON_2 , 0 );
+		Display_LCD( "Tiempo=        m" , RENGLON_2 , 0 );
 		EstadoConfiguracion = TEMPORIZADOR;
 	}
 }
 
 void SetTemporizador(void)
 {
-	//Display LCD: (actualizar los %%% para que muestren el valor del potenciometro)
-	//btn = getTecla();
+	itoa(vPotenciometro, vString, 10);
+	Display_LCD(vString, RENGLON_2, 10);
 	if(btn == B_OK)
 	{
 		T_Riego = vPotenciometro;
 		//Display LCD: "Cerrando Configuraciones Presione OK para continuar
-		Display_LCD( "Cerrando config " , RENGLON_1 , 0 );
-		Display_LCD( "Ok p/continuar  " , RENGLON_2 , 0 );
+		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
+		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
 	}
 }
@@ -175,13 +176,16 @@ void AguardandoOk(void)
 	if(btn == B_OK)
 	{
 		Display_LCD("Regando - Tiempo", RENGLON_1, 0);
-		Display_LCD("Restante:   TTTs", RENGLON_1, 0);
+		Display_LCD("Restante:   TTTm", RENGLON_1, 0);
 		TimerStart(E_Riego, T_Riego, VolverAguardando, B_Riego);
 	}
 }
 
 void VolverAguardando(void)
 {
+	uint8_t vTimer = GetTimer(E_Riego);
+	itoa(vTimer,vString,10);
+	Display_LCD(vString, RENGLON_2, 11);
 	EstadoTemporizado = AGUARDANDO_OK;
 }
 
