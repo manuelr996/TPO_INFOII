@@ -18,9 +18,9 @@
  *** INCLUDES GLOBALES
  **********************************************************************************************************************************/
 #include "PR_SoftTimers.h"
-#include "DR_tipos.h"
 #include "PR_Boton.h"
 #include "PR_Leds.h"
+#include "PR_Sensores.h"
 #include "DR_ElectroValvula.h"
 #include "DR_ADC.h"
 #include "DR_gpio.h"

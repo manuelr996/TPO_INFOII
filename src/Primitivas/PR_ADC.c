@@ -71,11 +71,6 @@ void leerHumedad( void )
 	ADCSTART =	STOP;
 	ADCSTART =	TRIGGER;
 
-	//Reseteo el timer
-	SetTimer( ADCevent , ADCtime );
-
-//	printf("Humedad: %d\n",HumedadSuelo);
-}
 ////////////////////////POTENCIOMETRO//////////////////////////////
 /**
 	\fn  IniciarPotenciometro

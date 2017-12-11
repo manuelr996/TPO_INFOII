@@ -42,6 +42,7 @@ EstadosAutomatico EstadoAutomatico;
 uint8_t btn;
 
 uint8_t T_Riego;
+
 /***********************************************************************************************************************************
  *** PROTOTIPO DE FUNCIONES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -87,6 +88,25 @@ void RiegoOff ( void )
 	}
 }
 /////////////////////////////////AUTOMATICO/////////////////////////////////
+void RiegoAutomaticoOn( void )
+{
+	EV_RIEGO_ON;
+	if(CondicionesFin())
+	{
+		//DisplayLCD: "Riego: OFF"
+		EstadoAutomatico = NO_REGANDO;
+	}
+}
+
+void RiegoAutomaticoOff( void )
+{
+	EV_RIEGO_OFF;
+	if(CondicionesInicio())
+	{
+		//DisplayLCD: "Riego: ON"
+		EstadoAutomatico = REGANDO;
+	}
+}
 ////////////////////////////////CONFIGURACION///////////////////////////////
 void ConfiguracionInicializada (void)
 {

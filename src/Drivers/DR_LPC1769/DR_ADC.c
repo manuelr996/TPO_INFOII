@@ -32,9 +32,6 @@
  *** VARIABLES GLOBALES PUBLICAS
  **********************************************************************************************************************************/
 volatile uint32_t 	HumedadSuelo;
-volatile uint32_t	HumedadMaxima;
-volatile uint32_t	HumedadMinima;
-
 volatile uint32_t	vPotenciometro;
 
 volatile uint8_t 	CanalAConvertir;
@@ -93,7 +90,7 @@ void InitADC ( void )
 	ADCPDN = 1;								//Prendido
 	ADCSTART = 0;							/*Dejo el adc en stop, para que sea disparado con maquinaria de timers
 											//para manejar mejor la frecuencia de muestreo*/
-	}
+}
 
 void ADC_IRQHandler( void )
 {

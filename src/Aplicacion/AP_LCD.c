@@ -58,8 +58,8 @@
 */
 void SecuenciaBienvenidaLCD ( void )
 {
-	char mensaje1[]="Sistema de riego";
-	char mensaje2[]="   Automatico   ";
+	//char mensaje1[]="Sistema de riego";
+	//char mensaje2[]="   Automatico   ";
 
 	//Display_LCD(mensaje1,RENGLON_1,0);
 	//Display_LCD(mensaje2,RENGLON_2,0);
