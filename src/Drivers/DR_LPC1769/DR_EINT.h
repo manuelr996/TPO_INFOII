@@ -57,6 +57,7 @@
 #define		ACTIVADO		1
 #define		DESACTIVADO		0
 
+#define		NO_INTERRUMPIO	0
 #define 	RISING 			1
 #define		FALLING			2
 
