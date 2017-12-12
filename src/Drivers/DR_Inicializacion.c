@@ -63,14 +63,13 @@ void Inicializacion ( void )
 	HumedadSuelo = HumedadSueloRESET;
 	T_Riego = 20;
 
-
 	InitPLL();			//PLL
 	InitSysTick();		//SysTick
 	InitADC();			//Conversor Analogo/Digital
 	InitExtIntGPIO();  	//Interrupciones de GPIO
+	OWire_Init();		//DS18B20
 	InitInfotrinic();  	//Sensores, Teclado, LEDs(placa), Relays
 	InitLCD ();			//LCD
-	OWire_Init();		//DS18B20
 
 	TimerStart( ADCevent , ADCtime , DispararConversion , ADCbase );	//Inicio un timer para disparar el ADC segun el tiempo determinado
 	ElectroValvula_Off();

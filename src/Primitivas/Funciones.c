@@ -55,7 +55,7 @@
 */
 void MostrarSensores( void )
 {
-	FuncLluvia();
+	//FuncLluvia();
 	Display( HumedadSuelo , DSP1 );
 	Display( tempBuffer , DSP0 );
 }

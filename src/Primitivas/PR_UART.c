@@ -10,7 +10,6 @@
  *** INCLUDES
  **********************************************************************************************************************************/
 #include "PR_UART.h"
-#include "Aplicacion.h"
 
 /***********************************************************************************************************************************
  *** DEFINES PRIVADOS AL MODULO
@@ -82,7 +81,7 @@ void TransmitirString ( char * s)
  	\date 5 de oct. de 2017
  	\param void
 	\return void
-*/
+*//*
 void Mensaje ( void )
 {
 	int16_t dato;
@@ -219,3 +218,4 @@ void Mensaje ( void )
 		}
 	}
 }
+*/

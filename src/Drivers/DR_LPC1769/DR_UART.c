@@ -16,7 +16,7 @@
 //#include "DR_EINT.h"
 #include "DR_PLL.h"
 #include"DR_Inicializacion.h"
-#include"Aplicacion.h"
+
 /***********************************************************************************************************************************
  *** DEFINES PRIVADOS AL MODULO
  **********************************************************************************************************************************/
@@ -173,7 +173,7 @@ int16_t PopTX( void )
 	return salida;
 }
 
-
+/*
 void InitUART1 ( void )
 {
 	//TODO: Completar Inicializacion de UART1
@@ -224,3 +224,4 @@ void InitUART1 ( void )
 
 
 }
+*/

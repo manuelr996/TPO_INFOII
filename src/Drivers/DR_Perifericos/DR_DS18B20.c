@@ -39,7 +39,7 @@ uint8_t bitsSent;
 uint8_t bitsRead;
 uint8_t currentStatus;
 uint8_t tConv;
-
+uint8_t interruptCounter;
 volatile uint32_t tempBuffer;
 /***********************************************************************************************************************************
  *** PROTOTIPO DE FUNCIONES PRIVADAS AL MODULO
@@ -99,11 +99,13 @@ void OWire_Init(void)							//Inicializa el Timer y GPIO para One Wire
 	T3TCR |= 1;
 	//T3EMR |=  0x31;
 	// Seteamos el external match para toggle
+	interruptCounter = 0;
 }
 
 void TIMER3_IRQHandler(void)
 {
 	static uint8_t sFlag = 1;
+	interruptCounter++;
 
 	switch(currentStatus)
 	{
@@ -251,7 +253,7 @@ void ReadScratchpad(void)
 {
 	tempBuffer |= GetPIN(tempData, ALTO);
 	T3MR0 += 30*uS;
-	tempBuffer << 1;
+	tempBuffer = tempBuffer << 1;
 	bitsRead++;
 }
 
