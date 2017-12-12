@@ -158,6 +158,7 @@ void SetTemporizador(void)
 	{
 		T_Riego = vPotenciometro;
 		//Display LCD: "Cerrando Configuraciones Presione OK para continuar
+		TimerStop(E_Potenciometro);
 		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
 		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
@@ -170,7 +171,6 @@ void ConfiguracionFinalizada (void)
 	if(btn == B_OK)
 	{
 		CloseConfiguracion();
-		TimerStop(E_Potenciometro);
 	}
 }
 ////////////////////////////////TEMPORIZADO////////////////////////////////
@@ -179,13 +179,15 @@ void PrintTimer (void)
 	uint8_t vTimer = GetTimer(E_Riego);
 	itoa(vTimer,vString,10);
 	GuardarMensajeLCD(vString,vString);
-	Display_LCD(vString, RENGLON_2, 11);
+	Display_LCD(vString, RENGLON_2, 12);
+	SetTimer(E_Potenciometro,T_Potenciometro);
 }
 
 void AguardandoOk(void)
 {
 	if(btn == B_OK)
 	{
+		EV_RIEGO_ON;
 		Display_LCD("Regando - Tiempo", RENGLON_1, 0);
 		Display_LCD("Restante:   TTTm", RENGLON_2, 0);
 		TimerStart(E_Riego, T_Riego, VolverAguardando, B_Riego);

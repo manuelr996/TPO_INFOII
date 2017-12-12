@@ -61,6 +61,7 @@ void InitConfiguracion( void )
 	ApagarLeds();
 	PrenderLed(ROJO);
 	TimerStop(E_Riego);
+	TimerStop(E_Potenciometro);
 	IniciarPotenciometro();
 	Display_LCD("Configuracion   ", RENGLON_1, 0);
 	Display_LCD("OK p/continuar  ", RENGLON_2, 0);
@@ -105,6 +106,7 @@ void InitAutomatico(void)
 	ApagarLeds();
 	PrenderLed(VERDE);
 	TimerStop(E_Riego);
+	TimerStop(E_Potenciometro);
 	DetenerPotenciometro();
 	Display_LCD("Auto    Valv:OFF" , RENGLON_1 , 0 );
 	Display_LCD("Pote:   Humedad:" , RENGLON_2 , 0 );
@@ -115,6 +117,7 @@ void InitManual(void)
 	ApagarLeds();
 	PrenderLed(AZUL);
 	TimerStop(E_Riego);
+	TimerStop(E_Potenciometro);
 	DetenerPotenciometro();
 	Display_LCD("Manual  Valv:OFF" , RENGLON_1 , 0 );
 	Display_LCD("Pote:   Humedad:" , RENGLON_2 , 0 );
@@ -126,6 +129,7 @@ void InitTemporizado(void)
 	PrenderLed(ROJO);
 	PrenderLed(VERDE);
 	TimerStop(E_Riego);
+	TimerStop(E_Potenciometro);
 	DetenerPotenciometro();
 	Display_LCD("Tempo   Valv:OFF" , RENGLON_1 , 0 );
 	Display_LCD("Pote:   Humedad:" , RENGLON_2 , 0 );

@@ -133,10 +133,10 @@ uint32_t GetTimer( uint8_t event )
 			tiempo /= DECIMAS;
 			break;
 		case SEG:
-			tiempo /= ( SEGUNDOS * DECIMAS );
+			tiempo /= SEGUNDOS;
 			break;
 		case MIN:
-			tiempo /= ( MINUTOS * SEGUNDOS * DECIMAS );
+			tiempo /= MINUTOS;
 			break;
 	}
 	return tiempo;
