@@ -27,8 +27,8 @@
 #define 	MIN			(uint8_t)2
 
 #define 	DECIMAS		(uint8_t)40
-#define 	SEGUNDOS	(uint8_t)400
-#define 	MINUTOS		(uint8_t)24000
+#define 	SEGUNDOS	DECIMAS*10
+#define 	MINUTOS		SEGUNDOS*60
 
 #define 	RUN			(uint8_t)0
 #define 	PAUSE		(uint8_t)1

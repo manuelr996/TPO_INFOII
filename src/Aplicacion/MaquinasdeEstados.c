@@ -15,12 +15,6 @@
 /***********************************************************************************************************************************
  *** DEFINES PRIVADOS AL MODULO
  **********************************************************************************************************************************/
-#define B_Riego MIN
-#define E_Riego (uint8_t)1
-
-#define E_Potenciometro (uint8_t)2
-#define B_Potenciometro DEC
-#define T_Potenciometro 5
 
 /***********************************************************************************************************************************
  *** MACROS PRIVADAS AL MODULO
@@ -202,6 +196,8 @@ void AguardandoOk(void)
 
 void VolverAguardando(void)
 {
+	Display_LCD("No Regando      ", RENGLON_1, 0);
+	Display_LCD("                ", RENGLON_2, 0);
 	EstadoTemporizado = AGUARDANDO_OK;
 	TimerStop(E_Potenciometro);
 }

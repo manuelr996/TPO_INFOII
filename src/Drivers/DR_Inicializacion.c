@@ -61,7 +61,7 @@ void Inicializacion ( void )
 	RIEGO_Ttime = RIEGO_TtimeRESET;
 	RIEGO_AtimeON = RIEGO_AtimeRESET;
 	HumedadSuelo = HumedadSueloRESET;
-	vPotenciometro = vPotenciometroRESET;
+	T_Riego = 20;
 
 
 	InitPLL();			//PLL
