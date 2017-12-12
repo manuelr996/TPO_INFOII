@@ -70,6 +70,7 @@ void Inicializacion ( void )
 	InitExtIntGPIO();  	//Interrupciones de GPIO
 	InitInfotrinic();  	//Sensores, Teclado, LEDs(placa), Relays
 	InitLCD ();			//LCD
+	OWire_Init();		//DS18B20
 
 	TimerStart( ADCevent , ADCtime , DispararConversion , ADCbase );	//Inicio un timer para disparar el ADC segun el tiempo determinado
 	ElectroValvula_Off();

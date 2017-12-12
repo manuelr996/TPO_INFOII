@@ -35,9 +35,12 @@
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
 uint8_t currentCommand;
+uint8_t bitsSent;
+uint8_t bitsRead;
 uint8_t currentStatus;
 uint8_t tConv;
 
+volatile uint32_t tempBuffer;
 /***********************************************************************************************************************************
  *** PROTOTIPO DE FUNCIONES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -119,8 +122,9 @@ void TIMER3_IRQHandler(void)
 				sFlag = 0;
 			}
 			TxCommand();
-			if(!currentCommand)
+			if(bitsSent == 8)
 			{
+				bitsSent = 0;
 				sFlag = 1;
 				if(tConv)
 					currentStatus = R_SCRP_TX;
@@ -134,12 +138,13 @@ void TIMER3_IRQHandler(void)
 			{
 				SetPIN(tempData, SALIDA);
 				currentCommand = CONVERT_TEMPERATURE;
-				sFlag = 1;
+				sFlag = 0;
 			}
 			TxCommand();
-			if(!currentCommand)
+			if(bitsSent == 8)
 			{
-				sFlag = 0;
+				bitsSent = 0;
+				sFlag = 1;
 				currentStatus = CONV_RX;
 				T3MR0 += 3*uS;
 			}
@@ -152,15 +157,37 @@ void TIMER3_IRQHandler(void)
 			{
 				SetPIN(tempData, SALIDA);
 				currentCommand = READ_SCRATCHPAD;
+				sFlag = 0;
+			}
+			TxCommand();
+			if(bitsSent == 8)
+			{
+				bitsSent = 0;
+				sFlag = 1;
+				currentStatus = R_SCRP_RX;
+				T3MR0 += 3*uS;
+			}
+		case R_SCRP_RX:
+			if(sFlag)
+			{
+				SetPIN(tempData, ENTRADA);
+				tempBuffer = 0;
+				sFlag = 0;
+			}
+			ReadScratchpad();
+			if(bitsRead == 16)
+			{
+				bitsRead = 0;
+				tConv = 0;
+				currentStatus = RESET_TX;
+				T3MR0 += 1200*uS;
 			}
 		default:
-			currentStatus = RESET_RX;
+			currentStatus = RESET_TX;
 			currentCommand = 0x00;
-			T3MR0 += 800*uS;
+			T3MR0 += 1200*uS;
 			break;
 	}
-	
-
 }
 
 void ResetTx(void)
@@ -220,6 +247,14 @@ void ConvRx(void)
 	
 }
 
+void ReadScratchpad(void)
+{
+	tempBuffer |= GetPIN(tempData, ALTO);
+	T3MR0 += 30*uS;
+	tempBuffer << 1;
+	bitsRead++;
+}
+
 void TxCommand(void)
 {
 	if (!(currentCommand & 0x01))
@@ -248,6 +283,7 @@ void TxCommand(void)
 	}
 
 	currentCommand = currentCommand >> 1;
+	bitsSent++;
 }
 
 

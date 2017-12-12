@@ -14,8 +14,6 @@
 
 #include <cr_section_macros.h>
 
-//#include <stdio.h>
-
 #include "PR_Leds.h"
 #include "DR_Inicializacion.h"
 #include "Funciones.h"

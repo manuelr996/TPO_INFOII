@@ -57,7 +57,7 @@ void MostrarSensores( void )
 {
 	FuncLluvia();
 	Display( HumedadSuelo , DSP1 );
-	Display( vPotenciometro , DSP0 );
+	Display( tempBuffer , DSP0 );
 }
 /**
 	\fn  FuncLluvia

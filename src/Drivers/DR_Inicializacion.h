@@ -21,6 +21,7 @@
 #include "DR_pinsel.h"
 #include "DR_PLL.h"
 #include "DR_SysTick.h"
+#include "DR_DS18B20.h"
 #include "PR_SoftTimers.h"
 #include "DR_ElectroValvula.h"
 #include "MaquinaGeneral.h"
