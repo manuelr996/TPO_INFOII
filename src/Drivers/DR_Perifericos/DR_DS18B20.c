@@ -34,11 +34,13 @@ volatile uint32_t tempBuffer;
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
+ESTADOS_DS18B20 currentStatus;
 uint8_t currentCommand;
 uint8_t bitsSent;
 uint8_t bitsRead;
-uint8_t currentStatus;
 uint8_t tConv;
+uint8_t sFlag;
+
 uint8_t OWireDelay;
 /***********************************************************************************************************************************
  *** PROTOTIPO DE FUNCIONES PRIVADAS AL MODULO
@@ -69,8 +71,10 @@ void OWire_Init(void)							//Inicializa el Timer y GPIO para One Wire
 
 	T3TCR &= ~(0x1);
 	//Apago el Timer mientras configuro
+
 	DIR_TIMER3->TC = 0;
 	//Seteo el Counter a 0
+
 	*T3CTCR = 0x00;
 	// Seteo el Count Control Register para que cuente pasos de CCLK
 
@@ -79,25 +83,22 @@ void OWire_Init(void)							//Inicializa el Timer y GPIO para One Wire
 
 	SetPINSEL(tempData, PINSEL_GPIO);
 	// Seteamos el pin para ser GPIO
-	/*SetPINSEL(TempData, FUNC_3);*/
-	// Seteamos el pin con la funcion para ser salida en Match
-
 
 	SetDIR(tempData, SALIDA);
-	SetMODE(tempData, PULLUP);
 	//configuramos el GPIO para que al cambiarlo a input ya este con el
+	SetMODE(tempData, PULLUP);
 	//Pull-Up Resistor encendido
-	ISE_TIMER3;
-	//Prendo las interrupciones del Timer 3 en el NVIC
+
 	T3MCR |= 1;
 	// Prendemos las interrupciones del Match 0 Timer 3
+
+	ISE_TIMER3;
+	//Prendo las interrupciones del Timer 3 en el NVIC
 
 	T3MR0 = uS*50;
 	// Seteamos el match Register para interrumpir dentro de 50uS
 
 	T3TCR |= 1;
-	//T3EMR |=  0x31;
-	// Seteamos el external match para toggle
 }
 
 void TIMER3_IRQHandler(void)
@@ -189,6 +190,10 @@ void TIMER3_IRQHandler(void)
 
 void ResetTx(void)
 {
+	sFlag = 1;
+	bitsSent = 0;
+	bitsRead = 0;
+	currentCommand = 0x00;
 	TempDataOutput;
 	W0TempData;
 	T3MR0 += (uS*480);
@@ -223,7 +228,7 @@ void ConvRx(void)
 	TempDataInput;
 	static uint8_t tiempo_contado = 0;
 	
-	if(!GetTempData)
+	if(!(GetTempData))
 	{
 		currentStatus = RESET_TX;
 		tConv = 1;
