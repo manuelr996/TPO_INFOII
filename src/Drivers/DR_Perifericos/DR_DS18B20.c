@@ -30,7 +30,7 @@
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PUBLICAS
  **********************************************************************************************************************************/
-
+volatile uint32_t tempBuffer;
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -39,8 +39,7 @@ uint8_t bitsSent;
 uint8_t bitsRead;
 uint8_t currentStatus;
 uint8_t tConv;
-uint8_t interruptCounter;
-volatile uint32_t tempBuffer;
+uint8_t OWireDelay;
 /***********************************************************************************************************************************
  *** PROTOTIPO DE FUNCIONES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -99,14 +98,10 @@ void OWire_Init(void)							//Inicializa el Timer y GPIO para One Wire
 	T3TCR |= 1;
 	//T3EMR |=  0x31;
 	// Seteamos el external match para toggle
-	interruptCounter = 0;
 }
 
 void TIMER3_IRQHandler(void)
 {
-	static uint8_t sFlag = 1;
-	interruptCounter++;
-
 	switch(currentStatus)
 	{
 		case RESET_TX:
@@ -119,7 +114,7 @@ void TIMER3_IRQHandler(void)
 		case ROMSKIP_TX:
 			if(sFlag)
 			{
-				SetPIN(tempData, SALIDA);
+				TempDataOutput;
 				currentCommand = SKIP_ROM;
 				sFlag = 0;
 			}
@@ -138,7 +133,7 @@ void TIMER3_IRQHandler(void)
 		case CONV_TX:
 			if(sFlag)
 			{
-				SetPIN(tempData, SALIDA);
+				TempDataOutput;
 				currentCommand = CONVERT_TEMPERATURE;
 				sFlag = 0;
 			}
@@ -157,7 +152,7 @@ void TIMER3_IRQHandler(void)
 		case R_SCRP_TX:
 			if(sFlag)
 			{
-				SetPIN(tempData, SALIDA);
+				TempDataOutput;
 				currentCommand = READ_SCRATCHPAD;
 				sFlag = 0;
 			}
@@ -172,7 +167,7 @@ void TIMER3_IRQHandler(void)
 		case R_SCRP_RX:
 			if(sFlag)
 			{
-				SetPIN(tempData, ENTRADA);
+				TempDataInput;
 				tempBuffer = 0;
 				sFlag = 0;
 			}
@@ -187,24 +182,24 @@ void TIMER3_IRQHandler(void)
 		default:
 			currentStatus = RESET_TX;
 			currentCommand = 0x00;
-			T3MR0 += 1200*uS;
+			T3MR0 += 2*S;
 			break;
 	}
 }
 
 void ResetTx(void)
 {
-	SetDIR(tempData, SALIDA);
-	SetPIN(tempData, BAJO);
+	TempDataOutput;
+	W0TempData;
 	T3MR0 += (uS*480);
 }
 
 void ResetRx(void)
 {
-	SetDIR(tempData, ENTRADA);
+	TempDataInput;
 	static uint8_t tiempo_contado = 0;
 	
-	if(GetPIN(tempData,BAJO))
+	if(GetTempData)
 	{
 		currentStatus = ROMSKIP_TX; //comenzamos a transmitir el Skip Rom Command
 		T3MR0 += (uS*3);
@@ -225,10 +220,10 @@ void ResetRx(void)
 
 void ConvRx(void)
 {
-	SetDIR(tempData, ENTRADA);
+	TempDataInput;
 	static uint8_t tiempo_contado = 0;
 	
-	if(GetPIN(tempData,BAJO))
+	if(!GetTempData)
 	{
 		currentStatus = RESET_TX;
 		tConv = 1;
@@ -251,7 +246,7 @@ void ConvRx(void)
 
 void ReadScratchpad(void)
 {
-	tempBuffer |= GetPIN(tempData, ALTO);
+	tempBuffer |= GetTempData;
 	T3MR0 += 30*uS;
 	tempBuffer = tempBuffer << 1;
 	bitsRead++;
@@ -261,26 +256,20 @@ void TxCommand(void)
 {
 	if (!(currentCommand & 0x01))
 	{// Escribo un 0
-		SetPIN(tempData, ALTO);
-		SetPIN(tempData, ALTO);	//Genero un retraso de 1uS
-		SetPIN(tempData, ALTO);
-
-		SetPIN(tempData, BAJO); //bajo la señal para generar el cero
+		W1TempData;
+		for(OWireDelay = uS ; OWireDelay ; OWireDelay-- );
+		W0TempData; //bajo la señal para generar el cero
 
 		T3MR0 += (uS*60);
 	}
 	else
 	{// Escribo un 1
-		SetPIN(tempData, ALTO);
-		SetPIN(tempData, ALTO); //Genero un retraso de 1uS
-		SetPIN(tempData, ALTO);
+		W1TempData;
+		for(OWireDelay = uS ; OWireDelay ; OWireDelay-- );
+		W0TempData;
+		for(OWireDelay = uS ; OWireDelay ; OWireDelay-- );
 
-		SetPIN(tempData, BAJO);
-		SetPIN(tempData, BAJO); //Genero un retraso de 1uS
-		SetPIN(tempData, BAJO);
-
-		SetPIN(tempData, ALTO);
-
+		W1TempData;
 		T3MR0 += (uS*60);
 	}
 

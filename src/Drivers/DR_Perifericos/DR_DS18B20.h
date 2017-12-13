@@ -50,11 +50,19 @@
  **********************************************************************************************************************************/
 
 #define uS 			0x64
+#define S			1000000*uS
 
 #define tempData  	2,8
+
 /***********************************************************************************************************************************
  *** MACROS GLOBALES
  **********************************************************************************************************************************/
+
+#define GetTempData 		FIO2PIN & 0x100		//Mascara para leer el pin 8 del puerto 2
+#define TempDataInput 		FIO2DIR |= 0x100	//Mascara para Configurar el pin 8 del puerto 2 como input
+#define TempDataOutput		FIO2DIR &= ~(0x100)	//Mascara para Configurar el pin 8 del puerto 2 como output
+#define W1TempData			FIO2SET |= 0x100	//Prende el pin 8 del puerto 2
+#define W0TempData			FIO2CLR |= 0x100	//Apaga el pin 8 del puerto 2
 
 /***********************************************************************************************************************************
  *** TIPO DE DATOS GLOBALES
