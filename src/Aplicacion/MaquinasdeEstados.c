@@ -70,7 +70,7 @@ void RiegoOn ( void )
 	EV_RIEGO_ON;
 	if(btn == B_OK)
 	{
-		Display_LCD("OFF" , RENGLON_1 , 13 );
+		Display_LCD("OFF" , RENGLON_2 , 10 );
 		EstadoManual = RIEGO_OFF;
 	}
 }
@@ -81,7 +81,7 @@ void RiegoOff ( void )
 	EV_RIEGO_OFF;
 	if(btn == B_OK)
 	{
-		Display_LCD("ON " , RENGLON_1 , 13 );
+		Display_LCD("ON " , RENGLON_2 , 10 );
 		EstadoManual = RIEGO_ON;
 	}
 }
@@ -91,7 +91,7 @@ void RiegoAutomaticoOn( void )
 	EV_RIEGO_ON;
 	if(CondicionesFin())
 	{
-		Display_LCD("OFF" , RENGLON_1 , 13 );
+		Display_LCD("OFF" , RENGLON_2 , 10 );
 		EstadoAutomatico = NO_REGANDO;
 	}
 }
@@ -101,7 +101,7 @@ void RiegoAutomaticoOff( void )
 	EV_RIEGO_OFF;
 	if(CondicionesInicio())
 	{
-		Display_LCD("ON " , RENGLON_1 , 13 );
+		Display_LCD("ON " , RENGLON_2 , 10 );
 		EstadoAutomatico = REGANDO;
 	}
 }
@@ -179,7 +179,7 @@ void PrintTimer (void)
 	uint8_t vTimer = GetTimer(E_Riego);
 	itoa(vTimer,vString,10);
 	GuardarMensajeLCD(vString,vString);
-	Display_LCD(vString, RENGLON_2, 12);
+	Display_LCD(vString, RENGLON_2, 10);
 	SetTimer(E_Potenciometro,T_Potenciometro);
 }
 
@@ -188,8 +188,8 @@ void AguardandoOk(void)
 	if(btn == B_OK)
 	{
 		EV_RIEGO_ON;
-		Display_LCD("Regando - Tiempo", RENGLON_1, 0);
-		Display_LCD("Restante:   TTTm", RENGLON_2, 0);
+		Display_LCD("Modo Temporizado", RENGLON_1, 0);
+		Display_LCD("  Timer:     m  ", RENGLON_2, 0);
 		TimerStart(E_Riego, T_Riego, VolverAguardando, B_Riego);
 		TimerStart(E_Potenciometro,T_Potenciometro,PrintTimer,B_Potenciometro);
 		EstadoTemporizado = RIEGO_TEMPORIZADO;
@@ -198,10 +198,11 @@ void AguardandoOk(void)
 
 void VolverAguardando(void)
 {
-	Display_LCD("No Regando      ", RENGLON_1, 0);
-	Display_LCD("                ", RENGLON_2, 0);
+	Display_LCD("Modo Temporizado" , RENGLON_1 , 0 );
+	Display_LCD("  Timer:  OFF   " , RENGLON_2 , 0 );
 	EstadoTemporizado = AGUARDANDO_OK;
 	TimerStop(E_Potenciometro);
+	EV_RIEGO_OFF;
 }
 
 void RiegoTemporizado(void)

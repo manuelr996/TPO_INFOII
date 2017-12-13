@@ -47,5 +47,5 @@ void InitAutomatico(void);
 void InitTemporizado(void);
 void InitConfiguracion(void);
 void CloseConfiguracion(void);
-
+void CloseEstados(void);
 #endif /* PRIMITIVAS_PR_MAQUINASDEESTADOS_H_ */

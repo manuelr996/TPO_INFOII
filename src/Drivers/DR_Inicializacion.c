@@ -67,7 +67,7 @@ void Inicializacion ( void )
 	InitSysTick();		//SysTick
 	InitADC();			//Conversor Analogo/Digital
 	InitExtIntGPIO();  	//Interrupciones de GPIO
-	OWire_Init();		//DS18B20
+	//OWire_Init();		//DS18B20
 	InitInfotrinic();  	//Sensores, Teclado, LEDs(placa), Relays
 	InitLCD ();			//LCD
 

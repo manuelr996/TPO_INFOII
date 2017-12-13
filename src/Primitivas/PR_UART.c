@@ -81,7 +81,8 @@ void TransmitirString ( char * s)
  	\date 5 de oct. de 2017
  	\param void
 	\return void
-*//*
+*/
+//TODO adaptar a funcionamiento
 void Mensaje ( void )
 {
 	int16_t dato;
@@ -96,25 +97,24 @@ void Mensaje ( void )
 		ESPERANDO_COMANDO,
 		ESPERANDO_DATOS,
 		ESPERANDO_FIN_DE_TRAMA
-	} MDE_TRAMA_LUBRICADORA;
+	} ESTADOS_TRAMA;
 
-	static MDE_TRAMA_LUBRICADORA mde_trama_lubricadora = ESPERANDO_INICIO_DE_TRAMA;
+	static ESTADOS_TRAMA trama = ESPERANDO_INICIO_DE_TRAMA;
 	char Buffer_Auxiliar[10];
 
 	dato = PopRX();
 
 	if ( dato != -1 )
 	{
-		switch ( mde_trama_lubricadora )
+		switch ( trama )
 		{
 			case ESPERANDO_INICIO_DE_TRAMA:
 
 				if ( dato == '#')
-				{	mde_trama_lubricadora = ESPERANDO_COMANDO;
-				}
+					trama = ESPERANDO_COMANDO;
 				else
-				{	TransmitirString("ERROR\r\n\0");
-				}
+					TransmitirString("ERROR\r\n\0");
+
 				break;
 
 			case ESPERANDO_COMANDO:
@@ -138,23 +138,23 @@ void Mensaje ( void )
 					Contador_Datos_Recibidos = 0;
 					Contador_Datos_Esperados = 6;
 					Comando_En_Cuestion = CONFIGURAR_INTERVALOS;
-					mde_trama_lubricadora = ESPERANDO_DATOS;
+					trama = ESPERANDO_DATOS;
 				}
 				else if ( dato == CONTINUAR_LUBRICACION )
 				{
-					mde_trama_lubricadora = ESPERANDO_FIN_DE_TRAMA;
+					trama = ESPERANDO_FIN_DE_TRAMA;
 					Comando_En_Cuestion = CONTINUAR_LUBRICACION;
 				}
 				else if ( dato == FINALIZAR_LUBRICACION )
 				{
-					mde_trama_lubricadora = ESPERANDO_FIN_DE_TRAMA;
+					trama = ESPERANDO_FIN_DE_TRAMA;
 					Comando_En_Cuestion = FINALIZAR_LUBRICACION;
 				}
 				else
 				{	strcpy(Buffer_Auxiliar, "ERROR\r\n\0");
 
 					TransmitirString(Buffer_Auxiliar);
-					mde_trama_lubricadora = ESPERANDO_INICIO_DE_TRAMA;
+					trama = ESPERANDO_INICIO_DE_TRAMA;
 				}
 				break;
 
@@ -167,13 +167,13 @@ void Mensaje ( void )
 
 					if (Contador_Datos_Recibidos >= Contador_Datos_Esperados)
 					{
-						mde_trama_lubricadora = ESPERANDO_FIN_DE_TRAMA;
+						trama = ESPERANDO_FIN_DE_TRAMA;
 					}
 				}
 				else
 				{	strcpy(Buffer_Auxiliar, "ERROR\r\n\0");
 					TransmitirString(Buffer_Auxiliar);
-					mde_trama_lubricadora = ESPERANDO_INICIO_DE_TRAMA;
+					trama = ESPERANDO_INICIO_DE_TRAMA;
 				}
 				break;
 
@@ -194,21 +194,21 @@ void Mensaje ( void )
 						CargaTiempos();
 
 						TransmitirString("OK\r\n\0");
-						mde_trama_lubricadora = ESPERANDO_INICIO_DE_TRAMA;
+						trama = ESPERANDO_INICIO_DE_TRAMA;
 					}
 					else if ( Comando_En_Cuestion == CONTINUAR_LUBRICACION )
 					{	Buffer_Disparo_Por_Trama = 1;
 						TransmitirString("OK\r\n\0");
-						mde_trama_lubricadora = ESPERANDO_INICIO_DE_TRAMA;
+						trama = ESPERANDO_INICIO_DE_TRAMA;
 					}
 					else if ( Comando_En_Cuestion == FINALIZAR_LUBRICACION )
 					{	Buffer_Freno_Por_Trama = 1;
 						TransmitirString("OK\r\n\0");
-						mde_trama_lubricadora = ESPERANDO_INICIO_DE_TRAMA;
+						trama = ESPERANDO_INICIO_DE_TRAMA;
 					}
 					else
 					{	TransmitirString("ERROR\r\n\0");
-						mde_trama_lubricadora = ESPERANDO_INICIO_DE_TRAMA;
+						trama = ESPERANDO_INICIO_DE_TRAMA;
 					}
 					break;
 				}
@@ -218,4 +218,4 @@ void Mensaje ( void )
 		}
 	}
 }
-*/
+

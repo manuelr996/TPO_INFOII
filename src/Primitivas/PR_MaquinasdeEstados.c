@@ -47,6 +47,7 @@ uint8_t EstadoAnterior;
  /***********************************************************************************************************************************
  *** FUNCIONES GLOBALES AL MODULO
  **********************************************************************************************************************************/
+//TODO Armar funcion switchEstados
 /**
 	\fn  Nombre de la Funcion
 	\brief Descripcion
@@ -103,34 +104,35 @@ void CloseConfiguracion(void)
 
 void InitAutomatico(void)
 {
-	ApagarLeds();
+	CloseEstados();
 	PrenderLed(VERDE);
-	TimerStop(E_Riego);
-	TimerStop(E_Potenciometro);
-	DetenerPotenciometro();
-	Display_LCD("Auto    Valv:OFF" , RENGLON_1 , 0 );
-	Display_LCD("Pote:   Humedad:" , RENGLON_2 , 0 );
+	Display_LCD("Modo Automatico " , RENGLON_1 , 0 );
+	Display_LCD("   Riego: OFF   " , RENGLON_2 , 0 );
 }
 
 void InitManual(void)
 {
-	ApagarLeds();
+	CloseEstados();
 	PrenderLed(AZUL);
 	TimerStop(E_Riego);
-	TimerStop(E_Potenciometro);
-	DetenerPotenciometro();
-	Display_LCD("Manual  Valv:OFF" , RENGLON_1 , 0 );
-	Display_LCD("Pote:   Humedad:" , RENGLON_2 , 0 );
+	Display_LCD("   Modo Manual  " , RENGLON_1 , 0 );
+	Display_LCD("   Riego: OFF   " , RENGLON_2 , 0 );
 }
 
 void InitTemporizado(void)
 {
-	ApagarLeds();
+	CloseEstados();
 	PrenderLed(ROJO);
 	PrenderLed(VERDE);
+	Display_LCD("Modo Temporizado" , RENGLON_1 , 0 );
+	Display_LCD("  Timer:  OFF   " , RENGLON_2 , 0 );
+}
+
+void CloseEstados(void)
+{
+	EV_RIEGO_OFF;
+	ApagarLeds();
 	TimerStop(E_Riego);
 	TimerStop(E_Potenciometro);
 	DetenerPotenciometro();
-	Display_LCD("Tempo   Valv:OFF" , RENGLON_1 , 0 );
-	Display_LCD("Pote:   Humedad:" , RENGLON_2 , 0 );
 }

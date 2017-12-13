@@ -72,8 +72,8 @@ void MaquinaGeneral (void)
 	case RESET_G:
 		Estado = MANUAL;
 		btn = B_MANUAL;
-		Display_LCD("        Valv:OFF" , RENGLON_1 , 0 );
-		Display_LCD("Pote:   Humedad:" , RENGLON_2 , 0 );
+		Display_LCD("   Modo Manual  " , RENGLON_1 , 0 );
+		Display_LCD("   Riego: OFF   " , RENGLON_2 , 0 );
 		break;
 	case CONFIGURACION:
 		MaquinaConfiguracion[EstadoConfiguracion]();
@@ -91,6 +91,7 @@ void MaquinaGeneral (void)
 		Estado = RESET_G;
 		break;
 	}
+//TODO Reemplazar switch por funcion switchEstados(btn)
 
 	switch(btn)
 	{
