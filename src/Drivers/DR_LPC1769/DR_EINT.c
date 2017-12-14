@@ -170,12 +170,19 @@ void EINT3_IRQHandler( void )
 {
 	uint8_t flanco;
 
-	flanco = GetRFStatus( SENSOR_LLUVIA );
+	/*flanco = GetRFStatus( SENSOR_LLUVIA );
 
 	if( flanco == FALLING )						//Si hubo interrupcion por Falling significa que comenzo a llover
 			Lluvia = ON;
 	if( flanco == RISING )						//Si hubo interrupcion por Rising significa que paro de llover
 		Lluvia = OFF;
+*/
+	flanco = GetPIN(SENSOR_LLUVIA, ALTO);
+
+	if(flanco == 1)
+		Lluvia=OFF;
+	if(flanco==0)
+		Lluvia=ON;
 
 	ClearGPIOInt( SENSOR_LLUVIA );				//Borro los flags de interrupcion de ENTDIG2
 }

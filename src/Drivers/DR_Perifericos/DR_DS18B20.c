@@ -71,10 +71,6 @@ void OWire_Init(void)							//Inicializa el Timer y GPIO para One Wire
 
 	T3TCR &= ~(0x1);
 	//Apago el Timer mientras configuro
-
-	DIR_TIMER3->TC = 0;
-	//Seteo el Counter a 0
-
 	*T3CTCR = 0x00;
 	// Seteo el Count Control Register para que cuente pasos de CCLK
 
@@ -92,14 +88,17 @@ void OWire_Init(void)							//Inicializa el Timer y GPIO para One Wire
 	T3MCR |= 1;
 	// Prendemos las interrupciones del Match 0 Timer 3
 
-	ISE_TIMER3;
-	//Prendo las interrupciones del Timer 3 en el NVIC
-
 	T3MR0 = uS*50;
 	// Seteamos el match Register para interrumpir dentro de 50uS
 
 	T3TCR |= 1;
 	//Ponemos a correr el timer nuevamente
+
+	DIR_TIMER3->TC = 0;
+	//Seteo el Counter a 0
+
+	ISE_TIMER3;
+	//Prendo las interrupciones del Timer 3 en el NVIC
 }
 
 void TIMER3_IRQHandler(void)
