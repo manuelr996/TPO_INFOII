@@ -1,35 +1,12 @@
 /*******************************************************************************************************************************//**
  *
  * @file		DR_DS18B20.h
- * @brief		Breve descripción del objetivo del Módulo
+ * @brief		Drivers del sensor One Wire DS18B20
  * @date		10 de oct. de 2017
  * @author		Manuel A. Rafaele
  *
  **********************************************************************************************************************************/
-	/*to-do:
-		Escritura:
-		Lectura:
-			Una vez envie el comando, uso el capture register para tomar el momento en el que se termine la conversion
-			en el momento en el cual se termino la conversion el integrado va a empezar a enviar los datos serializados
-			a partir de ese momento uso los match registers para leer una vez cada cierta cantidad de tiempo y tomar ese valor
-			se utiliza la misma metodologia que en el anterior, pero tengo que leer 8 veces si o si, y en vez de alternar
-			cargo el valor a algun buffer.
 
-		Carga del comando:
-			tengo configurar un Match register para que alterne el estado de un pin GPIO
-			Ese match tiene que generar una interrupcion para que pueda resetearse en una posicion mas adelantada
-			Esto se hace tantas veces tenga que alternar los bits para mandar el comando
-			En este caso tengo que enviar el comando 0x44, entonces tengo que alternar 4 veces minimo para generar un 0100 0100
-			Inmediatamente despues de que termine de cargar el comando se debe reconfigurar el GPIO como Entrada ya que vamos
-			a tener que leer el dato.
-
-	*/
-
-/*Inicializacion:
-		-Prendo el Timer
-		-Configuro los Registros de Match y sus interrupts
-		-Hay que configurar el Sensor?
-*/
 /***********************************************************************************************************************************
  *** MODULO
  **********************************************************************************************************************************/
@@ -49,10 +26,10 @@
  *** DEFINES GLOBALES
  **********************************************************************************************************************************/
 
-#define uS 			0x64
-#define S			1000000*uS
+#define uS 			0x64		//un Microsegundo en ticks del timer
+#define S			1000000*uS	//un segundo en ticks del timer
 
-#define tempData  	2,8
+#define tempData  	2,8			//puerto y bit del bus del sensor de temperatura
 
 /***********************************************************************************************************************************
  *** MACROS GLOBALES
@@ -80,9 +57,9 @@ typedef enum
  
  typedef enum
  {
-	SKIP_ROM = 0xCC,
-	CONVERT_TEMPERATURE = 0x44,
-	READ_SCRATCHPAD = 0xBE	
+	SKIP_ROM = 0xCC,			//Comando para realizar un skip del ROM
+	CONVERT_TEMPERATURE = 0x44,	//Comando para solicitar la conversion de la temperatura
+	READ_SCRATCHPAD = 0xBE		//Comando para solicitar la lectura de una temperatura ya convertida
  }COMANDOS_DS18B20;
  
 /***********************************************************************************************************************************
@@ -90,15 +67,15 @@ typedef enum
  **********************************************************************************************************************************/
 // extern tipo nombreVariable;
 //extern uint8_t currentCommand;
-extern volatile uint32_t tempBuffer;
+extern volatile uint32_t tempBuffer;	//Buffer donde se almacena la ultima temperatura convertida
 /***********************************************************************************************************************************
  *** PROTOTIPOS DE FUNCIONES GLOBALES
  **********************************************************************************************************************************/
-void OWire_Init(void);
-void TxCommand(void);
-void ResetRx(void);
-void ResetTx(void);
-void ConvRx(void);
-void ReadScratchpad(void);
+void OWire_Init(void);					//Funcion que se encarga de inicializar el Driver One Wire
+void TxCommand(void);					//Funcion que realiza la Transmision de un bit del comando
+void ResetRx(void);						//Funcion que realiza la recepcion de la señal de vida del Sensor
+void ResetTx(void);						//Funcion que realiza la Transmision de un pulso de reset al sensor
+void ConvRx(void);						//Funcion que realiza la recepcion de la señal que indica que se finalizo la conversion de una temperatura
+void ReadScratchpad(void);				//Funcion que realiza la carga del buffer de la ultima temperatura convertida
 
 #endif /* PRIMITIVAS_DR_DS18B20_H_ */

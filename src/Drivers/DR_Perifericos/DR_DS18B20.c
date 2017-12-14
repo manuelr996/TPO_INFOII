@@ -99,6 +99,7 @@ void OWire_Init(void)							//Inicializa el Timer y GPIO para One Wire
 	// Seteamos el match Register para interrumpir dentro de 50uS
 
 	T3TCR |= 1;
+	//Ponemos a correr el timer nuevamente
 }
 
 void TIMER3_IRQHandler(void)
@@ -163,7 +164,7 @@ void TIMER3_IRQHandler(void)
 				bitsSent = 0;
 				sFlag = 1;
 				currentStatus = R_SCRP_RX;
-				T3MR0 += 3*uS;
+				T3MR0 += 3*uS;	//Una vez que se envia el byte se esperan 3 uS antes de intentar nuevamente
 			}
 		case R_SCRP_RX:
 			if(sFlag)
@@ -178,12 +179,12 @@ void TIMER3_IRQHandler(void)
 				bitsRead = 0;
 				tConv = 0;
 				currentStatus = RESET_TX;
-				T3MR0 += 1200*uS;
+				T3MR0 += 2*S; //Una vez conseguimos una Conversion Correcta esperamos al menos dos segundos antes de hacer la proxima conversion
 			}
 		default:
 			currentStatus = RESET_TX;
 			currentCommand = 0x00;
-			T3MR0 += 2*S;
+			T3MR0 += 2*S;	//Si ocurre un fallo por ruido entonces esperamos dos segundos antes de volver a intentar
 			break;
 	}
 }
@@ -213,12 +214,12 @@ void ResetRx(void)
 	else if(tiempo_contado <= 250)
 	{
 		tiempo_contado += 30;
-		T3MR0 += (uS*30); // si todavia no esta
+		T3MR0 += (uS*30); // Si el sensor todavia no dio señales de vida entonces seguimos esperando
 	}
 	else
 	{
 		tiempo_contado = 0;
-		T3MR0 += (uS*2);
+		T3MR0 += (2*S); //Esperamos dos segundos antes de volver a intentar si es que falla la conexion
 		currentStatus = RESET_TX;
 	}
 }
@@ -243,7 +244,8 @@ void ConvRx(void)
 	else
 	{
 		tiempo_contado = 0;
-		T3MR0 += uS*3;
+		tConv = 0;
+		T3MR0 += uS*10;
 		currentStatus = RESET_TX;
 	}
 	
