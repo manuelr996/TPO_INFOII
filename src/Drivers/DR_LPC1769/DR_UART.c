@@ -173,50 +173,30 @@ int16_t PopTX( void )
 	return salida;
 }
 
-/*
+
 void InitUART0 ( void )
 {
-	//TODO: Completar Inicializacion de UART0
 	//1.- Registro PCONP: Energizo la UART:
-	// Como amanece encendida no sería en ppo necesario, pero se la activara de cualquier mmanera
-
-	  //1.- Registro PCONP (0x400FC0C4) - bit 4 en 1 prende la UART:
-	PCONP->bits._PCUART0 = 1;					//Prendo el periferico UART0
+	PCONP->bits._PCUART0 = 1;
 
 	//2.- Registro PCLKSEL0 (0x400FC1A8) - selecciono el clk de la UART (recordar que cclk = 100MHz)
-
-		//2.- Registro PCLKSEL0 (0x400FC1A8) - bits 6 y 7 en 0 seleccionan que el clk de la UART0 sea 25MHz--> DIVIDE POR 4:
 	PCLKSEL0 &= ~(0x03<<6); //pAG 56
 
-			//3.- Registro U0LCR (0x4001000C) - transmision de 8 bits, 1 bit de stop, sin paridad, sin break cond, DLAB = 1:
+	//3.- Registro U0LCR (0x4001000C) - transmision de 8 bits, 1 bit de stop, sin paridad, sin break cond, DLAB = 1:
 	UART0LCR =0x00000083; //pAG 326
 
 	//4.- Registros U0DLL (0x40010000) y U0DLM (0x40010004):
-
-	UART0DLM = 0x00;   // es el resultado de 25Mhz/(9600*16)---> 162
+	UART0DLM = 0x00;   	// es el resultado de 25Mhz/(9600*16)---> 162
 	UART0DLL = 0xA2;	// lo cargo en ambos registros pAG 320
 
 	//5.- Registros PINSEL0 (0x4002C000) y PINSEL1 (0x4002C004) - habilitan las funciones especiales de los pines:
-	//TX1D : P0[15] Hay colocar un 1 en el bit 30 y un cERO en el bit 31
-
-
-	SetPINSEL( TXD0 , PINSEL_FUNC1 );
-
-
-	//RX1D : P0[16]  Hay que colocar un 1 ene l bit 0 y un 0 en el bit 1                         Pag 108
-
-	SetPINSEL( RXD0 , PINSEL_FUNC1 );
+	SetPINSEL( TX0 , PINSEL_FUNC1 );
+	SetPINSEL( RX0 , PINSEL_FUNC1 );
 
 	//6. Habilito las interrupciones (En la UART -IER- y en el NVIC -ISER)
-
-	// hay que poner el DLAB=0 para habilitar las interrupciones por TX RX;
-	UART0LCR &= ~(0x01<<7);// pongo en cero el bit 7 DLAB=0                          Pag 326
-	UART0IER |= 0X03 ; // bit 0 y 1 del registro U1Ier Habilia int por TX y RX       Pag 322
-
-	ISER0 |= (0x01<< 6);	//  Habilita Interrupcion por UART1 del NVIC  Pag77
-	UART0FCR |=(0x01);     //  habilita la FIFO de TX RX                             Pag 325
-
-
-
+	// hay que poner el DLAB=0 para habilitar las interrupciones por TX RX
+	UART0LCR &= ~(0x01<<7);	// pongo en cero el bit 7 DLAB=0
+	UART0IER |= 0X03; 		// bit 0 y 1 del registro U1Ier Habilia int por TX y RX
+	ISER0 |= (0x01<< 6);	// Habilita Interrupcion por UART1 del NVIC  Pag77
+	UART0FCR |=(0x01);     	// habilita la FIFO de TX RX
 }
-*/

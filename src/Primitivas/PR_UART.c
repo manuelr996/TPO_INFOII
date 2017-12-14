@@ -14,9 +14,7 @@
 /***********************************************************************************************************************************
  *** DEFINES PRIVADOS AL MODULO
  **********************************************************************************************************************************/
-#define CONFIGURAR_INTERVALOS	'I'
-#define CONTINUAR_LUBRICACION	'C'
-#define FINALIZAR_LUBRICACION	'F'
+
 
 /***********************************************************************************************************************************
  *** MACROS PRIVADAS AL MODULO
@@ -33,12 +31,6 @@
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PUBLICAS
  **********************************************************************************************************************************/
-extern uint8_t T0;
-extern uint8_t T1;
-extern uint8_t T2;
-
-uint8_t Buffer_Disparo_Por_Trama = 0;
-uint8_t Buffer_Freno_Por_Trama = 0;
 
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
@@ -83,13 +75,18 @@ void TransmitirString ( char * s)
 	\return void
 */
 //TODO adaptar a funcionamiento
+
+/*Formato de Trama "#[E][A]$"
+ * [E]: Estado Actual -> 'M': Manual, 'A': Automatico, 'T': Temporizado
+ * [A]: Accion a Tomar -> 	Manual		: 'O': EV_RIEGO_OFF 'I': EV_RIEGO_ON
+ * 							Automatico 	: ?????
+ * 							Temporizado	: 'S': IniciarRiego 'F': Cancelar Temporizador
+ *
+ */
 void Mensaje ( void )
 {
 	int16_t dato;
-	static char aux [10];
-	static uint8_t Contador_Datos_Recibidos;
-	static uint8_t Contador_Datos_Esperados;
-	static uint8_t Comando_En_Cuestion;
+	static char estadoRiego = 0;
 
 	typedef enum
 	{
@@ -97,7 +94,7 @@ void Mensaje ( void )
 		ESPERANDO_COMANDO,
 		ESPERANDO_DATOS,
 		ESPERANDO_FIN_DE_TRAMA
-	} ESTADOS_TRAMA;
+	}ESTADOS_TRAMA;
 
 	static ESTADOS_TRAMA trama = ESPERANDO_INICIO_DE_TRAMA;
 	char Buffer_Auxiliar[10];
@@ -119,40 +116,25 @@ void Mensaje ( void )
 
 			case ESPERANDO_COMANDO:
 
-				//	LISTADO DE COMANDOS CONOCIDOS:
-				//
-				//  - 'I' = INTERVALOS DE LUBRICACION. TIENE ASOCIADOS 3 DATOS.
-				//
-				//			EL PRIMERO INDICA EL TIEMPO DE LUBRICACION. [2 BYTES]
-				//			EL SEGUNDO INDICA EL INTERVALO ENTRE LUBRICACIONES. [2 BYTES]
-				//			EL TERCERO INDICA LA CANTIDAD DE REPETICIONES. [1 BYTE]
-				//
-				//	- 'C' = COMENZAR LUBRICACION. NO TIENE DATOS ASOCIADOS.
-				//
-				//	- 'F' = FINALIZAR LUBRICACION. NO TIENE DATOS ASOCIADOS.
-				//
-				//
-
-				if ( dato == CONFIGURAR_INTERVALOS )
+				if(dato == 'M')
 				{
-					Contador_Datos_Recibidos = 0;
-					Contador_Datos_Esperados = 6;
-					Comando_En_Cuestion = CONFIGURAR_INTERVALOS;
+					estadoRiego = 'M';
+					InitManual();
 					trama = ESPERANDO_DATOS;
 				}
-				else if ( dato == CONTINUAR_LUBRICACION )
+				if(dato == 'A')
 				{
-					trama = ESPERANDO_FIN_DE_TRAMA;
-					Comando_En_Cuestion = CONTINUAR_LUBRICACION;
+					estadoRiego = 'A';
+					trama = ESPERANDO_DATOS;
 				}
-				else if ( dato == FINALIZAR_LUBRICACION )
+				if(dato == 'T')
 				{
-					trama = ESPERANDO_FIN_DE_TRAMA;
-					Comando_En_Cuestion = FINALIZAR_LUBRICACION;
+					estadoRiego = 'T';
+					trama = ESPERANDO_DATOS;
 				}
 				else
-				{	strcpy(Buffer_Auxiliar, "ERROR\r\n\0");
-
+				{
+					strcpy(Buffer_Auxiliar, "ERROR\r\n\0");
 					TransmitirString(Buffer_Auxiliar);
 					trama = ESPERANDO_INICIO_DE_TRAMA;
 				}
@@ -160,15 +142,22 @@ void Mensaje ( void )
 
 			case ESPERANDO_DATOS:
 
-				if ( dato >= '0' && dato <= '9' )
+				if(estadoRiego == 'M')
 				{
-					aux[Contador_Datos_Recibidos] = dato;
-					Contador_Datos_Recibidos++;
-
-					if (Contador_Datos_Recibidos >= Contador_Datos_Esperados)
+					if(dato == 'O')
 					{
-						trama = ESPERANDO_FIN_DE_TRAMA;
+						EV_RIEGO_OFF;
+						Display_LCD("   Riego: OFF   " , RENGLON_2 , 0 );
 					}
+					else if(dato == 'I')
+					{
+						EV_RIEGO_ON;
+						Display_LCD("   Riego: ON    " , RENGLON_2 , 0 );
+					}
+				}
+				if(estadoRiego == 'T')
+				{
+
 				}
 				else
 				{	strcpy(Buffer_Auxiliar, "ERROR\r\n\0");
@@ -181,39 +170,11 @@ void Mensaje ( void )
 
 				if (dato == '$')
 				{
-					if ( Comando_En_Cuestion == CONFIGURAR_INTERVALOS )
-					{
-						T0 = (aux[0] - '0') * 10;
-						T0 += (aux[1] - '0');
-
-						T1 = (aux[2] - '0') * 10;
-						T1 += (aux[3] - '0');
-
-						T2 = (aux[4] - '0') * 10;
-						T2 += (aux[5] - '0');
-						CargaTiempos();
-
-						TransmitirString("OK\r\n\0");
-						trama = ESPERANDO_INICIO_DE_TRAMA;
-					}
-					else if ( Comando_En_Cuestion == CONTINUAR_LUBRICACION )
-					{	Buffer_Disparo_Por_Trama = 1;
-						TransmitirString("OK\r\n\0");
-						trama = ESPERANDO_INICIO_DE_TRAMA;
-					}
-					else if ( Comando_En_Cuestion == FINALIZAR_LUBRICACION )
-					{	Buffer_Freno_Por_Trama = 1;
-						TransmitirString("OK\r\n\0");
-						trama = ESPERANDO_INICIO_DE_TRAMA;
-					}
-					else
-					{	TransmitirString("ERROR\r\n\0");
-						trama = ESPERANDO_INICIO_DE_TRAMA;
-					}
 					break;
 				}
 				else
-				{	TransmitirString("ERROR\r\n\0");
+				{
+					TransmitirString("ERROR\r\n\0");
 				}
 		}
 	}

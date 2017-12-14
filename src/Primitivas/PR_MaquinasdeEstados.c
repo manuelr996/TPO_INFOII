@@ -47,33 +47,13 @@ uint8_t EstadoAnterior;
  /***********************************************************************************************************************************
  *** FUNCIONES GLOBALES AL MODULO
  **********************************************************************************************************************************/
-//TODO Armar funcion switchEstados
-/**
-	\fn  Nombre de la Funcion
-	\brief Descripcion
- 	\author Manuel A. Rafaele
- 	\date Dec 8, 2017
- 	\param [in] parametros de entrada
- 	\param [out] parametros de salida
-	\return tipo y descripcion de retorno
-*/
-void InitConfiguracion( void )
-{
-	ApagarLeds();
-	PrenderLed(ROJO);
-	TimerStop(E_Riego);
-	TimerStop(E_Potenciometro);
-	IniciarPotenciometro();
-	Display_LCD("Configuracion   ", RENGLON_1, 0);
-	Display_LCD("OK p/continuar  ", RENGLON_2, 0);
-	EstadoAnterior = Estado;
 
-}
-
-void CloseConfiguracion(void)
+void SwitchEstados(EstadosGenerales nuevoEstado)
 {
-	switch(EstadoAnterior)
+	switch(nuevoEstado)
 	{
+	case RESET_G:
+		Estado = RESET_G;
 	case AUTOMATICO:
 		InitAutomatico();
 		Estado = AUTOMATICO;
@@ -99,6 +79,33 @@ void CloseConfiguracion(void)
 		btn = NO_KEY;
 		break;
 	}
+}
+
+/**
+	\fn  Nombre de la Funcion
+	\brief Descripcion
+ 	\author Manuel A. Rafaele
+ 	\date Dec 8, 2017
+ 	\param [in] parametros de entrada
+ 	\param [out] parametros de salida
+	\return tipo y descripcion de retorno
+*/
+void InitConfiguracion( void )
+{
+	ApagarLeds();
+	PrenderLed(ROJO);
+	TimerStop(E_Riego);
+	TimerStop(E_Potenciometro);
+	IniciarPotenciometro();
+	Display_LCD("Configuracion   ", RENGLON_1, 0);
+	Display_LCD("OK p/continuar  ", RENGLON_2, 0);
+	EstadoAnterior = Estado;
+
+}
+
+void CloseConfiguracion(void)
+{
+	SwitchEstados(EstadoAnterior);
 }
 
 

@@ -91,33 +91,6 @@ void MaquinaGeneral (void)
 		Estado = RESET_G;
 		break;
 	}
-//TODO Reemplazar switch por funcion switchEstados(btn)
 
-	switch(btn)
-	{
-	case B_AUTOMATICO:
-		InitAutomatico();
-		Estado = AUTOMATICO;
-		EstadoAutomatico = NO_REGANDO;
-		btn = NO_KEY;
-		break;
-	case B_CONFIGURACION:
-		InitConfiguracion();
-		Estado = CONFIGURACION;
-		EstadoConfiguracion = INIT_CONFIGURACION;
-		btn = NO_KEY;
-		break;
-	case B_MANUAL:
-		InitManual();
-		Estado = MANUAL;
-		EstadoManual = RIEGO_OFF;
-		btn = NO_KEY;
-		break;
-	case B_TEMPORIZADO:
-		InitTemporizado();
-		Estado = TEMPORIZADO;
-		EstadoTemporizado = AGUARDANDO_OK;
-		btn = NO_KEY;
-		break;
-	}
+	SwitchEstados(btn);
 }

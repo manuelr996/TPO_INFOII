@@ -25,13 +25,12 @@
 #define 	NO_KEY			0
 #define		ACEPTAR_ESTADO	2
 
-
-#define		B_RESET			0
-#define 	B_MANUAL		5
-#define		B_TEMPORIZADO	4
+#define 	B_MANUAL		0
+#define		B_CONFIGURACION	1
+#define		B_TEMPORIZADO	2
 #define		B_AUTOMATICO	3
-#define		B_CONFIGURACION	2
-#define 	B_OK			1
+#define		B_RESET			4
+#define 	B_OK			5
 
 /***********************************************************************************************************************************
  *** MACROS GLOBALES
