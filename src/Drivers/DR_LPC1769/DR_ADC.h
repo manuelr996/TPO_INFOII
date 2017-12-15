@@ -56,6 +56,7 @@
 
 #define		CH2SEL			0x04
 #define		CH5SEL			0x20
+#define 	CH1SEL 			0x02
 
 #define 	PCONPADC		12
 #define 	PCLKADC			24
@@ -65,13 +66,14 @@
 #define		NVIC_ADC		22
 #define		ADDR_RESULT		4
 
-#define 	ADCevent 		0
-#define 	ADCtime			2
-#define		ADCbase			SEG
+#define 	E_ADC 			0
+#define 	T_ADC			2
+#define		B_ADC			CEN
 
 #define		STOP			0
 #define		TRIGGER			1
 
+#define 	AD01				PORT0,24
 #define		AD02				PORT0,25
 #define		AD05				PORT1,31
 
@@ -112,13 +114,12 @@ typedef struct
  *** VARIABLES GLOBALES
  **********************************************************************************************************************************/
 // extern tipo nombreVariable;
-extern volatile uint32_t 	HumedadSuelo;
-extern volatile uint32_t	vPotenciometro;
-extern volatile uint8_t 	CanalAConvertir;
+extern volatile uint8_t HumedadSuelo;
+extern volatile uint8_t	vPotenciometro;
+extern volatile uint8_t	Temperatura;
 /***********************************************************************************************************************************
  *** PROTOTIPOS DE FUNCIONES GLOBALES
  **********************************************************************************************************************************/
 void InitADC ( void );
-void CambiarCanal (uint8_t);
-void DispararConversion ( void );
+void CargarBuffersADC ( void );
 #endif /* DR_ADC_H_ */

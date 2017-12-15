@@ -39,8 +39,7 @@
 /***********************************************************************************************************************************
  *** PROTOTIPOS DE FUNCIONES GLOBALES
  **********************************************************************************************************************************/
-void leerHumedad( void );
-void leerPotenciometro ( void );
-void IniciarPotenciometro ( void );
-void DetenerPotenciometro ( void );
+uint8_t GetHumedadSuelo (void);
+uint8_t GetPotenciometro (void);
+uint8_t GetTemperatura (void);
 #endif /* PRIMITIVAS_PR_ADC_H_ */

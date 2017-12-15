@@ -25,8 +25,10 @@
 #define 	DEC			(uint8_t)0
 #define 	SEG			(uint8_t)1
 #define 	MIN			(uint8_t)2
+#define 	CEN			(uint8_t)3
 
-#define 	DECIMAS		(uint8_t)40
+#define		CENTESIMAS	(uint8_t)4
+#define 	DECIMAS		CENTESIMAS*10
 #define 	SEGUNDOS	DECIMAS*10
 #define 	MINUTOS		SEGUNDOS*60
 

@@ -47,50 +47,34 @@
  /***********************************************************************************************************************************
  *** FUNCIONES GLOBALES AL MODULO
  **********************************************************************************************************************************/
+
 /**
-	\fn  Nombre de la Funcion
-	\brief Descripcion
- 	\author Manuel A. Rafaele
- 	\date 3 de dic. de 2017
- 	\param [in] parametros de entrada
- 	\param [out] parametros de salida
-	\return tipo y descripcion de retorno
-*/
-/////////////////////////SENSOR HUMEDAD////////////////////////////
-/**
-	\fn  leerHumedad
-	\brief realiza una lectura de la humedad y redispara el conversor
+	\fn  GetHumedadSuelo
+	\brief Retorna el valor del buffer HumedadSuelo
  	\author Tomás Bautista Ordóñez
  	\date 9 oct. 2017
- 	\param void
-	\return void
 */
-
-uint8_t GetHumedadSuelo(void)
+uint8_t GetHumedadSuelo (void)
 {
 	return HumedadSuelo;
 }
-////////////////////////POTENCIOMETRO//////////////////////////////
 /**
-	\fn  IniciarPotenciometro
-	\brief Cambia entre el potenciometro y el sensor de humedad
- 	\author Manuel A. Rafaele
- 	\date 3 de dic. de 2017
- 	\param [in] parametros de entrada
- 	\param [out] parametros de salida
-	\return tipo y descripcion de retorno
+	\fn  GetPotenciometro
+	\brief Retorna el valor del buffer vPotenciometro
+ 	\author Tomás Bautista Ordóñez
+ 	\date 9 oct. 2017
 */
-void IniciarPotenciometro(void)
+uint8_t GetPotenciometro (void)
 {
-	TimerStop(ADCevent); 			//desactivo el disparador del conversor de Humedad
-	CambiarCanal( POTE );			//Potenciometro como objeto de conversion
-	TimerStart( ADCevent , ADCtime , DispararConversion , ADCbase );
+	return vPotenciometro;
 }
-
-void DetenerPotenciometro(void)
+/**
+	\fn  GetTemperatura
+	\brief Retorna el valor del buffer Temperatura
+ 	\author Tomás Bautista Ordóñez
+ 	\date 9 oct. 2017
+*/
+uint8_t GetTemperatura (void)
 {
-	TimerStop(ADCevent);
-	CambiarCanal( S_HUMEDAD );
-	TimerStart(ADCevent, ADCtime, DispararConversion, ADCbase);
+	return Temperatura;
 }
-
