@@ -22,30 +22,29 @@
  *** DEFINES GLOBALES
  **********************************************************************************************************************************/
 /* RTC */
-#define	RTCILR		(*(volatile uint32_t*)0x40024000UL)
-#define	RTC_CCR		(*(volatile uint32_t*)0x40024008)
-#define	RTC_CIIR	(*(volatile uint32_t*)0x4002400C)
-#define	RTC_AMR		(*(volatile uint32_t*)0x40024010)
+#define	RTCILR		(*(__RW uint32_t*)0x40024000UL)
+#define	RTC_CCR		(*(__RW uint32_t*)0x40024008)
+#define	RTC_CIIR	(*(__RW uint32_t*)0x4002400C)
+#define	RTC_AMR		(*(_RW uint32_t*)0x40024010)
+#define RTC_CTIME	((__RW CTIME* ) 0x40024014UL)
 #define	RTC_AUX		(*(volatile uint32_t*)0x4002405C)
 #define	RTC_AUXEN	(*(volatile uint32_t*)0x40024058)
-#define	RTC_CTIME0	(*(volatile uint32_t*)0x40024014)
-#define	RTC_CTIME1	(*(volatile uint32_t*)0x40024018)
-#define	RTC_CTIME2	(*(volatile uint32_t*)0x4002401C)
-#define	RTC_SEC		(*(volatile uint32_t*)0x40024020)
-#define	RTC_MIN		(*(volatile uint32_t*)0x40024024)
-#define	RTC_HOUR	(*(volatile uint32_t*)0x40024028)
-#define	RTC_DOM		(*(volatile uint32_t*)0x4002402C)
-#define	RTC_DOW		(*(volatile uint32_t*)0x40024030)
-#define	RTC_DOY		(*(volatile uint32_t*)0x40024034)
-#define	RTC_MONTH	(*(volatile uint32_t*)0x40024038)
-#define	RTC_YEAR	(*(volatile uint32_t*)0x4002403C)
 #define	RTC_CALIBRATION	(*(volatile uint32_t*)0x40024040)
-#define	RTC_GPREG	( (volatile uint32_t*)0x40024044)
-#define	RTC_GPREG0	(*(volatile uint32_t*)0x40024044)
-#define	RTC_GPREG1	(*(volatile uint32_t*)0x40024048)
-#define	RTC_GPREG2	(*(volatile uint32_t*)0x4002404C)
-#define	RTC_GPREG3	(*(volatile uint32_t*)0x40024050)
-#define	RTC_GPREG4	(*(volatile uint32_t*)0x40024054)
+#define	RTC_GPREG	((volatile uint32_t*)0x40024044)
+#define	RTC_GPREG0	RTC_GPREG[0]
+#define	RTC_GPREG1	RTC_GPREG[1]
+#define	RTC_GPREG2	RTC_GPREG[2]
+#define	RTC_GPREG3	RTC_GPREG[3]
+#define	RTC_GPREG4	RTC_GPREG[4]
+#define RTC_TIMER	((__RW uint32_t *)0x40024020)
+#define RTC_SEC		RTC_TIMER[0]
+#define RTC_MIN		RTC_TIMER[1]
+#define RTC_HOUR	RTC_TIMER[2]
+#define RTC_DOM		RTC_TIMER[3]
+#define RTC_DOW		RTC_TIMER[4]
+#define RTC_DOY		RTC_TIMER[5]
+#define RTC_MONTH	RTC_TIMER[6]
+#define RTC_YEAR	RTC_TIMER[7]
 #define	RTC_ALSEC	(*(volatile uint32_t*)0x40024060)
 #define	RTC_ALMIN	(*(volatile uint32_t*)0x40024064)
 #define	RTC_ALHOUR	(*(volatile uint32_t*)0x40024068)
@@ -54,22 +53,68 @@
 #define	RTC_ALDOY	(*(volatile uint32_t*)0x40024074)
 #define	RTC_ALMON	(*(volatile uint32_t*)0x40024078)
 #define	RTC_ALYEAR	(*(volatile uint32_t*)0x4002407C)
+
 /***********************************************************************************************************************************
  *** MACROS GLOBALES
  **********************************************************************************************************************************/
 #define	_BV(bit) (1<<(bit))
+#define GetFailFlag (RTC_AUX & 0x10)
 /***********************************************************************************************************************************
  *** TIPO DE DATOS GLOBALES
  **********************************************************************************************************************************/
-typedef struct {
-	uint16_t	year;	/* 1..4095 */
-	uint8_t		month;	/* 1..12 */
-	uint8_t		mday;	/* 1.. 31 */
-	uint8_t		wday;	/* 1..7 */
-	uint8_t		hour;	/* 0..23 */
-	uint8_t		min;	/* 0..59 */
-	uint8_t		sec;	/* 0..59 */
+typedef struct 		//Estructura para las primitivas TODO: Moverse a PR_RTC.h
+{
+	uint32_t Seconds:6;
+	uint32_t Minutes:6;
+	uint32_t Hours:5;
+	uint32_t DayOfWeek:3;
+	uint32_t DayofMonth:5;
+	uint32_t Month:4;
+	uint32_t Year:12;
 } RTC;
+
+typedef struct		//Estructura para registro CTIME
+{
+
+	union
+	{
+		__RW uint32_t Register;
+		struct
+		{
+			__RW uint32_t Seconds:6;
+			__R  uint32_t RESERVED_0:2;
+			__RW uint32_t Minutes:6;
+			__R  uint32_t RESERVED_1:2;
+			__RW uint32_t Hours:5;
+			__R  uint32_t RESERVED_2:3;
+			__RW uint32_t DayOfWeek:3;
+			__R  uint32_t RESERVED_3:5;
+		}bits;
+	}CTIME0;
+	union
+	{
+		__RW uint32_t Register;
+		struct
+		{
+			__RW uint32_t DayOfMonth:5;
+			__R  uint32_t RESERVED_0:3;
+			__RW uint32_t Month:4;
+			__R  uint32_t RESERVED_1:4;
+			__RW uint32_t Year:12;
+			__R  uint32_t RESERVED_2:4;
+		}bits;
+	}CTIME1;
+	union
+	{
+		__RW uint32_t Register;
+		struct
+		{
+			__RW uint32_t DayOfYear:12;
+			__R  uint32_t RESERVED_0:20;
+		}bits;
+	}CTIME2;
+
+}CTIME;
 
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES

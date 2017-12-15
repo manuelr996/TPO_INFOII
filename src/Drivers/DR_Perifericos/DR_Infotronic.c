@@ -53,7 +53,7 @@
  	\author Tomás Bautista Ordóñez
  	\date 26 nov. 2017
 */
-void InitInfotrinic ( void )
+void InitInfotronic ( void )
 {
 	InitTeclado();
 	InitRGB();

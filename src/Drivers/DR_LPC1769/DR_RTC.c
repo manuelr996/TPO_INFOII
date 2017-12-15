@@ -30,7 +30,7 @@
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PUBLICAS
  **********************************************************************************************************************************/
-
+RTC currentTime;
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -57,83 +57,38 @@ void InitRTC (void)
 	RTC_CCR = 0x11;
 }
 
-
-
-uint32_t rtc_gettime (RTC *rtc)	/* 1:RTC valid, 0:RTC volatiled */
+uint8_t TimeUpdate(RTC *rtc)
 {
-	uint32_t d, t;
-
-
-	do {
-		t = RTC_CTIME0;
-		d = RTC_CTIME1;
-	} while (t != RTC_CTIME0 || d != RTC_CTIME1);
-
-	if (RTC_AUX & _BV(4)) {	/* If power fail has been detected, return default time. */
-		rtc->sec = 0; rtc->min = 0; rtc->hour = 0;
-		rtc->wday = 0; rtc->mday = 1; rtc->month = 1; rtc->year = 2014;
+	if (GetFailFlag) // If power fail has been detected, return default time.
+	{
+		rtc->Seconds = 0; rtc->Minutes = 0; rtc->Hours = 0;
+		rtc->DayOfWeek = 0; rtc->DayofMonth = 1; rtc->Month = 1; rtc->Year = 2014;
 		return 0;
 	}
 
-	rtc->sec = t & 63;
-	rtc->min = (t >> 8) & 63;
-	rtc->hour = (t >> 16) & 31;
-	rtc->wday = (t >> 24) & 7;
-	rtc->mday = d & 31;
-	rtc->month = (d >> 8) & 15;
-	rtc->year = (d >> 16) & 4095;
+	rtc->Seconds = RTC_CTIME->CTIME0.bits.Seconds;
+	rtc->Minutes = RTC_CTIME->CTIME0.bits.Minutes;
+	rtc->Hours = RTC_CTIME->CTIME0.bits.Hours;
+	rtc->DayOfWeek = RTC_CTIME->CTIME0.bits.DayOfWeek;
+	rtc->DayofMonth = RTC_CTIME->CTIME1.bits.DayOfMonth;
+	rtc->Month = RTC_CTIME->CTIME1.bits.Month;
+	rtc->Year = RTC_CTIME->CTIME1.bits.Year;
 	return 1;
 }
 
-
-
-
-void rtc_settime (const RTC *rtc)
+void SetRTCTime (const RTC *rtc)
 {
 	RTC_CCR = 0x12;		/* Stop RTC */
 
 	/* Update RTC registers */
-	RTC_SEC = rtc->sec;
-	RTC_MIN = rtc->min;
-	RTC_HOUR = rtc->hour;
-	RTC_DOW = rtc->wday;
-	RTC_DOM = rtc->mday;
-	RTC_MONTH = rtc->month;
-	RTC_YEAR = rtc->year;
+	RTC_SEC = rtc->Seconds;
+	RTC_MIN = rtc->Minutes;
+	RTC_HOUR = rtc->Hours;
+	RTC_DOW = rtc->DayOfWeek;
+	RTC_DOM = rtc->DayofMonth;
+	RTC_MONTH = rtc->Month;
+	RTC_YEAR = rtc->Year;
 
 	RTC_AUX = _BV(4);	/* Clear power fail flag */
 	RTC_CCR = 0x11;		/* Restart RTC, Disable calibration feature */
-}
-
-/**
- * \fn void reiniciarRTC (void)
- * \brief Pone los valores del RTC en 0
- * \details
- * \param [in] void
- * \return void
- * */
-void reiniciarRTC(){
-	RTC_CCR &= ~(1);
-	RTC_MIN=0;
-	RTC_SEC=0;
-}
-/**
- * \fn void prenderRTC (void)
- * \brief Pone en funcionamiento el RTC
- * \details
- * \param [in] void
- * \return void
- * */
-void prenderRTC(){
-	RTC_CCR |= (1);
-}
-/**
- * \fn void apagarRTC (void)
- * \brief apaga el RTC
- * \details
- * \param [in] void
- * \return void
- * */
-void apagarRTC(){
-	RTC_CCR &= ~(1);
 }

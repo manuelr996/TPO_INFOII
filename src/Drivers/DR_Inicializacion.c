@@ -68,7 +68,7 @@ void Inicializacion ( void )
 	InitADC();			//Conversor Analogo/Digital
 	InitExtIntGPIO();  	//Interrupciones de GPIO
 	//OWire_Init();		//DS18B20
-	InitInfotrinic();  	//Sensores, Teclado, LEDs(placa), Relays
+	InitInfotronic();  	//Sensores, Teclado, LEDs(placa), Relays
 	InitLCD ();			//LCD
 	InitUART0(); 		// UArt 0
 	TimerStart( ADCevent , ADCtime , DispararConversion , ADCbase );	//Inicio un timer para disparar el ADC segun el tiempo determinado

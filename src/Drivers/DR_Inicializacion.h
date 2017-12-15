@@ -20,6 +20,7 @@
 #include "DR_gpio.h"
 #include "DR_pinsel.h"
 #include "DR_PLL.h"
+#include "DR_UART.h"
 #include "DR_SysTick.h"
 #include "DR_DS18B20.h"
 #include "PR_SoftTimers.h"

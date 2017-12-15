@@ -87,15 +87,6 @@ void IniciarPotenciometro(void)
 	TimerStart( ADCevent , ADCtime , DispararConversion , ADCbase );
 }
 
-void leerPotenciometro(void)
-{
-	ADCPDN = 1;								//Prendido
-	ADCSTART = STOP;						//Disparo
-	ADCSTART = TRIGGER;
-
-	SetTimer(ADCevent, ADCtime);			//Reseteo
-}
-
 void DetenerPotenciometro(void)
 {
 	TimerStop(ADCevent);
