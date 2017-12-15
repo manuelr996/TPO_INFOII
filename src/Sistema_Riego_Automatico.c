@@ -27,6 +27,7 @@ int main(void)
 	SetPIN(0,28,ALTO);
 	while(1)
     {
+		Mensaje();
 		MaquinaGeneral();
 		TimerEvent();
 		MostrarSensores();

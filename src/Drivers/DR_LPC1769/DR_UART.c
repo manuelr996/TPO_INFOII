@@ -79,7 +79,7 @@ void UART1_IRQHandler (void)
 		{
 			datoTx = PopTX();
 
-			if ( datoTx != -1 )
+			if ( datoTx != 0 )
 				UART1THR = (uint8_t) datoTx;
 			else
 				flagTx = 0;
@@ -119,7 +119,7 @@ void PushRX( uint8_t dato )
 */
 int16_t PopRX( void )
 {
-	int16_t salida = -1;
+	int16_t salida = 0;
 
 	if ( inRX != outRX )
 	{
@@ -161,7 +161,7 @@ void PushTX( uint8_t dato )
 */
 int16_t PopTX( void )
 {
-	int16_t salida = -1;
+	int16_t salida = 0;
 
 	if ( inTX != outTX )
 	{

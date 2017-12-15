@@ -101,7 +101,7 @@ void Mensaje ( void )
 
 	dato = PopRX();
 
-	if ( dato != -1 )
+	if ( dato != 0 )
 	{
 		switch ( trama )
 		{
