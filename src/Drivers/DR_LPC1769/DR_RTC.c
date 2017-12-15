@@ -3,7 +3,7 @@
  * @file		DR_RTC.c
  * @brief		Descripcion del modulo
  * @date		8 dic. 2017
- * @author		Tomás Bautista Ordóñez
+ * @author		Rafaele Manuel Adrian
  *
  **********************************************************************************************************************************/
 
@@ -55,24 +55,28 @@ void InitRTC (void)
 
 	/* Start RTC with external XTAL */
 	RTC_CCR = 0x11;
+
+	//Habilitamos la interrupcion de alarmas
+
+
 }
 
-uint8_t TimeUpdate(RTC *rtc)
+uint8_t TimeUpdate(void)
 {
 	if (GetFailFlag) // If power fail has been detected, return default time.
 	{
-		rtc->Seconds = 0; rtc->Minutes = 0; rtc->Hours = 0;
-		rtc->DayOfWeek = 0; rtc->DayofMonth = 1; rtc->Month = 1; rtc->Year = 2014;
+		currentTime.Seconds = 0; currentTime.Minutes = 0; currentTime.Hours = 0;
+		currentTime.DayOfWeek = 0; currentTime.DayofMonth = 1; currentTime.Month = 1; currentTime.Year = 2014;
 		return 0;
 	}
 
-	rtc->Seconds = RTC_CTIME->CTIME0.bits.Seconds;
-	rtc->Minutes = RTC_CTIME->CTIME0.bits.Minutes;
-	rtc->Hours = RTC_CTIME->CTIME0.bits.Hours;
-	rtc->DayOfWeek = RTC_CTIME->CTIME0.bits.DayOfWeek;
-	rtc->DayofMonth = RTC_CTIME->CTIME1.bits.DayOfMonth;
-	rtc->Month = RTC_CTIME->CTIME1.bits.Month;
-	rtc->Year = RTC_CTIME->CTIME1.bits.Year;
+	currentTime.Seconds = RTC_CTIME->CTIME0.bits.Seconds;
+	currentTime.Minutes = RTC_CTIME->CTIME0.bits.Minutes;
+	currentTime.Hours = RTC_CTIME->CTIME0.bits.Hours;
+	currentTime.DayOfWeek = RTC_CTIME->CTIME0.bits.DayOfWeek;
+	currentTime.DayofMonth = RTC_CTIME->CTIME1.bits.DayOfMonth;
+	currentTime.Month = RTC_CTIME->CTIME1.bits.Month;
+	currentTime.Year = RTC_CTIME->CTIME1.bits.Year;
 	return 1;
 }
 
@@ -81,13 +85,13 @@ void SetRTCTime (const RTC *rtc)
 	RTC_CCR = 0x12;		/* Stop RTC */
 
 	/* Update RTC registers */
-	RTC_SEC = rtc->Seconds;
-	RTC_MIN = rtc->Minutes;
-	RTC_HOUR = rtc->Hours;
-	RTC_DOW = rtc->DayOfWeek;
-	RTC_DOM = rtc->DayofMonth;
+	RTC_SEC   = rtc->Seconds;
+	RTC_MIN   = rtc->Minutes;
+	RTC_HOUR  = rtc->Hours;
+	RTC_DOW   = rtc->DayOfWeek;
+	RTC_DOM   = rtc->DayofMonth;
 	RTC_MONTH = rtc->Month;
-	RTC_YEAR = rtc->Year;
+	RTC_YEAR  = rtc->Year;
 
 	RTC_AUX = _BV(4);	/* Clear power fail flag */
 	RTC_CCR = 0x11;		/* Restart RTC, Disable calibration feature */
