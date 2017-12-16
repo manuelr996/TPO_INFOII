@@ -96,7 +96,7 @@ void RTC_IRQHandler(void)
 	}
 }
 
-void SetRTCTime (const RTC *rtc)
+void SetRTCTime (const RTC_t *rtc)
 {
 	RTC_CCR = 0x12;		/* Stop RTC */
 

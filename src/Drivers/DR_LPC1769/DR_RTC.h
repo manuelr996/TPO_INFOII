@@ -19,6 +19,7 @@
  **********************************************************************************************************************************/
 #include "DR_PCONP.h"
 #include "PR_SoftTimers.h"
+#include "PR_UART.h"
 /***********************************************************************************************************************************
  *** DEFINES GLOBALES
  **********************************************************************************************************************************/
@@ -47,14 +48,14 @@
 #define RTC_MONTH		RTC_TIMER[6]
 #define RTC_YEAR		RTC_TIMER[7]
 #define RTC_ALREG		( (__RW uint32_t *)0x40024060UL)
-#define	RTC_ALSEC		RTC_ALREC[0]
-#define	RTC_ALMIN		RTC_ALREC[1]
-#define	RTC_ALHOUR		RTC_ALREC[2]
-#define	RTC_ALDOM		RTC_ALREC[3]
-#define	RTC_ALDOW		RTC_ALREC[4]
-#define	RTC_ALDOY		RTC_ALREC[5]
-#define	RTC_ALMON		RTC_ALREC[6]
-#define	RTC_ALYEAR		RTC_ALREC[7]
+#define	RTC_ALSEC		RTC_ALREG[0]
+#define	RTC_ALMIN		RTC_ALREG[1]
+#define	RTC_ALHOUR		RTC_ALREG[2]
+#define	RTC_ALDOM		RTC_ALREG[3]
+#define	RTC_ALDOW		RTC_ALREG[4]
+#define	RTC_ALDOY		RTC_ALREG[5]
+#define	RTC_ALMON		RTC_ALREG[6]
+#define	RTC_ALYEAR		RTC_ALREG[7]
 
 /***********************************************************************************************************************************
  *** MACROS GLOBALES
@@ -123,13 +124,13 @@ typedef struct		//Estructura para registro CTIME
  *** VARIABLES GLOBALES
  **********************************************************************************************************************************/
 // extern tipo nombreVariable;
-extern RTC currentTime;
+extern RTC_t currentTime;
 extern uint8_t AlarmBuffer;
 /***********************************************************************************************************************************
  *** PROTOTIPOS DE FUNCIONES GLOBALES
  **********************************************************************************************************************************/
 void InitRTC ( void );					/* Inicializa al RTC */
-uint8_t TimeUpdate(void);			/* 		Get time	 */
+void TimeUpdate(void);			/* 		Get time	 */
 void rtc_settime (void);		/*		Set time	 */
 
 #endif /* DR_RTC_H_ */

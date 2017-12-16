@@ -62,3 +62,8 @@ void SetAlarm(RTC_t *rtc)
 	RTC_ALMIN = rtc->Minutes;
 	RTC_ALHOUR = rtc->Hours;
 }
+
+RTC_t GetTime()
+{
+	return currentTime;
+}
