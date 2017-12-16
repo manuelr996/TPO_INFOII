@@ -148,12 +148,12 @@ void GuardarMensajeLCD( char *mensaje, char *lugar )
 		lugar[i] = mensaje[i];
 	}
 
-	for( ; i < 3; i++ )
+	for( ; i < 6; i++ )
 	{
 		lugar[i] = ' ';
 	}
 
-	lugar[3] = 0;
+	lugar[6] = 0;
 
 }
 

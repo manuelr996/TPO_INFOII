@@ -19,6 +19,7 @@
  **********************************************************************************************************************************/
 #include "PR_ADC.h"
 #include "PR_Leds.h"
+#include "PR_RTC.h"
 #include "DR_Boton.h"
 #include "MaquinaGeneral.h"
 #include "MaquinasdeEstados.h"
@@ -50,4 +51,5 @@ void InitConfiguracion(void);
 void CloseConfiguracion(void);
 void CloseEstados(void);
 void SwitchEstados(uint8_t);
+void ComponerTemporizador(struct RTC_t *, char *);
 #endif /* PRIMITIVAS_PR_MAQUINASDEESTADOS_H_ */

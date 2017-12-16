@@ -39,9 +39,13 @@ EstadosAutomatico EstadoAutomatico;
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
 uint8_t btn;
-char vString[4];
+char vString[6];
 uint8_t T_Riego;
 RTC_t AlarmTime;
+RTC_t TemporizadoTime;
+
+
+uint8_t UartOk; //Debug
 /***********************************************************************************************************************************
  *** PROTOTIPO DE FUNCIONES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -68,7 +72,7 @@ RTC_t AlarmTime;
 void RiegoOn ( void )
 {
 	EV_RIEGO_ON;
-	if(btn == B_OK)
+	if(btn == B_OK || UartOk)
 	{
 		Display_LCD("OFF" , RENGLON_2 , 10 );
 		EstadoManual = RIEGO_OFF;
@@ -78,7 +82,7 @@ void RiegoOn ( void )
 void RiegoOff ( void )
 {
 	EV_RIEGO_OFF;
-	if(btn == B_OK)
+	if(btn == B_OK || UartOk)
 	{
 		Display_LCD("ON " , RENGLON_2 , 10 );
 		EstadoManual = RIEGO_ON;
@@ -151,7 +155,7 @@ void SetTemporizador(void)
 {
 	if(btn == B_OK)
 	{
-		T_Riego = GetPotenciometro();
+		T_Riego = GetPotenciometro()*60;
 		TimerStop(E_Potenciometro);
 		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
 		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
@@ -169,16 +173,18 @@ void ConfiguracionFinalizada (void)
 ////////////////////////////////TEMPORIZADO////////////////////////////////
 void PrintTimer (void)
 {
-	uint8_t vTimer = GetTimer(E_Riego);
-	itoa(vTimer,vString,10);
-	GuardarMensajeLCD(vString,vString);
-	Display_LCD(vString, RENGLON_2, 10);
+	TemporizadoTime = FromGetTimer(GetTimer(E_Riego),B_Riego);
+
+	ComponerTemporizador(&TemporizadoTime,vString);
+
+	Display_LCD(vString, RENGLON_2, 9);
+
 	SetTimer(E_Potenciometro,T_Potenciometro);
 }
 
 void AguardandoOk(void)
 {
-	if(btn == B_OK)
+	if(btn == B_OK || Alarma() || UartOk)
 	{
 		EV_RIEGO_ON;
 		Display_LCD("Modo Temporizado", RENGLON_1, 0);

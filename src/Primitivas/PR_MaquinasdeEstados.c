@@ -122,7 +122,6 @@ void CloseConfiguracion(void)
 	SwitchEstados(EstadoAnterior);
 }
 
-
 void InitAutomatico(void)
 {
 	CloseEstados();
@@ -154,4 +153,14 @@ void CloseEstados(void)
 	ApagarLeds();
 	TimerStop(E_Riego);
 	TimerStop(E_Potenciometro);
+}
+
+void ComponerTemporizador(RTC_t *timer, char *dest)
+{
+	dest[0] = timer->Minutes/10 + '0';
+	dest[1] = timer->Minutes%10 + '0';
+	dest[2] = ':';
+	dest[3] = timer->Seconds/10 + '0';
+	dest[4] = timer->Seconds%10 + '0';
+	dest[5] = 0;
 }
