@@ -14,7 +14,9 @@
 /***********************************************************************************************************************************
  *** DEFINES PRIVADOS AL MODULO
  **********************************************************************************************************************************/
-
+#define E_RTC (uint8_t)3
+#define T_RTC 1
+#define B_RTC SEG
 /***********************************************************************************************************************************
  *** MACROS PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -30,7 +32,8 @@
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PUBLICAS
  **********************************************************************************************************************************/
-RTC currentTime;
+RTC_t currentTime;
+uint8_t AlarmBuffer;
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -49,27 +52,25 @@ RTC currentTime;
 
 void InitRTC (void)
 {
-	/* Enable PCLK to the RTC */
+	// Enable PCLK to the RTC
 	//__set_PCONP(PCRTC, 1);
 	PCONP->bits._PCRTC = 1;					//Prendo el periferico RTC
 
-	/* Start RTC with external XTAL */
+	// Start RTC with external XTAL
 	RTC_CCR = 0x11;
 
-	//Habilitamos la interrupcion de alarmas
+	//Prendemos el registro de deteccion de falla de poder
+	RTC_AUXEN = 0x8;
 
+	//Habilitamos la interrupcion de alarmas en la hora y minuto
+	RTC_AMR = 0x6;
+
+	TimerStart(E_RTC,T_RTC,TimeUpdate,B_RTC);
 
 }
 
-uint8_t TimeUpdate(void)
+void TimeUpdate(void)
 {
-	if (GetFailFlag) // If power fail has been detected, return default time.
-	{
-		currentTime.Seconds = 0; currentTime.Minutes = 0; currentTime.Hours = 0;
-		currentTime.DayOfWeek = 0; currentTime.DayofMonth = 1; currentTime.Month = 1; currentTime.Year = 2014;
-		return 0;
-	}
-
 	currentTime.Seconds = RTC_CTIME->CTIME0.bits.Seconds;
 	currentTime.Minutes = RTC_CTIME->CTIME0.bits.Minutes;
 	currentTime.Hours = RTC_CTIME->CTIME0.bits.Hours;
@@ -77,7 +78,22 @@ uint8_t TimeUpdate(void)
 	currentTime.DayofMonth = RTC_CTIME->CTIME1.bits.DayOfMonth;
 	currentTime.Month = RTC_CTIME->CTIME1.bits.Month;
 	currentTime.Year = RTC_CTIME->CTIME1.bits.Year;
-	return 1;
+	SetTimer(E_RTC,T_RTC);
+}
+
+void RTC_IRQHandler(void)
+{
+	if (GetFailFlag) // If power fail has been detected, return default time.
+	{
+		CLRFailFlag;
+		TransmitirString("#CF$"); //CF: comando de RTC Failure solicita al
+		TimerStop(E_RTC);
+	}
+	else if (RTC_ILR & 0x2)
+	{
+		RTC_ILR |= 0x2;
+		AlarmBuffer = 1;
+	}
 }
 
 void SetRTCTime (const RTC *rtc)
@@ -93,6 +109,7 @@ void SetRTCTime (const RTC *rtc)
 	RTC_MONTH = rtc->Month;
 	RTC_YEAR  = rtc->Year;
 
-	RTC_AUX = _BV(4);	/* Clear power fail flag */
 	RTC_CCR = 0x11;		/* Restart RTC, Disable calibration feature */
 }
+
+
