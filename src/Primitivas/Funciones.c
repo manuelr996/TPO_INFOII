@@ -55,9 +55,9 @@
 */
 void MostrarSensores( void )
 {
-	//FuncLluvia();
-	Display( HumedadSuelo , DSP1 );
-	Display( tempBuffer , DSP0 );
+	FuncLluvia();
+	Display( GetHumedadSuelo() , DSP1 );
+	Display( GetTemperatura()  , DSP0 );
 }
 /**
 	\fn  FuncLluvia
@@ -67,7 +67,7 @@ void MostrarSensores( void )
 */
 void FuncLluvia( void )
 {
-	 if( Lluvia == ON )
+	 if( GetLluvia() == ON )
 		LedLluvia_On();
 	else
 		LedLluvia_Off();

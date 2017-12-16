@@ -110,11 +110,8 @@ void SwitchEstados(EstadosGenerales nuevoEstado)
 */
 void InitConfiguracion( void )
 {
-	ApagarLeds();
+	CloseEstados();
 	PrenderLed(ROJO);
-	TimerStop(E_Riego);
-	TimerStop(E_Potenciometro);
-	IniciarPotenciometro();
 	Display_LCD("Configuracion   ", RENGLON_1, 0);
 	Display_LCD("OK p/continuar  ", RENGLON_2, 0);
 	EstadoAnterior = Estado;
@@ -138,7 +135,6 @@ void InitManual(void)
 {
 	CloseEstados();
 	PrenderLed(AZUL);
-	TimerStop(E_Riego);
 	Display_LCD("   Modo Manual  " , RENGLON_1 , 0 );
 	Display_LCD("   Riego: OFF   " , RENGLON_2 , 0 );
 }
@@ -158,5 +154,4 @@ void CloseEstados(void)
 	ApagarLeds();
 	TimerStop(E_Riego);
 	TimerStop(E_Potenciometro);
-	DetenerPotenciometro();
 }

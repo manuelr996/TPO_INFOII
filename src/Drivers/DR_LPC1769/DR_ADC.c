@@ -91,9 +91,6 @@ void InitADC ( void )
 	//Activacion y disparo del ADC:
 	ADCPDN = 1;								//Prendido
 	ADCSTART = 0;							//STAR=0 para que inicie las conversiones
-
-	//Inicio un timer que llena los buffers
-	TimerStart( E_ADC , T_ADC , CargarBuffersADC , B_ADC );
 }
 /**
 	\fn  CargarBuffersADC

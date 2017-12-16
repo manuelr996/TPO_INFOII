@@ -58,7 +58,7 @@ volatile uint32_t	HumedadMinima;
 */
 uint8_t CondicionesInicio ( void )
 {
-	if( Lluvia == OFF && HumedadSuelo <= HumedadMinima )
+	if( GetLluvia() == OFF && GetHumedadSuelo() <= HumedadMinima )
 		return TRUE;
 
 	return FALSE;
@@ -72,7 +72,7 @@ uint8_t CondicionesInicio ( void )
 */
 uint8_t CondicionesFin ( void )
 {
-	if( Lluvia == ON || HumedadSuelo >= HumedadMaxima)
+	if( GetLluvia() == ON || GetHumedadSuelo() >= HumedadMaxima )
 		return TRUE;
 
 	return FALSE;

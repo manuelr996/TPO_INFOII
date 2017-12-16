@@ -66,7 +66,6 @@ uint8_t T_Riego;
 ///////////////////////////////////MANUAL///////////////////////////////////
 void RiegoOn ( void )
 {
-	//btn = getTecla();
 	EV_RIEGO_ON;
 	if(btn == B_OK)
 	{
@@ -77,7 +76,6 @@ void RiegoOn ( void )
 
 void RiegoOff ( void )
 {
-	//btn = getTecla();
 	EV_RIEGO_OFF;
 	if(btn == B_OK)
 	{
@@ -109,7 +107,7 @@ void RiegoAutomaticoOff( void )
 
 void PrintPotenciometro(void)
 {
-	itoa(vPotenciometro, vString, 10);
+	itoa( GetPotenciometro() , vString, 10);
 	GuardarMensajeLCD(vString,vString);
 	Display_LCD(vString, RENGLON_2, 12);
 	SetTimer(E_Potenciometro,T_Potenciometro);
@@ -117,7 +115,6 @@ void PrintPotenciometro(void)
 
 void ConfiguracionInicializada (void)
 {
-	//btn = getTecla();
 	if(btn == B_OK)
 	{
 		Display_LCD("Config HumMin   ", RENGLON_1 , 0 );
@@ -129,11 +126,9 @@ void ConfiguracionInicializada (void)
 
 void SetHumedadMinima (void)
 {
-
 	if(btn == B_OK)
 	{
-		HumedadMinima = vPotenciometro;
-		//DisplayLCD: "Configurando Humedad Minima\nHumedad Maxima: %%%"
+		HumedadMinima = GetPotenciometro();
 		Display_LCD( "Config HumMax   " , RENGLON_1 , 0 );
 		Display_LCD( "Humedad Max=   %" , RENGLON_2 , 0 );
 		EstadoConfiguracion = HUMEDADMAXIMA;
@@ -144,8 +139,7 @@ void SetHumedadMaxima (void)
 {
 	if(btn == B_OK)
 	{
-		HumedadMaxima = vPotenciometro;
-		//Display LCD: "Configurando Temporizador:\n Tiempo: %%%m
+		HumedadMaxima = GetPotenciometro();
 		Display_LCD( "Config Temporiza" , RENGLON_1 , 0 );
 		Display_LCD( "Tiempo=        m" , RENGLON_2 , 0 );
 		EstadoConfiguracion = TEMPORIZADOR;
@@ -156,8 +150,7 @@ void SetTemporizador(void)
 {
 	if(btn == B_OK)
 	{
-		T_Riego = vPotenciometro;
-		//Display LCD: "Cerrando Configuraciones Presione OK para continuar
+		T_Riego = GetPotenciometro();
 		TimerStop(E_Potenciometro);
 		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
 		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
@@ -167,7 +160,6 @@ void SetTemporizador(void)
 
 void ConfiguracionFinalizada (void)
 {
-	//btn = getTecla();
 	if(btn == B_OK)
 	{
 		CloseConfiguracion();

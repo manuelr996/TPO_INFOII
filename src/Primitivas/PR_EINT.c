@@ -1,16 +1,16 @@
 /*******************************************************************************************************************************//**
  *
- * @file		MaquinaGeneral.c
+ * @file		PR_EINT.c
  * @brief		Descripcion del modulo
- * @date		Dec 8, 2017
- * @author		Manuel A. Rafaele
+ * @date		15 dic. 2017
+ * @author		Tomás Bautista Ordóñez
  *
  **********************************************************************************************************************************/
 
 /***********************************************************************************************************************************
  *** INCLUDES
  **********************************************************************************************************************************/
-#include "MaquinaGeneral.h"
+#include "PR_EINT.h"
 
 /***********************************************************************************************************************************
  *** DEFINES PRIVADOS AL MODULO
@@ -35,12 +35,7 @@
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
-EstadosGenerales Estado;
 
-void (*MaquinaConfiguracion[])(void) = {ConfiguracionInicializada, SetHumedadMinima, SetHumedadMaxima, SetTemporizador, ConfiguracionFinalizada};
-void (*MaquinaManual[])(void) = {RiegoOff, RiegoOn};
-void (*MaquinaTemporizado[])(void) = {AguardandoOk, RiegoTemporizado};
-void (*MaquinaAutomatico[])(void) = {RiegoAutomaticoOn, RiegoAutomaticoOff};
 /***********************************************************************************************************************************
  *** PROTOTIPO DE FUNCIONES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -53,42 +48,12 @@ void (*MaquinaAutomatico[])(void) = {RiegoAutomaticoOn, RiegoAutomaticoOff};
  *** FUNCIONES GLOBALES AL MODULO
  **********************************************************************************************************************************/
 /**
-	\fn  Nombre de la Funcion
-	\brief Descripcion
- 	\author Manuel A. Rafaele
- 	\date Dec 8, 2017
- 	\param [in] parametros de entrada
- 	\param [out] parametros de salida
-	\return tipo y descripcion de retorno
+	\fn  GetLluvia
+	\brief Devuelve el estado del buffer Lluvia
+ 	\author Tomás Bautista Ordóñez
+ 	\date 15 dic. 2017
 */
-void MaquinaGeneral (void)
+uint8_t GetLluvia ( void )
 {
-	btn = getTecla();
-
-	switch(Estado)
-	{
-	case RESET_G:
-		Estado = MANUAL;
-		btn = B_MANUAL;
-		Display_LCD("   Modo Manual  " , RENGLON_1 , 0 );
-		Display_LCD("   Riego: OFF   " , RENGLON_2 , 0 );
-		break;
-	case CONFIGURACION:
-		MaquinaConfiguracion[EstadoConfiguracion]();
-		break;
-	case MANUAL:
-		MaquinaManual[EstadoManual]();
-		break;
-	case TEMPORIZADO:
-		MaquinaTemporizado[EstadoTemporizado]();
-		break;
-	case AUTOMATICO:
-		MaquinaAutomatico[EstadoAutomatico]();
-		break;
-	default:
-		Estado = RESET_G;
-		break;
-	}
-
-	SwitchEstados(btn);
+	return Lluvia;
 }
