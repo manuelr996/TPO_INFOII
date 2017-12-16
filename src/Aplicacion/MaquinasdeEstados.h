@@ -69,6 +69,7 @@ typedef enum
 	HUMEDADMINIMA,
 	HUMEDADMAXIMA,
 	TEMPORIZADOR,
+	HORA_RIEGO,
 	CERRAR_CONFIGURACION
 }EstadosConfiguracion;
 
@@ -82,7 +83,7 @@ extern EstadosTemporizado EstadoTemporizado;
 extern EstadosAutomatico EstadoAutomatico;
 
 extern uint8_t btn;
-extern uint8_t T_Riego;
+extern uint32_t T_Riego;
 /***********************************************************************************************************************************
  *** PROTOTIPOS DE FUNCIONES GLOBALES
  **********************************************************************************************************************************/
@@ -94,13 +95,16 @@ void RiegoAutomaticoOn(void);
 void RiegoAutomaticoOff(void);
 
 void PrintPotenciometro(void);
+void PrintHour(void);
 void ConfiguracionInicializada(void);
 void SetHumedadMinima(void);
 void SetHumedadMaxima(void);
 void SetTemporizador(void);
+void SetHoraTemporizador(void);
 void ConfiguracionFinalizada(void);
 
 void AguardandoOk(void);
+void PrintTimer(void);
 void VolverAguardando(void);
 void RiegoTemporizado(void);
 #endif /* APLICACION_MAQUINASDEESTADOS_H_ */

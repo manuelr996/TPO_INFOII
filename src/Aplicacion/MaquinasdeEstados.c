@@ -35,15 +35,15 @@ EstadosConfiguracion EstadoConfiguracion;
 EstadosManual EstadoManual;
 EstadosTemporizado EstadoTemporizado;
 EstadosAutomatico EstadoAutomatico;
+
+uint32_t T_Riego;
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
 uint8_t btn;
 char vString[6];
-uint8_t T_Riego;
 RTC_t AlarmTime;
 RTC_t TemporizadoTime;
-
 
 uint8_t UartOk; //Debug
 /***********************************************************************************************************************************
@@ -112,9 +112,19 @@ void RiegoAutomaticoOff( void )
 
 void PrintPotenciometro(void)
 {
-	itoa( GetPotenciometro() , vString, 10);
-	GuardarMensajeLCD(vString,vString);
+	ComponerPotenciometro(GetPotenciometro(),vString);
 	Display_LCD(vString, RENGLON_2, 12);
+	SetTimer(E_Potenciometro,T_Potenciometro);
+}
+
+void PrintHour(void)
+{
+	AlarmTime = FromGetTimer(vPotenciometro*14.40, MIN); //1440 = 24*60 => 100 -> Valor maximo del Potenciometro
+
+	ComponerTemporizador(&TemporizadoTime,vString);
+
+	Display_LCD(vString, RENGLON_2, 9);
+
 	SetTimer(E_Potenciometro,T_Potenciometro);
 }
 
@@ -156,6 +166,18 @@ void SetTemporizador(void)
 	if(btn == B_OK)
 	{
 		T_Riego = GetPotenciometro()*60;
+		TimerStart(E_Potenciometro,T_Potenciometro,PrintHour,B_Potenciometro);
+		Display_LCD( "Config Hora     " , RENGLON_1 , 0 );
+		Display_LCD( "Hora=           " , RENGLON_2 , 0 );
+		EstadoConfiguracion = HORA_RIEGO;
+	}
+}
+
+void SetHoraTemporizador(void)
+{
+	if(btn == B_OK)
+	{
+		SetAlarm(&AlarmTime);
 		TimerStop(E_Potenciometro);
 		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
 		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
@@ -170,7 +192,9 @@ void ConfiguracionFinalizada (void)
 		CloseConfiguracion();
 	}
 }
+
 ////////////////////////////////TEMPORIZADO////////////////////////////////
+
 void PrintTimer (void)
 {
 	TemporizadoTime = FromGetTimer(GetTimer(E_Riego),B_Riego);
@@ -188,7 +212,7 @@ void AguardandoOk(void)
 	{
 		EV_RIEGO_ON;
 		Display_LCD("Modo Temporizado", RENGLON_1, 0);
-		Display_LCD("  Timer:     m  ", RENGLON_2, 0);
+		Display_LCD("  Timer:        ", RENGLON_2, 0);
 		TimerStart(E_Riego, T_Riego, VolverAguardando, B_Riego);
 		TimerStart(E_Potenciometro,T_Potenciometro,PrintTimer,B_Potenciometro);
 		EstadoTemporizado = RIEGO_TEMPORIZADO;

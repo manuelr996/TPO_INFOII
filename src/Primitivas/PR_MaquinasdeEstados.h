@@ -52,4 +52,5 @@ void CloseConfiguracion(void);
 void CloseEstados(void);
 void SwitchEstados(uint8_t);
 void ComponerTemporizador(struct RTC_t *, char *);
+void ComponerPotenciometro(uint8_t,char *);
 #endif /* PRIMITIVAS_PR_MAQUINASDEESTADOS_H_ */

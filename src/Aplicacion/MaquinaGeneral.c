@@ -37,7 +37,7 @@
  **********************************************************************************************************************************/
 EstadosGenerales Estado;
 
-void (*MaquinaConfiguracion[])(void) = {ConfiguracionInicializada, SetHumedadMinima, SetHumedadMaxima, SetTemporizador, ConfiguracionFinalizada};
+void (*MaquinaConfiguracion[])(void) = {ConfiguracionInicializada, SetHumedadMinima, SetHumedadMaxima, SetTemporizador, SetHoraTemporizador,ConfiguracionFinalizada};
 void (*MaquinaManual[])(void) = {RiegoOff, RiegoOn};
 void (*MaquinaTemporizado[])(void) = {AguardandoOk, RiegoTemporizado};
 void (*MaquinaAutomatico[])(void) = {RiegoAutomaticoOn, RiegoAutomaticoOff};

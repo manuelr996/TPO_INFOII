@@ -63,7 +63,6 @@ void SetAlarm(struct RTC_t *rtc)
 	RTC_ALHOUR = rtc->Hours;
 }
 
-
 void DecrementoTiempo(RTC_t *rtc)
 {
 	if(rtc->Seconds == 0)
@@ -101,7 +100,6 @@ void IncrementoTiempo(RTC_t *rtc)
 	else
 		rtc->Seconds++;
 }
-
 
 RTC_t GetTime(void)
 {

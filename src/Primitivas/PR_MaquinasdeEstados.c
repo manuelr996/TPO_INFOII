@@ -122,6 +122,21 @@ void CloseConfiguracion(void)
 	SwitchEstados(EstadoAnterior);
 }
 
+void ComponerPotenciometro(uint8_t pot, char *dest)
+{
+	if(pot == 100)
+	{
+		dest = "100%";
+	}
+	else
+	{
+		dest[0] = '0';
+		dest[1] = pot/10 + '0';
+		dest[2] = pot%10 + '0';
+		dest[3] = 0;
+	}
+}
+
 void InitAutomatico(void)
 {
 	CloseEstados();
