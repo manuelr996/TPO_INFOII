@@ -131,6 +131,6 @@ extern uint8_t AlarmBuffer;
  **********************************************************************************************************************************/
 void InitRTC ( void );					/* Inicializa al RTC */
 void TimeUpdate(void);			/* 		Get time	 */
-void rtc_settime (void);		/*		Set time	 */
+void SetRTCTime (const struct RTC_t *);		/*		Set time	 */
 
 #endif /* DR_RTC_H_ */

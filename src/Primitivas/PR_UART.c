@@ -15,10 +15,8 @@
 /***********************************************************************************************************************************
  *** DEFINES PRIVADOS AL MODULO
  **********************************************************************************************************************************/
-#define CONFIGURAR_INTERVALOS	'I'
-#define CONTINUAR_LUBRICACION	'C'
-#define FINALIZAR_LUBRICACION	'F'
-
+#define DATOS_ESPERADOS_RTC 6
+#define DATOS_ESPERADOS_CONFIG 18
 /***********************************************************************************************************************************
  *** MACROS PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -34,12 +32,6 @@
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PUBLICAS
  **********************************************************************************************************************************/
-extern uint8_t T0;
-extern uint8_t T1;
-extern uint8_t T2;
-
-uint8_t Buffer_Disparo_Por_Trama = 0;
-uint8_t Buffer_Freno_Por_Trama = 0;
 
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
@@ -86,126 +78,141 @@ void TransmitirString ( char * s)
 
 void Mensaje ( void )
 {
-
 	int16_t dato;
-		static char estadoRiego = 0;
+	static uint8_t comandoDatos = 0;
+	static uint8_t datosTomados = 0;
+	//static uint8_t auxDatos = 0;
+	static RTC_t auxRTC = {0};
+	static EstadosGenerales estadoRiego;
 
-		typedef enum
+	static ESTADOS_TRAMA trama = ESPERANDO_INICIO_DE_TRAMA;
+	char Buffer_Auxiliar[10];
+
+	dato = PopRX();
+
+	if ( dato != -1 )
+	{
+
+		switch ( trama )
 		{
-			ESPERANDO_INICIO_DE_TRAMA = 0,
-			ESPERANDO_COMANDO,
-			ESPERANDO_DATOS,
-			ESPERANDO_FIN_DE_TRAMA,
-		}ESTADOS_TRAMA;
+			case ESPERANDO_INICIO_DE_TRAMA:
 
-		static ESTADOS_TRAMA trama = ESPERANDO_INICIO_DE_TRAMA;
-		char Buffer_Auxiliar[10];
+				if ( dato == '#')
+				{
 
-		dato = PopRX();
+					trama = ESPERANDO_COMANDO;
+					TransmitirString("A\r\n\0");
+				}
 
-		if ( dato != -1 )
-		{
+				else
+					TransmitirString("ERROR\r\n\0");
 
-			switch ( trama )
-			{
-				case ESPERANDO_INICIO_DE_TRAMA:
+				break;
 
-					if ( dato == '#')
+			case ESPERANDO_COMANDO:
+
+				if(dato == 'M')
+				{
+					estadoRiego = MANUAL;
+					trama = ESPERANDO_FIN_DE_TRAMA;
+				}
+				if(dato == 'A')
+				{
+					estadoRiego = AUTOMATICO;
+					trama = ESPERANDO_FIN_DE_TRAMA;
+				}
+				if(dato == 'T')
+				{
+					estadoRiego = TEMPORIZADO;
+					trama = ESPERANDO_FIN_DE_TRAMA;
+				}
+				if(dato == 'C')
+				{
+					estadoRiego = NO_KEY;
+					comandoDatos = 'C';
+					trama = ESPERANDO_DATOS;
+				}
+				if(dato == 'R')
+				{
+					estadoRiego = NO_KEY;
+					comandoDatos = 'R';
+					trama = ESPERANDO_DATOS;
+				}
+				else
+				{
+					strcpy(Buffer_Auxiliar, "ERROR\r\n\0");
+					TransmitirString(Buffer_Auxiliar);
+					trama = ESPERANDO_INICIO_DE_TRAMA;
+				}
+				SwitchEstados(estadoRiego);
+				estadoRiego = NO_KEY;
+				break;
+
+			case ESPERANDO_DATOS:
+				if(comandoDatos == 'R')
+				{
+					if(datosTomados == 0 && (dato < '9' && dato > '0'))
 					{
-
-						trama = ESPERANDO_COMANDO;
-						TransmitirString("A\r\n\0");
+						auxRTC.Hours = (dato-'0')*10;
+						datosTomados++;
 					}
-
-					else
-						TransmitirString("ERROR\r\n\0");
-
-					break;
-
-				case ESPERANDO_COMANDO:
-
-					if(dato == 'M')
+					else if(datosTomados == 1 && (dato < '9' && dato > '0'))
 					{
-						estadoRiego = 'M';
-						InitManual();
-						trama = ESPERANDO_DATOS;
+						auxRTC.Hours += dato-'0';
+						datosTomados++;
 					}
-					if(dato == 'A')
+					else if(datosTomados == 2 && (dato < '9' && dato > '0'))
 					{
-						estadoRiego = 'A';
-						InitAutomatico();
-						trama = ESPERANDO_DATOS;
+						auxRTC.Minutes = (dato-'0')*10;
+						datosTomados++;
 					}
-					if(dato == 'T')
+					else if(datosTomados == 3 && (dato < '9' && dato > '0'))
 					{
-						estadoRiego = 'T';
-						InitTemporizado();
-						trama = ESPERANDO_DATOS;
+						auxRTC.Minutes += dato-'0';
+						datosTomados++;
 					}
-					else
+					else if(datosTomados == 4 && (dato < '9' && dato > '0'))
 					{
-						strcpy(Buffer_Auxiliar, "ERROR\r\n\0");
-						TransmitirString(Buffer_Auxiliar);
-						trama = ESPERANDO_INICIO_DE_TRAMA;
+						auxRTC.Seconds = (dato-'0')*10;
+						datosTomados++;
 					}
-					break;
-
-				case ESPERANDO_DATOS:
-
-					if(estadoRiego == 'M')
+					else if(datosTomados == 5 && (dato < '9' && dato > '0'))
 					{
-						if(dato == 'O')
-						{
-							EV_RIEGO_OFF;
-							Display_LCD("   Riego: APAGOMA   " , RENGLON_2 , 0 );
-							trama = ESPERANDO_FIN_DE_TRAMA;
-						}
-						else if(dato == 'I')
-						{
-							EV_RIEGO_ON;
-							Display_LCD("   Riego: PRENDOMA    " , RENGLON_2 , 0 );
-							trama = ESPERANDO_FIN_DE_TRAMA;
-						}
+						auxRTC.Seconds += dato-'0';
+						datosTomados++;
 					}
-					if(estadoRiego == 'T')
+					else if(datosTomados == DATOS_ESPERADOS_RTC)
 					{
-						if(dato == 'O')
-						{
-							EV_RIEGO_OFF;
-							Display_LCD("Riego: APAGOTEMP   " , RENGLON_2 , 0 );
-							trama = ESPERANDO_FIN_DE_TRAMA;
-						}
-						else if(dato == 'I')
-						{
-							EV_RIEGO_ON;
-							Display_LCD("Riego: PRENDOTEMP    " , RENGLON_2 , 0 );
-							trama = ESPERANDO_FIN_DE_TRAMA;
-						}
-					}
-					else
-					{	strcpy(Buffer_Auxiliar, "ERROR\r\n\0");
-						TransmitirString(Buffer_Auxiliar);
-						trama = ESPERANDO_INICIO_DE_TRAMA;
-					}
-					break;
-
-				case ESPERANDO_FIN_DE_TRAMA:
-
-					if (dato == '$')
-					{
-						Display_LCD("Fin trama       " , RENGLON_2 , 0 );
-						trama=ESPERANDO_INICIO_DE_TRAMA;
-
+						datosTomados = 0;
+						SetRTCTime(&auxRTC);
 					}
 					else
 					{
+						datosTomados = 0;
 						TransmitirString("ERROR\r\n\0");
 					}
-					break;
+				}
+				else if(comandoDatos == 'C')
+				{
 
-				default:
-					Display_LCD("#ERROR\r\n\0", RENGLON_2 , 0 );
-					break;
-			}
+				}
+				break;
+
+			case ESPERANDO_FIN_DE_TRAMA:
+
+				if (dato == '$')
+				{
+					trama=ESPERANDO_INICIO_DE_TRAMA;
+				}
+				else
+				{
+					TransmitirString("ERROR\r\n\0");
+				}
+				break;
+
+			default:
+				Display_LCD("#ERROR\r\n\0", RENGLON_2 , 0 );
+				break;
 		}
+	}
 }

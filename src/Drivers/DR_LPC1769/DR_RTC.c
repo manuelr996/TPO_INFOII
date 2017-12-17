@@ -33,7 +33,9 @@
  *** VARIABLES GLOBALES PUBLICAS
  **********************************************************************************************************************************/
 RTC_t currentTime;
+RTC_t defaultTime = {0};
 uint8_t AlarmBuffer;
+
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -65,8 +67,9 @@ void InitRTC (void)
 	//Habilitamos la interrupcion de alarmas en la hora y minuto
 	RTC_AMR = 0x6;
 
-	TimerStart(E_RTC,T_RTC,TimeUpdate,B_RTC);
+	defaultTime.Seconds = 0; // se carga un tiempo default en 0
 
+	TimerStart(E_RTC,T_RTC,TimeUpdate,B_RTC);
 }
 
 void TimeUpdate(void)
@@ -83,11 +86,12 @@ void TimeUpdate(void)
 
 void RTC_IRQHandler(void)
 {
-	if (GetFailFlag) // If power fail has been detected, return default time.
+	if (GetFailFlag) // Si se detecto una falla de poder se solicita la temperatura al software acompañante
 	{
 		CLRFailFlag;
-		TransmitirString("#CF$"); //CF: comando de RTC Failure solicita al
-		TimerStop(E_RTC);
+		TransmitirString("#CF$"); //CF: comando de RTC Failure solicita por el puerto UART el envio de la hora actual para re-sincronizar
+		SetRTCTime(&defaultTime); //En el mientras tanto se
+		StandByTimer(E_RTC, PAUSE);
 	}
 	else if (RTC_ILR & 0x2)
 	{
@@ -98,9 +102,9 @@ void RTC_IRQHandler(void)
 
 void SetRTCTime (const RTC_t *rtc)
 {
-	RTC_CCR = 0x12;		/* Stop RTC */
+	RTC_CCR = 0x12;		//Apagamos el RTC
 
-	/* Update RTC registers */
+	//Actualizamos los valores del RTC
 	RTC_SEC   = rtc->Seconds;
 	RTC_MIN   = rtc->Minutes;
 	RTC_HOUR  = rtc->Hours;
@@ -109,7 +113,8 @@ void SetRTCTime (const RTC_t *rtc)
 	RTC_MONTH = rtc->Month;
 	RTC_YEAR  = rtc->Year;
 
-	RTC_CCR = 0x11;		/* Restart RTC, Disable calibration feature */
+	StandByTimer(E_RTC, RUN);
+	RTC_CCR = 0x11;		//Encendemos el RTC nuevamente
 }
 
 
