@@ -106,8 +106,9 @@ int16_t PopRX( void )
 void PushTX( uint8_t dato )
 {
 	if ( !flagTx )
-	{	flagTx = 1;
-		UART1THR = dato;
+	{
+		flagTx = 1;
+		UART0THR = dato;
 		return;
 	}
 
@@ -184,6 +185,8 @@ void UART0_IRQHandler (void)
 			dato=PopTX();
 			if( dato != -1)
 				UART0THR = dato;
+			else
+				flagTx = 0;
 
 		}
 		if ( iir & 0x04 ) //Data ready

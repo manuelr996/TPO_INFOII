@@ -23,9 +23,7 @@
 int main(void)
 {
 	Inicializacion();
-	SetPINSEL(0,28,FUNCION_GPIO);
-	SetDIR(0,28,SALIDA);
-	SetPIN(0,28,ALTO);
+
 	while(1)
     {
 		Mensaje();

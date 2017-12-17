@@ -32,7 +32,7 @@
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PUBLICAS
  **********************************************************************************************************************************/
-
+uint8_t UartOk;
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -82,7 +82,7 @@ void Mensaje ( void )
 	static uint8_t comandoDatos = 0;
 	static uint8_t datosTomados = 0;
 	//static uint8_t auxDatos = 0;
-	static RTC_t auxRTC = {0};
+	static char auxRTC [DATOS_ESPERADOS_RTC];
 	static EstadosGenerales estadoRiego;
 
 	static ESTADOS_TRAMA trama = ESPERANDO_INICIO_DE_TRAMA;
@@ -138,6 +138,11 @@ void Mensaje ( void )
 					comandoDatos = 'R';
 					trama = ESPERANDO_DATOS;
 				}
+				if(dato == 'O')
+				{
+					UartOk = 1;
+					trama = ESPERANDO_FIN_DE_TRAMA;
+				}
 				else
 				{
 					strcpy(Buffer_Auxiliar, "ERROR\r\n\0");
@@ -151,45 +156,21 @@ void Mensaje ( void )
 			case ESPERANDO_DATOS:
 				if(comandoDatos == 'R')
 				{
-					if(datosTomados == 0 && (dato < '9' && dato > '0'))
+					while((datosTomados < DATOS_ESPERADOS_RTC) && (dato > '9' && dato < '0'))
 					{
-						auxRTC.Hours = (dato-'0')*10;
+						auxRTC[datosTomados] = dato;
 						datosTomados++;
 					}
-					else if(datosTomados == 1 && (dato < '9' && dato > '0'))
+
+					if(datosTomados ==  DATOS_ESPERADOS_RTC)
 					{
-						auxRTC.Hours += dato-'0';
-						datosTomados++;
-					}
-					else if(datosTomados == 2 && (dato < '9' && dato > '0'))
-					{
-						auxRTC.Minutes = (dato-'0')*10;
-						datosTomados++;
-					}
-					else if(datosTomados == 3 && (dato < '9' && dato > '0'))
-					{
-						auxRTC.Minutes += dato-'0';
-						datosTomados++;
-					}
-					else if(datosTomados == 4 && (dato < '9' && dato > '0'))
-					{
-						auxRTC.Seconds = (dato-'0')*10;
-						datosTomados++;
-					}
-					else if(datosTomados == 5 && (dato < '9' && dato > '0'))
-					{
-						auxRTC.Seconds += dato-'0';
-						datosTomados++;
-					}
-					else if(datosTomados == DATOS_ESPERADOS_RTC)
-					{
-						datosTomados = 0;
-						SetRTCTime(&auxRTC);
+						ActualizarRTC(auxRTC);
+						trama = ESPERANDO_FIN_DE_TRAMA;
 					}
 					else
 					{
-						datosTomados = 0;
 						TransmitirString("ERROR\r\n\0");
+						trama = ESPERANDO_INICIO_DE_TRAMA;
 					}
 				}
 				else if(comandoDatos == 'C')

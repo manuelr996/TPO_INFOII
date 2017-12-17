@@ -122,7 +122,7 @@ uint8_t Alarma(void)
 	return aux;
 }
 
-RTC_t FromGetTimer(uint8_t tiempo, uint8_t base)
+RTC_t FromGetTimer(uint32_t tiempo, uint8_t base)
 {
 	RTC_t aux = {0};
 	switch(base)
@@ -143,4 +143,19 @@ RTC_t FromGetTimer(uint8_t tiempo, uint8_t base)
 		break;
 	}
 	return aux;
+}
+
+void ActualizarRTC(const char *src)
+{
+	RTC_t auxrtc;
+
+	auxrtc.Hours 	= (src[0]-'0')*10;
+	auxrtc.Hours 	= (src[1]-'0');
+	auxrtc.Minutes 	= (src[2]-'0')*10;
+	auxrtc.Minutes 	= (src[3]-'0');
+	auxrtc.Seconds 	= (src[4]-'0')*10;
+	auxrtc.Seconds 	= (src[5]-'0');
+
+	SetRTCTime(&auxrtc);
+
 }

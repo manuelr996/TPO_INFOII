@@ -44,8 +44,6 @@ uint8_t btn;
 char vString[6];
 RTC_t AlarmTime;
 RTC_t TemporizadoTime;
-
-uint8_t UartOk; //Debug
 /***********************************************************************************************************************************
  *** PROTOTIPO DE FUNCIONES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -74,7 +72,9 @@ void RiegoOn ( void )
 	EV_RIEGO_ON;
 	if(btn == B_OK || UartOk)
 	{
+		UartOk = 0;
 		Display_LCD("OFF" , RENGLON_2 , 10 );
+		TransmitirString("#O$");
 		EstadoManual = RIEGO_OFF;
 	}
 }
@@ -84,7 +84,9 @@ void RiegoOff ( void )
 	EV_RIEGO_OFF;
 	if(btn == B_OK || UartOk)
 	{
+		UartOk = 0;
 		Display_LCD("ON " , RENGLON_2 , 10 );
+		TransmitirString("#O$");
 		EstadoManual = RIEGO_ON;
 	}
 }
@@ -95,6 +97,7 @@ void RiegoAutomaticoOn( void )
 	if(CondicionesFin())
 	{
 		Display_LCD("OFF" , RENGLON_2 , 10 );
+		TransmitirString("#O$");
 		EstadoAutomatico = NO_REGANDO;
 	}
 }
@@ -210,6 +213,7 @@ void AguardandoOk(void)
 {
 	if(btn == B_OK || Alarma() || UartOk)
 	{
+		UartOk = 0;
 		EV_RIEGO_ON;
 		Display_LCD("Modo Temporizado", RENGLON_1, 0);
 		Display_LCD("  Timer:        ", RENGLON_2, 0);

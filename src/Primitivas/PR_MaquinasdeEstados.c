@@ -112,6 +112,7 @@ void InitConfiguracion( void )
 {
 	CloseEstados();
 	PrenderLed(ROJO);
+	TransmitirString("#C$");
 	Display_LCD("Configuracion   ", RENGLON_1, 0);
 	Display_LCD("OK p/continuar  ", RENGLON_2, 0);
 	EstadoAnterior = Estado;
@@ -143,6 +144,7 @@ void InitAutomatico(void)
 {
 	CloseEstados();
 	PrenderLed(VERDE);
+	TransmitirString("#A$");
 	Display_LCD("Modo Automatico " , RENGLON_1 , 0 );
 	Display_LCD("   Riego: OFF   " , RENGLON_2 , 0 );
 }
@@ -151,6 +153,7 @@ void InitManual(void)
 {
 	CloseEstados();
 	PrenderLed(AZUL);
+	TransmitirString("#M$");
 	Display_LCD("   Modo Manual  " , RENGLON_1 , 0 );
 	Display_LCD("   Riego: OFF   " , RENGLON_2 , 0 );
 }
@@ -160,6 +163,7 @@ void InitTemporizado(void)
 	CloseEstados();
 	PrenderLed(ROJO);
 	PrenderLed(VERDE);
+	TransmitirString("#T$");
 	Display_LCD("Modo Temporizado" , RENGLON_1 , 0 );
 	Display_LCD("  Timer:  OFF   " , RENGLON_2 , 0 );
 }
