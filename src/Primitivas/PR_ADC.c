@@ -78,3 +78,45 @@ uint8_t GetTemperatura (void)
 {
 	return Temperatura;
 }
+
+//////////////////////Temperatura-Humedad//////////////////////////
+void Ev1SecuenciaTempHumedad ( void )
+{
+	CambiarCanal( S_HUMEDAD );
+	DispararConversion();
+	TimerStart( ADCevent , ADCTHtime, Ev2SecuenciaTempHUmedad , ADCbase );
+}
+void Ev2SecuenciaTempHUmedad ( void )
+{
+	CambiarCanal( S_TEMPERATURA );
+	DispararConversion();
+	TimerStart( ADCevent , ADCTHtime, Ev1SecuenciaTempHumedad , ADCbase );
+}
+////////////////////////POTENCIOMETRO//////////////////////////////
+/**
+	\fn  IniciarPotenciometro
+	\brief Cambia entre el potenciometro y el sensor de humedad
+ 	\author Manuel A. Rafaele
+ 	\date 3 de dic. de 2017
+ 	\param [in] parametros de entrada
+ 	\param [out] parametros de salida
+	\return tipo y descripcion de retorno
+*/
+void IniciarPotenciometro(void)
+{
+	TimerStop(ADCevent); 													//Desactivo el disparador del conversor de humedad y temperatura
+	CambiarCanal( POTE );													//Potenciometro como objeto de conversion
+	TimerStart( ADCevent , ADCPtime , DispararPotenciometro , ADCbase );	//Disparo un timer para iniciar una secuencia de conversion del potenciometro
+}
+
+void DispararPotenciometro (void)
+{
+	DispararConversion();			//Disparo
+	SetTimer(ADCevent, ADCPtime);	//Reseteo
+}
+
+void DetenerPotenciometro(void)
+{
+	TimerStop(ADCevent);
+	Ev1SecuenciaTempHumedad();
+}

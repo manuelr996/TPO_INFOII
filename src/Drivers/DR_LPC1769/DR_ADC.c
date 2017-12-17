@@ -58,8 +58,7 @@ volatile uint8_t	Temperatura;
 
 void InitADC ( void )
 {
-	/*Esta inicializacion esta hecha apuntando a que el ADC no interrumpa
-	 *y que un timer cargue los buffers correspondiente cuando es debido*/
+	/*Esta inicializacion esta hecha apuntando a que el ADC se maneje sin BURST y con un timer activamos canal a canal*/
 
 	//Power:
 	PCONP->bits._PCADC = 1;					//Prendo el periferico ADC
@@ -70,10 +69,7 @@ void InitADC ( void )
 
 	//Canales:
 	ADCSEL = 0;								//Limpio ADCSEL
-	ADCSEL |= CH2SEL;						//Selecciono el canal 2 (    Sensor Humedad   ) como objeto de conversion
-	ADCSEL |= CH5SEL;						//Selecciono el canal 5 (    Potenciometro    ) como objeto de conversion
-	ADCSEL |= CH1SEL;						//Selecciono el canal 1 (Sensor de Temperatura) como objeto de conversion
-	ADCBURST = 1;							//Activo el BURST
+	ADCBURST = 0;							//Sin BURST
 
 	//Pines:
 	SetPINSEL( AD02 , PINSEL_FUNC1 );		//Configuro el pin con el que voy a convertir con funcionADC (Sensor de Humedad)
@@ -84,29 +80,63 @@ void InitADC ( void )
 	SetMODE( AD01 , NONE );					//Configuro el pin con neither pull-up nor pull-down
 
 	//Interrupciones:
-	/*No hay interrupciones*/
-	AD0INTEN = 0;							//No interrumpe ningun canal
-	ISER0 &= ~(1 << NVIC_ADC);				//Deshabilito la interrupcion de ADC en el NVIC
+	AD0INTEN = 1 << ADINTEN_GLOB;			//Interrumpe el flag DONE del registro global
+	ISER0 |= 1 << NVIC_ADC;					//Deshabilito la interrupcion de ADC en el NVIC
 
 	//Activacion y disparo del ADC:
-	ADCPDN = 1;								//Prendido
-	ADCSTART = 0;							//STAR=0 para que inicie las conversiones
+	ADCPDN = OFF;							//Prendo el ADC
+	ADCSTART = STOP;						//Lo dejo pausado para despues activar las conversiones "manualmente"
+}
+
+void ADC_IRQHandler( void )
+{
+	uint32_t lectura = AD0GDR;
+	uint32_t conversion;
+
+
+	conversion = ( lectura >> ADDR_RESULTBIT ) & ADDR_RESULTMASK;	//Dejo el dato de la conversion bien expresado
+
+	switch ( (lectura >> CHINBIT) & CHINMASK  )						//Hago un switch con el CHIN (ultimo canal convertido)
+		{
+			case S_HUMEDAD:
+				HumedadSuelo = 	 100 - ( conversion / 41 );			//Cargo la conversion al buffer
+				break;
+			case POTE:
+				vPotenciometro = 100 - ( conversion / 41 );			//Cargo la conversion al buffer
+				break;
+			case S_TEMPERATURA:
+				Temperatura = (conversion* 330 ) / 4095;			//Cargo la conversion al buffer				4095_____3300mV    LM35=>   10mV____1ºC				Temperatura = (ADC*330)/4095
+																											//	 ADC_____x=ADCmV		   ADCmV____x=Temperatura
+				break;
+			default:
+				break;
+		}
 }
 /**
-	\fn  CargarBuffersADC
-	\brief Llena los buffers de las entradas analogicas
+	\fn  CambiarCanal
+	\brief Cambia el canal objto de conversion
  	\author Tomás Bautista Ordóñez
- 	\date 9 oct. 2017
+ 	\param uint8_t ch: canal a convertir
+ 	\date 9 de dic. de 2017
 */
-void CargarBuffersADC ( void )
+void CambiarCanal ( uint8_t ch )
 {
-	uint32_t lecturaHumedad = ADDR2;
-	uint32_t lecturaPotenciometro = ADDR5;
-	uint32_t lecturaTemperatura = ADDR1;
+	ADCSTART = STOP;						//Detendo el ADC
 
-	HumedadSuelo = 100-	( ( lecturaHumedad 		 >> ADDR_RESULTBIT ) & ADDR_RESULTMASK ) / 41;
-	vPotenciometro =	( ( lecturaPotenciometro >> ADDR_RESULTBIT ) & ADDR_RESULTMASK ) / 41;
-	Temperatura = 	  ( ( ( lecturaTemperatura	 >> ADDR_RESULTBIT ) & ADDR_RESULTMASK ) * 330 ) / 4095;		/*4095_____3300mV    LM35=> 10mV____1ºC				Temperatura = (ADC*330)/4095
-																									   	   	   	   ADC_____x=ADCmV		   ADCmV____x=Temperatura								*/
-	SetTimer( E_ADC , T_ADC );
+	ADCPDN = OFF;							//Apago el ADC
+
+	ADCSEL = 1 << ch;						//Selecciono el canal ch como objeto de conversion
+}
+
+/**
+	\fn  DispararConversion
+	\brief Dispara una conversion y se resetea
+ 	\author Tomás Bautista Ordóñez
+ 	\date 9 de dic. de 2017
+*/
+void DispararConversion ( void )
+{
+	ADCPDN = ON;							//Prendido
+	ADCSTART = STOP;						//Disparo
+	ADCSTART = START;
 }

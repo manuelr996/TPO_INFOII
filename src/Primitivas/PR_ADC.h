@@ -42,4 +42,10 @@
 uint8_t GetHumedadSuelo (void);
 uint8_t GetPotenciometro (void);
 uint8_t GetTemperatura (void);
+
+void Ev1SecuenciaTempHumedad ( void );
+void Ev2SecuenciaTempHUmedad ( void );
+void IniciarPotenciometro(void);
+void DispararPotenciometro (void);
+void DetenerPotenciometro(void);
 #endif /* PRIMITIVAS_PR_ADC_H_ */

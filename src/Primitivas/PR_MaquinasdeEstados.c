@@ -115,10 +115,12 @@ void InitConfiguracion( void )
 	Display_LCD("Configuracion   ", RENGLON_1, 0);
 	Display_LCD("OK p/continuar  ", RENGLON_2, 0);
 	EstadoAnterior = Estado;
+	IniciarPotenciometro();
 }
 
 void CloseConfiguracion(void)
 {
+	DetenerPotenciometro();
 	SwitchEstados(EstadoAnterior);
 }
 
@@ -168,6 +170,7 @@ void CloseEstados(void)
 	ApagarLeds();
 	TimerStop(E_Riego);
 	TimerStop(E_Potenciometro);
+	DetenerPotenciometro();
 }
 
 void ComponerTemporizador(RTC_t *timer, char *dest)

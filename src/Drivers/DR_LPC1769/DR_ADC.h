@@ -66,12 +66,13 @@
 #define		NVIC_ADC		22
 #define		ADDR_RESULT		4
 
-#define 	E_ADC 			0
-#define 	T_ADC			2
-#define		B_ADC			CEN
+#define 	ADCevent 		0
+#define		ADCbase			DEC
+#define 	ADCTHtime		5
+#define 	ADCPtime		1
 
 #define		STOP			0
-#define		TRIGGER			1
+#define		START			1
 
 #define 	AD01				PORT0,24
 #define		AD02				PORT0,25
@@ -85,6 +86,7 @@
 
 #define 	POTE 				5
 #define 	S_HUMEDAD 			2
+#define 	S_TEMPERATURA		1
 /***********************************************************************************************************************************
  *** MACROS GLOBALES
  **********************************************************************************************************************************/
@@ -121,5 +123,6 @@ extern volatile uint8_t	Temperatura;
  *** PROTOTIPOS DE FUNCIONES GLOBALES
  **********************************************************************************************************************************/
 void InitADC ( void );
-void CargarBuffersADC ( void );
+void CambiarCanal ( uint8_t ch );
+void DispararConversion ( void );
 #endif /* DR_ADC_H_ */

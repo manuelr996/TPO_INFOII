@@ -71,7 +71,7 @@ void Inicializacion ( void )
 	InitInfotronic();  	//Sensores, Teclado, LEDs(placa), Relays
 	InitLCD ();			//LCD
 	InitUART0(); 		// UArt 0
-	TimerStart( E_ADC , T_ADC , CargarBuffersADC , B_ADC );//Inicio un timer que llena los buffers
 	ElectroValvula_Off();
-	//SecuenciaBienvenidaLCD();	//Se inicia una secuencia de bienvenida en el LCD
+
+	Ev1SecuenciaTempHumedad(); //Inicia secuencia de conversiones temperatura-humedad
 }
