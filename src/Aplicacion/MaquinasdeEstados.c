@@ -126,7 +126,7 @@ void PrintHour(void)
 
 	ComponerTemporizador(&AlarmTime,vString);
 
-	Display_LCD(vString, RENGLON_2, 9);
+	Display_LCD(vString, RENGLON_2, 8);
 
 	SetTimer(E_Potenciometro,T_Potenciometro);
 }
@@ -204,7 +204,7 @@ void PrintTimer (void)
 
 	ComponerTemporizador(&TemporizadoTime,vString);
 
-	Display_LCD(vString, RENGLON_2, 9);
+	Display_LCD(vString, RENGLON_2, 8);
 
 	SetTimer(E_Potenciometro,T_Potenciometro);
 }
