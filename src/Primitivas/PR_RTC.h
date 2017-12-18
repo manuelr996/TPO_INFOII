@@ -46,6 +46,7 @@ struct RTC_t GetTime(void);
 struct RTC_t DiferenciaTiempos(struct RTC_t *);
 struct RTC_t FromGetTimer(uint32_t,uint8_t);
 uint8_t Alarma(void);
+uint32_t ToTimer(struct RTC_t *,uint8_t);
 
 
 #endif /* PRIMITIVAS_PR_RTC_H_ */

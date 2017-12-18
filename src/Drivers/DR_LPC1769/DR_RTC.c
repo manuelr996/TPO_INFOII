@@ -54,8 +54,6 @@ uint8_t AlarmBuffer;
 
 void InitRTC (void)
 {
-	// Enable PCLK to the RTC
-	//__set_PCONP(PCRTC, 1);
 	PCONP->bits._PCRTC = 1;					//Prendo el periferico RTC
 
 	// Start RTC with external XTAL

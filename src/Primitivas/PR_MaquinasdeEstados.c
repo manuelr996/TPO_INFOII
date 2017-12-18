@@ -8,7 +8,8 @@
  **********************************************************************************************************************************/
 
 
-/*Logica de Mensajes a la UART:
+/*
+ * Logica de Mensajes a la UART:
  * La aplicacion va a recibir informacion sobre el estado actual de la maquina asi poder reflejarlo
  * y cada dos segundos enviara la informacion que obtuvo de los sensores...
  *
@@ -125,6 +126,25 @@ void CloseConfiguracion(void)
 	SwitchEstados(EstadoAnterior);
 }
 
+void CargarConfiguracion(const char *src) //recibe las configuraciones en un formato hhHHhhmmHHMM
+{
+	RTC_t aux;
+
+	HumedadMinima 		= (src[0] - '0')*10;
+	HumedadMinima 		+= (src[1] - '0');
+	HumedadMaxima 		= (src[2] - '0')*10;
+	HumedadMaxima 		+= (src[3] - '0');
+	aux.Hours			= (src[4] - '0')*10;
+	aux.Hours			+= (src[5] - '0');
+	aux.Minutes			= (src[6] - '0')*10;
+	aux.Minutes			+= (src[7] - '0');
+	T_Riego = ToTimer(&aux,SEG);
+	AlarmTime.Hours		= (src[8] - '0')*10;
+	AlarmTime.Hours 	+= (src[9] - '0');
+	AlarmTime.Minutes	= (src[10] - '0')*10;
+	AlarmTime.Minutes 	+= (src[11] - '0');
+}
+
 void ComponerPotenciometro(uint8_t pot, char *dest)
 {
 	if(pot == 100)
@@ -136,7 +156,7 @@ void ComponerPotenciometro(uint8_t pot, char *dest)
 		dest[0] = '0';
 		dest[1] = pot/10 + '0';
 		dest[2] = pot%10 + '0';
-		dest[3] = 0;
+		dest[3] = '\0';
 	}
 }
 
@@ -186,3 +206,5 @@ void ComponerTemporizador(RTC_t *timer, char *dest)
 	dest[4] = timer->Seconds%10 + '0';
 	dest[5] = 0;
 }
+
+

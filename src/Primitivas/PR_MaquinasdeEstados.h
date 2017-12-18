@@ -49,6 +49,7 @@ void InitAutomatico(void);
 void InitTemporizado(void);
 void InitConfiguracion(void);
 void CloseConfiguracion(void);
+void CargarConfiguracion(const char*);
 void CloseEstados(void);
 void SwitchEstados(uint8_t);
 void ComponerTemporizador(struct RTC_t *, char *);

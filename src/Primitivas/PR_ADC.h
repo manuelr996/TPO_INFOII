@@ -40,7 +40,8 @@
  *** PROTOTIPOS DE FUNCIONES GLOBALES
  **********************************************************************************************************************************/
 uint8_t GetHumedadSuelo (void);
-uint8_t GetPotenciometro (void);
+uint8_t GetPotenciometroHumedad (void);
+uint8_t GetPotenciometroHora (void);
 uint8_t GetTemperatura (void);
 
 void Ev1SecuenciaTempHumedad ( void );

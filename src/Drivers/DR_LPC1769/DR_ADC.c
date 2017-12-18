@@ -102,11 +102,10 @@ void ADC_IRQHandler( void )
 				HumedadSuelo = 	 100 - ( conversion / 41 );			//Cargo la conversion al buffer
 				break;
 			case POTE:
-				vPotenciometro = 100 - ( conversion / 41 );			//Cargo la conversion al buffer
+				vPotenciometro = conversion;										//Cargo la conversion al buffer
 				break;
 			case S_TEMPERATURA:
-				Temperatura = (conversion* 330 ) / 4095;			//Cargo la conversion al buffer				4095_____3300mV    LM35=>   10mV____1ºC				Temperatura = (ADC*330)/4095
-																											//	 ADC_____x=ADCmV		   ADCmV____x=Temperatura
+				Temperatura = (conversion* 330 ) / 4095;			//Cargo la conversion al buffer				4095_____3300mV    LM35=>   10mV____1ºC				Temperatura = (ADC*330)/4095																					//	 ADC_____x=ADCmV		   ADCmV____x=Temperatura
 				break;
 			default:
 				break;

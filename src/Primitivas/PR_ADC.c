@@ -64,10 +64,16 @@ uint8_t GetHumedadSuelo (void)
  	\author Tomás Bautista Ordóñez
  	\date 9 oct. 2017
 */
-uint8_t GetPotenciometro (void)
+uint8_t GetPotenciometroHumedad (void)
+{
+	return (100 - ( vPotenciometro / 41 ));
+}
+
+uint8_t GetPotenciometroHora(void)
 {
 	return vPotenciometro;
 }
+
 /**
 	\fn  GetTemperatura
 	\brief Retorna el valor del buffer Temperatura
@@ -78,6 +84,7 @@ uint8_t GetTemperatura (void)
 {
 	return Temperatura;
 }
+
 
 //////////////////////Temperatura-Humedad//////////////////////////
 void Ev1SecuenciaTempHumedad ( void )

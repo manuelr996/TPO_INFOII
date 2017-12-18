@@ -115,14 +115,14 @@ void RiegoAutomaticoOff( void )
 
 void PrintPotenciometro(void)
 {
-	ComponerPotenciometro(GetPotenciometro(),vString);
+	ComponerPotenciometro(GetPotenciometroHumedad(),vString);
 	Display_LCD(vString, RENGLON_2, 12);
 	SetTimer(E_Potenciometro,T_Potenciometro);
 }
 
 void PrintHour(void)
 {
-	AlarmTime = FromGetTimer(vPotenciometro*14.40, MIN); //1440 = 24*60 => 100 -> Valor maximo del Potenciometro
+	AlarmTime = FromGetTimer(GetPotenciometroHora()*2.8, MIN); //1440 = 24*60 => 4095/2.8 = 1462 -> Valor maximo del Potenciometro
 
 	ComponerTemporizador(&TemporizadoTime,vString);
 
@@ -146,7 +146,7 @@ void SetHumedadMinima (void)
 {
 	if(btn == B_OK)
 	{
-		HumedadMinima = GetPotenciometro();
+		HumedadMinima = GetPotenciometroHumedad();
 		Display_LCD( "Config HumMax   " , RENGLON_1 , 0 );
 		Display_LCD( "Humedad Max=   %" , RENGLON_2 , 0 );
 		EstadoConfiguracion = HUMEDADMAXIMA;
@@ -157,7 +157,7 @@ void SetHumedadMaxima (void)
 {
 	if(btn == B_OK)
 	{
-		HumedadMaxima = GetPotenciometro();
+		HumedadMaxima = GetPotenciometroHumedad();
 		Display_LCD( "Config Temporiza" , RENGLON_1 , 0 );
 		Display_LCD( "Tiempo=        m" , RENGLON_2 , 0 );
 		EstadoConfiguracion = TEMPORIZADOR;
@@ -168,7 +168,7 @@ void SetTemporizador(void)
 {
 	if(btn == B_OK)
 	{
-		T_Riego = GetPotenciometro()*60;
+		T_Riego = GetPotenciometroHumedad()*60;
 		TimerStart(E_Potenciometro,T_Potenciometro,PrintHour,B_Potenciometro);
 		Display_LCD( "Config Hora     " , RENGLON_1 , 0 );
 		Display_LCD( "Hora=           " , RENGLON_2 , 0 );

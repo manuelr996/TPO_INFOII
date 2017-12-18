@@ -128,8 +128,9 @@ RTC_t FromGetTimer(uint32_t tiempo, uint8_t base)
 	switch(base)
 	{
 	case MIN:
-		aux.Hours 	= tiempo/60;
-		aux.Minutes = tiempo%60;
+		aux.DayOfWeek = tiempo/1440;
+		aux.Hours 	  = (tiempo%1440);
+		aux.Minutes   = tiempo%60;
 		break;
 	case SEG:
 		aux.Hours 	= tiempo/3600;
@@ -145,16 +146,39 @@ RTC_t FromGetTimer(uint32_t tiempo, uint8_t base)
 	return aux;
 }
 
+uint32_t ToTimer(RTC_t *src, uint8_t base)
+{
+	uint32_t aux = 0;
+
+	switch(base)
+	{
+	case MIN:
+		aux =  src->Hours*60;
+		aux += src->Minutes;
+		aux += src->Seconds/60;
+	case SEG:
+		aux =  src->Hours*3600;
+		aux += src->Minutes*60;
+		aux += src->Seconds;
+	case DEC:
+		aux = src->Hours*36000;
+		aux = src->Minutes*600;
+		aux = src->Seconds*10;
+	}
+
+	return aux;
+}
+
 void ActualizarRTC(const char *src)
 {
 	RTC_t auxrtc;
 
 	auxrtc.Hours 	= (src[0]-'0')*10;
-	auxrtc.Hours 	= (src[1]-'0');
+	auxrtc.Hours 	+= (src[1]-'0');
 	auxrtc.Minutes 	= (src[2]-'0')*10;
-	auxrtc.Minutes 	= (src[3]-'0');
+	auxrtc.Minutes 	+= (src[3]-'0');
 	auxrtc.Seconds 	= (src[4]-'0')*10;
-	auxrtc.Seconds 	= (src[5]-'0');
+	auxrtc.Seconds 	+= (src[5]-'0');
 
 	SetRTCTime(&auxrtc);
 

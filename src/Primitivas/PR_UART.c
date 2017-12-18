@@ -82,7 +82,8 @@ void Mensaje ( void )
 	static uint8_t comandoDatos = 0;
 	static uint8_t datosTomados = 0;
 	//static uint8_t auxDatos = 0;
-	static char auxRTC [DATOS_ESPERADOS_RTC];
+	static char auxRTC [DATOS_ESPERADOS_RTC] = {0};
+	static char auxCFG [DATOS_ESPERADOS_CONFIG] = {0};
 	static EstadosGenerales estadoRiego;
 
 	static ESTADOS_TRAMA trama = ESPERANDO_INICIO_DE_TRAMA;
@@ -156,14 +157,15 @@ void Mensaje ( void )
 			case ESPERANDO_DATOS:
 				if(comandoDatos == 'R')
 				{
-					while((datosTomados < DATOS_ESPERADOS_RTC) && (dato > '9' && dato < '0'))
+					if((datosTomados < DATOS_ESPERADOS_RTC) && (dato > '9' && dato < '0'))
 					{
 						auxRTC[datosTomados] = dato;
 						datosTomados++;
 					}
-
 					if(datosTomados ==  DATOS_ESPERADOS_RTC)
 					{
+						datosTomados = 0;
+						comandoDatos = 0;
 						ActualizarRTC(auxRTC);
 						trama = ESPERANDO_FIN_DE_TRAMA;
 					}
@@ -175,7 +177,23 @@ void Mensaje ( void )
 				}
 				else if(comandoDatos == 'C')
 				{
-
+					if((datosTomados < DATOS_ESPERADOS_CONFIG) && (dato > '9' && dato < '0'))
+					{
+						auxCFG[datosTomados] = dato;
+						datosTomados++;
+					}
+					if(datosTomados == DATOS_ESPERADOS_CONFIG)
+					{
+						datosTomados = 0;
+						comandoDatos = 0;
+						CargarConfiguracion(auxCFG);
+						trama = ESPERANDO_FIN_DE_TRAMA;
+					}
+					else
+					{
+						TransmitirString("ERROR\r\n\0");
+						trama = ESPERANDO_INICIO_DE_TRAMA;
+					}
 				}
 				break;
 
