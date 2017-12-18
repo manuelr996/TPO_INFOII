@@ -26,7 +26,6 @@ int main(void)
 
 	while(1)
     {
-		FromGetTimer(1440,MIN);
 		Mensaje();
 		MaquinaGeneral();
 		TimerEvent();
