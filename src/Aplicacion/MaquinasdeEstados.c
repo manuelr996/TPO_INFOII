@@ -122,7 +122,7 @@ void PrintPotenciometro(void)
 
 void PrintHour(void)
 {
-	AlarmTime = FromGetTimer(GetPotenciometroHora()*2.8, MIN); //1440 = 24*60 => 4095/2.8 = 1462 -> Valor maximo del Potenciometro
+	AlarmTime = FromGetTimer(GetPotenciometroHora(), MIN); //1440 = 24*60 => 4095/2.8 = 1462 -> Valor maximo del Potenciometro
 
 	ComponerTemporizador(&TemporizadoTime,vString);
 
@@ -160,7 +160,7 @@ void SetHumedadMaxima (void)
 		HumedadMaxima = GetPotenciometroHumedad();
 		TimerStart(E_Potenciometro,T_Potenciometro,PrintHour,B_Potenciometro);
 		Display_LCD( "Config Temporiza" , RENGLON_1 , 0 );
-		Display_LCD( "Tiempo=        m" , RENGLON_2 , 0 );
+		Display_LCD( "Tiempo=         " , RENGLON_2 , 0 );
 		EstadoConfiguracion = TEMPORIZADOR;
 	}
 }

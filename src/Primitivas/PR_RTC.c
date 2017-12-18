@@ -129,7 +129,11 @@ RTC_t FromGetTimer(uint32_t tiempo, uint8_t base)
 	{
 	case MIN:
 		aux.DayOfWeek = tiempo/1440;
-		aux.Hours 	  = (tiempo%1440);
+		if(aux.DayOfWeek > 0)
+		{
+			tiempo -= 1440;
+		}
+		aux.Hours 	  = ((float)tiempo)/60;
 		aux.Minutes   = tiempo%60;
 		break;
 	case SEG:

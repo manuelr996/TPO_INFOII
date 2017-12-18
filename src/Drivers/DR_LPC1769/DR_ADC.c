@@ -32,7 +32,7 @@
  *** VARIABLES GLOBALES PUBLICAS
  **********************************************************************************************************************************/
 volatile uint8_t 	HumedadSuelo;
-volatile uint8_t	vPotenciometro;
+volatile uint32_t	vPotenciometro;
 volatile uint8_t	Temperatura;
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO

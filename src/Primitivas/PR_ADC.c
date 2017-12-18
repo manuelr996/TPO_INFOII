@@ -64,14 +64,14 @@ uint8_t GetHumedadSuelo (void)
  	\author Tomás Bautista Ordóñez
  	\date 9 oct. 2017
 */
-uint8_t GetPotenciometroHumedad (void)
+uint32_t GetPotenciometroHumedad (void)
 {
 	return (100 - ( vPotenciometro / 41 ));
 }
 
-uint8_t GetPotenciometroHora(void)
+uint32_t GetPotenciometroHora(void)
 {
-	return vPotenciometro;
+	return vPotenciometro/2.8;
 }
 
 /**

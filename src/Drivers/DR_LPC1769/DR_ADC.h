@@ -117,7 +117,7 @@ typedef struct
  **********************************************************************************************************************************/
 // extern tipo nombreVariable;
 extern volatile uint8_t HumedadSuelo;
-extern volatile uint8_t	vPotenciometro;
+extern volatile uint32_t	vPotenciometro;
 extern volatile uint8_t	Temperatura;
 /***********************************************************************************************************************************
  *** PROTOTIPOS DE FUNCIONES GLOBALES
