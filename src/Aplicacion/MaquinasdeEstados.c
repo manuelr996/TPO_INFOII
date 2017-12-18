@@ -158,6 +158,7 @@ void SetHumedadMaxima (void)
 	if(btn == B_OK)
 	{
 		HumedadMaxima = GetPotenciometroHumedad();
+		TimerStart(E_Potenciometro,T_Potenciometro,PrintHour,B_Potenciometro);
 		Display_LCD( "Config Temporiza" , RENGLON_1 , 0 );
 		Display_LCD( "Tiempo=        m" , RENGLON_2 , 0 );
 		EstadoConfiguracion = TEMPORIZADOR;
@@ -168,8 +169,7 @@ void SetTemporizador(void)
 {
 	if(btn == B_OK)
 	{
-		T_Riego = GetPotenciometroHumedad()*60;
-		TimerStart(E_Potenciometro,T_Potenciometro,PrintHour,B_Potenciometro);
+		T_Riego = GetPotenciometroHora()*60;
 		Display_LCD( "Config Hora     " , RENGLON_1 , 0 );
 		Display_LCD( "Hora=           " , RENGLON_2 , 0 );
 		EstadoConfiguracion = HORA_RIEGO;
