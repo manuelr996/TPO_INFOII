@@ -199,12 +199,14 @@ void CloseEstados(void)
 
 void ComponerTemporizador(RTC_t *timer, char *dest)
 {
-	dest[0] = timer->Minutes/10 - '0';
-	dest[1] = timer->Minutes%10 - '0';
+	dest[0] = (timer->Hours/10) + '0';
+	dest[1] = (timer->Hours%10) + '0';
 	dest[2] = ':';
-	dest[3] = timer->Seconds/10 - '0';
-	dest[4] = timer->Seconds%10 - '0';
-	dest[5] = 0;
+	dest[3] = (timer->Minutes/10) + '0';
+	dest[4] = (timer->Minutes%10) + '0';
+	dest[5] = ':';
+	dest[6] = (timer->Seconds/10) + '0';
+	dest[7] = (timer->Seconds%10) + '0';
+	dest[8] = 0;
 }
-
 

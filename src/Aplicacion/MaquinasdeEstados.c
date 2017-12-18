@@ -41,7 +41,7 @@ uint32_t T_Riego;
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
 uint8_t btn;
-char vString[6];
+char vString[9];
 RTC_t AlarmTime;
 RTC_t TemporizadoTime;
 /***********************************************************************************************************************************
@@ -124,7 +124,7 @@ void PrintHour(void)
 {
 	AlarmTime = FromGetTimer(GetPotenciometroHora(), MIN); //1440 = 24*60 => 4095/2.8 = 1462 -> Valor maximo del Potenciometro
 
-	ComponerTemporizador(&TemporizadoTime,vString);
+	ComponerTemporizador(&AlarmTime,vString);
 
 	Display_LCD(vString, RENGLON_2, 9);
 
