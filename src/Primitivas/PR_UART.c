@@ -176,7 +176,7 @@ void Mensaje ( void )
 				}
 				else if(comandoDatos == 'C')
 				{
-					if((datosTomados < DATOS_ESPERADOS_CONFIG) && (dato > '9' && dato < '0'))
+					if((datosTomados < DATOS_ESPERADOS_CONFIG) && ((dato > '9' && dato < '0') || dato == ':'))
 					{
 						auxCFG[datosTomados] = dato;
 						datosTomados++;

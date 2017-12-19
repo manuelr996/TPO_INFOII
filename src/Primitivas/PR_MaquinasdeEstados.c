@@ -129,20 +129,23 @@ void CloseConfiguracion(void)
 void CargarConfiguracion(const char *src) //recibe las configuraciones en un formato hhHHhhmmHHMM
 {
 	RTC_t aux;
-
+	EV_RIEGO_ON;
 	HumedadMinima 		= (src[0] - '0')*10;
 	HumedadMinima 		+= (src[1] - '0');
 	HumedadMaxima 		= (src[2] - '0')*10;
 	HumedadMaxima 		+= (src[3] - '0');
 	aux.Hours			= (src[4] - '0')*10;
 	aux.Hours			+= (src[5] - '0');
-	aux.Minutes			= (src[6] - '0')*10;
-	aux.Minutes			+= (src[7] - '0');
+	//un espacio por los ':'
+	aux.Minutes			= (src[7] - '0')*10;
+	aux.Minutes			+= (src[8] - '0');
 	T_Riego = ToTimer(&aux,SEG);
-	AlarmTime.Hours		= (src[8] - '0')*10;
-	AlarmTime.Hours 	+= (src[9] - '0');
-	AlarmTime.Minutes	= (src[10] - '0')*10;
-	AlarmTime.Minutes 	+= (src[11] - '0');
+	AlarmTime.Hours		= (src[9] - '0')*10;
+	AlarmTime.Hours 	+= (src[10] - '0');
+	//un espacio por los ':'
+	AlarmTime.Minutes	= (src[12] - '0')*10;
+	AlarmTime.Minutes 	+= (src[13] - '0');
+	EV_RIEGO_OFF;
 }
 
 void ComponerPotenciometro(uint8_t pot, char *dest)
