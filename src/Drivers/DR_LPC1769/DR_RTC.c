@@ -63,9 +63,9 @@ void InitRTC (void)
 	RTC_AUXEN = 0x8;
 
 	//Habilitamos la interrupcion de alarmas en la hora y minuto
-	RTC_AMR = 0x6;
+	RTC_AMR = ~(0x7);
 
-	defaultTime.Seconds = 0; // se carga un tiempo default en 0
+	ISER0 |= (0x1 << 17);
 
 	TimerStart(E_RTC,T_RTC,TimeUpdate,B_RTC);
 }

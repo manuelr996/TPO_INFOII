@@ -17,6 +17,8 @@
  **********************************************************************************************************************************/
 #define DATOS_ESPERADOS_RTC 6
 #define DATOS_ESPERADOS_CONFIG 18
+#define MENSAJE_ERROR "#ERROR$"
+#define MENSAJE_OK "#OK$"
 /***********************************************************************************************************************************
  *** MACROS PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -100,13 +102,11 @@ void Mensaje ( void )
 
 				if ( dato == '#')
 				{
-
 					trama = ESPERANDO_COMANDO;
-					TransmitirString("A\r\n\0");
 				}
 
 				else
-					TransmitirString("ERROR\r\n\0");
+					TransmitirString(MENSAJE_ERROR);
 
 				break;
 
@@ -146,8 +146,7 @@ void Mensaje ( void )
 				}
 				else
 				{
-					strcpy(Buffer_Auxiliar, "ERROR\r\n\0");
-					TransmitirString(Buffer_Auxiliar);
+					TransmitirString(MENSAJE_ERROR);
 					trama = ESPERANDO_INICIO_DE_TRAMA;
 				}
 				SwitchEstados(estadoRiego);
@@ -171,7 +170,7 @@ void Mensaje ( void )
 					}
 					else
 					{
-						TransmitirString("ERROR\r\n\0");
+						TransmitirString(MENSAJE_ERROR);
 						trama = ESPERANDO_INICIO_DE_TRAMA;
 					}
 				}
@@ -191,7 +190,7 @@ void Mensaje ( void )
 					}
 					else
 					{
-						TransmitirString("ERROR\r\n\0");
+						TransmitirString(MENSAJE_ERROR);
 						trama = ESPERANDO_INICIO_DE_TRAMA;
 					}
 				}
@@ -205,12 +204,13 @@ void Mensaje ( void )
 				}
 				else
 				{
-					TransmitirString("ERROR\r\n\0");
+					TransmitirString(MENSAJE_ERROR);
 				}
 				break;
 
 			default:
-				Display_LCD("#ERROR\r\n\0", RENGLON_2 , 0 );
+				TransmitirString(MENSAJE_ERROR);
+				trama = ESPERANDO_INICIO_DE_TRAMA;
 				break;
 		}
 	}
