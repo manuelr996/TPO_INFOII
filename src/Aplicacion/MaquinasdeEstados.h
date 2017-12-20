@@ -107,7 +107,7 @@ void SetHumedadMinimaDecenas(void);
 void SetHumedadMinimaUnidades(void);
 void SetHumedadMaximaDecenas(void);
 void SetHumedadMaximaUnidades(void);
-void SetTemporizador(void);
+void SetTemporizadorHH(void);
 void SetHoraTemporizador(void);
 void ConfiguracionFinalizada(void);
 

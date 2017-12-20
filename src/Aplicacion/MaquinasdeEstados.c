@@ -15,7 +15,17 @@
 /***********************************************************************************************************************************
  *** DEFINES PRIVADOS AL MODULO
  **********************************************************************************************************************************/
-#define T_Print 4
+#define T_Print 3
+
+#define Hs24_en_Seg 86399
+#define Hr_en_Seg 	3600
+
+#define Hr 0
+#define Min 1
+#define Seg 2
+
+#define Decena 0
+#define Unidad 1
 /***********************************************************************************************************************************
  *** MACROS PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -48,7 +58,7 @@ uint32_t T_Riego;
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
 uint8_t btnConfig;
-uint8_t d = 0;
+uint8_t vUnidad = 0;
 int32_t vConfig = 0;
 char vString[9];
 RTC_t AlarmTime;
@@ -127,7 +137,7 @@ void PrintHumedad(void)
 	ComponerPotenciometro(vConfig,vString);
 	Display_LCD(vString, RENGLON_2, 12);
 
-	if(d)
+	if(vUnidad == Decena)
 		MoverCursorLCD(13,RENGLON_2);
 	else
 		MoverCursorLCD(14,RENGLON_2);
@@ -138,12 +148,19 @@ void PrintHumedad(void)
 //TODO: Adaptar Funcionamiento a botones.
 void PrintHour(void)
 {
-	AlarmTime = FromGetTimer(vConfig, MIN); //1440 = 24*60 => 4095/2.8 = 1462 -> Valor maximo del Potenciometro
+	AlarmTime = FromGetTimer(vConfig, SEG); //1440 = 24*60 => 4095/2.8 = 1462 -> Valor maximo del Potenciometro
 
 	ComponerTemporizador(&AlarmTime,vString);
 
 	Display_LCD(vString, RENGLON_2, 8);
-	MoverCursorLCD(9,RENGLON_2);
+	if(vUnidad == Hr)
+	{
+		MoverCursorLCD(9,RENGLON_2);
+	}
+	else if(vUnidad == Min)
+	{
+		MoverCursorLCD(12,RENGLON_2);
+	}
 	SetTimer(E_Potenciometro,T_Potenciometro);
 }
 
@@ -154,7 +171,7 @@ void ConfiguracionInicializada (void)
 	{
 		Display_LCD(" Humedad Minima ", RENGLON_1 , 0 );
 		Display_LCD("Humedad Min=   %", RENGLON_2 , 0 );
-		d = 1;
+		vUnidad = Decena;
 		TimerStart(E_Potenciometro,T_Potenciometro,PrintHumedad,B_Potenciometro);
 		EstadoConfiguracion = HUMEDADMINIMA_D;
 	}
@@ -179,14 +196,19 @@ void SetHumedadMinimaDecenas (void)
 			vConfig = 100;
 		break;
 	case ADELANTE:
-		d = 0;	//editamos unidades
+		vUnidad = Unidad;	//editamos unidades
 		EstadoConfiguracion = HUMEDADMINIMA_U;
 		break;
 	case SALIR:
+		HumedadMinima = vConfig;
+		TimerStop(E_Potenciometro);
+		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
+		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
 		break;
 	}
 }
+
 void SetHumedadMinimaUnidades (void)
 {
 	btnConfig = getTecla();
@@ -201,16 +223,23 @@ void SetHumedadMinimaUnidades (void)
     		vConfig++;
     	break;
     case ATRAS:
-		d = 1; //editamos decenas
+		vUnidad = Decena; //editamos decenas
 		EstadoConfiguracion = HUMEDADMINIMA_D;
 		break;
     case ADELANTE:
 		HumedadMinima = vConfig;
     	Display_LCD(" Humedad Maxima ", RENGLON_1, 0);
     	Display_LCD("Humedad Max=   %", RENGLON_2, 0);
-    	d = 1; //editamos decenas
+    	vUnidad = Decena; //editamos decenas
     	EstadoConfiguracion = HUMEDADMAXIMA_D;
     	break;
+	case SALIR:
+		HumedadMinima = vConfig;
+		TimerStop(E_Potenciometro);
+		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
+		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
+		EstadoConfiguracion = CERRAR_CONFIGURACION;
+		break;
     }
 }
 
@@ -232,14 +261,21 @@ void SetHumedadMaximaDecenas (void)
 			vConfig = 100;
 		break;
     case ATRAS:
-    	d = 0; //editamos unidades
+    	vUnidad = Unidad; //editamos unidades
 		Display_LCD(" Humedad Minima ", RENGLON_1 , 0 );
 		Display_LCD("Humedad Min=   %", RENGLON_2 , 0 );
 		EstadoConfiguracion = HUMEDADMINIMA_U;
 		break;
     case ADELANTE:
-		d = 0; //editamos unidades
+		vUnidad = Unidad; //editamos unidades
 		EstadoConfiguracion = HUMEDADMAXIMA_U;
+		break;
+	case SALIR:
+		HumedadMaxima = vConfig;
+		TimerStop(E_Potenciometro);
+		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
+		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
+		EstadoConfiguracion = CERRAR_CONFIGURACION;
 		break;
     }
 }
@@ -258,27 +294,60 @@ void SetHumedadMaximaUnidades(void)
     		vConfig++;
     	break;
     case ATRAS:
-    	d = 1;
+    	vUnidad = Decena;
     	EstadoConfiguracion = HUMEDADMAXIMA_D;
+    	break;
 	case ADELANTE:
 		HumedadMaxima = vConfig;
+		vUnidad = Hr;
 		TimerStart(E_Potenciometro,T_Potenciometro,PrintHour,B_Potenciometro);
-		Display_LCD( "Config Temporiza" , RENGLON_1 , 0 );
+		Display_LCD( " Temp. de Riego " , RENGLON_1 , 0 );
 		Display_LCD( "Tiempo=         " , RENGLON_2 , 0 );
-		//EstadoConfiguracion = TEMPORIZADOR_HH;
+		EstadoConfiguracion = TEMPORIZADOR_HH;
+		break;
+	case SALIR:
+		HumedadMaxima = vConfig;
+		TimerStop(E_Potenciometro);
+		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
+		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
+		EstadoConfiguracion = CERRAR_CONFIGURACION;
 		break;
 	}
 }
 
-void SetTemporizador(void)
+void SetTemporizadorHH(void)
 {
-	if(btn == B_OK)
+	btnConfig = getTecla();
+	switch(btnConfig)
 	{
-		T_Riego = GetPotenciometroHora()*60;
-		Display_LCD( "Config Hora     " , RENGLON_1 , 0 );
-		Display_LCD( "Hora=           " , RENGLON_2 , 0 );
-		EstadoConfiguracion = HORA_RIEGO_HH;
+	case SUMAR:
+		if((vConfig+Hr_en_Seg) < Hs24_en_Seg)
+			vConfig += Hr_en_Seg;
+		else
+			vConfig = Hs24_en_Seg;
+		break;
+	case RESTAR:
+		if((vConfig-Hr_en_Seg) > 0)
+			vConfig -= Hr_en_Seg;
+		else
+			vConfig = 0;
+		break;
+	case ATRAS:
+    	Display_LCD(" Humedad Maxima ", RENGLON_1, 0);
+    	Display_LCD("Humedad Max=   %", RENGLON_2, 0);
+    	vUnidad = Unidad;
+    	EstadoConfiguracion = HUMEDADMAXIMA_U;
+		break;
 	}
+}
+
+void SetTemporizadorMM(void)
+{
+
+}
+void SetTemporizadorSS(void)
+{
+
 }
 void SetHoraTemporizador(void)
 {
