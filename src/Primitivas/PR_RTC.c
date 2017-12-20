@@ -137,9 +137,9 @@ RTC_t FromGetTimer(uint32_t tiempo, uint8_t base)
 		aux.Minutes   = tiempo%60;
 		break;
 	case SEG:
-		aux.Hours 	= tiempo/3600;
-		aux.Minutes = tiempo/60;
-		aux.Seconds = tiempo%60;
+		aux.Hours 	= (tiempo/=3600);
+		aux.Minutes = (tiempo/=60);
+		aux.Seconds = tiempo;
 		break;
 	case DEC:
 		aux.Hours	= tiempo/36000;

@@ -55,7 +55,8 @@ uint8_t	Demora_LCD; /*!< Variable para realizar las demoras necesarias en la ini
  * @brief Funcion encargada de inicializar el LCD
  */
 
-void InitLCD( void ){
+void InitLCD( void )
+{
 	uint16_t i;
 
 	SetPINSEL( LCD_D4 , 0 );

@@ -41,7 +41,8 @@ void (*MaquinaConfiguracion[])(void) = {ConfiguracionInicializada
 										,SetHumedadMinimaDecenas
 										,SetHumedadMinimaUnidades
 										,SetHumedadMaximaDecenas
-										,SetTemporizador
+										,SetHumedadMaximaUnidades
+										,SetTemporizadorHH
 										,SetHoraTemporizador
 										,ConfiguracionFinalizada};
 void (*MaquinaManual[])(void) = {RiegoOff, RiegoOn};
