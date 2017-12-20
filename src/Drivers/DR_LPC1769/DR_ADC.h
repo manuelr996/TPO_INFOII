@@ -68,7 +68,7 @@
 
 #define 	ADCevent 		0
 #define		ADCbase			DEC
-#define 	ADCTHtime		5
+#define 	ADCTHtime		2
 #define 	ADCPtime		1
 
 #define		STOP			0
@@ -86,7 +86,7 @@
 
 #define 	POTE 				5
 #define 	S_HUMEDAD 			2
-#define 	S_TEMPERATURA		1
+#define 	S_TEMPERATURA		5 //antes era 1
 /***********************************************************************************************************************************
  *** MACROS GLOBALES
  **********************************************************************************************************************************/

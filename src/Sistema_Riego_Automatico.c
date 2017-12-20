@@ -29,7 +29,6 @@ int main(void)
 		Mensaje();
 		MaquinaGeneral();
 		TimerEvent();
-		MostrarSensores();
     }
 	return 0;
 }

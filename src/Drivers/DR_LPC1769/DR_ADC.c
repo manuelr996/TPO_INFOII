@@ -74,10 +74,10 @@ void InitADC ( void )
 	//Pines:
 	SetPINSEL( AD02 , PINSEL_FUNC1 );		//Configuro el pin con el que voy a convertir con funcionADC (Sensor de Humedad)
 	SetMODE( AD02 , NONE );					//Configuro el pin con neither pull-up nor pull-down
-	SetPINSEL( AD05 , PINSEL_FUNC3 );		//Configuro el pin con el que voy a convertir con funcionADC (Potenciometro)
+	SetPINSEL( AD05 , PINSEL_FUNC3 );		//Configuro el pin con el que voy a convertir con funcionADC (Sensor de Temperatura) ex potenciometro
 	SetMODE( AD05 , NONE );					//Configuro el pin con neither pull-up nor pull-down
-	SetPINSEL( AD01 , PINSEL_FUNC1 );		//Configuro el pin con el que voy a convertir con funcionADC (Sensor de Temperatura)
-	SetMODE( AD01 , NONE );					//Configuro el pin con neither pull-up nor pull-down
+	//SetPINSEL( AD01 , PINSEL_FUNC1 );		//Configuro el pin con el que voy a convertir con funcionADC (Sensor de Temperatura)
+	//SetMODE( AD01 , NONE );					//Configuro el pin con neither pull-up nor pull-down
 
 	//Interrupciones:
 	AD0INTEN = 1 << ADINTEN_GLOB;			//Interrumpe el flag DONE del registro global
@@ -101,11 +101,13 @@ void ADC_IRQHandler( void )
 			case S_HUMEDAD:
 				HumedadSuelo = 	 100 - ( conversion / 41 );			//Cargo la conversion al buffer
 				break;
-			case POTE:
-				vPotenciometro = conversion;										//Cargo la conversion al buffer
+			/*
+			 * case POTE:
+				vPotenciometro = conversion;						//Cargo la conversion al buffer
 				break;
+			*/
 			case S_TEMPERATURA:
-				Temperatura = (conversion* 330 ) / 4095;			//Cargo la conversion al buffer				4095_____3300mV    LM35=>   10mV____1ºC				Temperatura = (ADC*330)/4095																					//	 ADC_____x=ADCmV		   ADCmV____x=Temperatura
+				Temperatura = (conversion* 330 ) / 4096;			//Cargo la conversion al buffer				4095_____3300mV    LM35=>   10mV____1ºC				Temperatura = (ADC*330)/4095																					//	 ADC_____x=ADCmV		   ADCmV____x=Temperatura
 				break;
 			default:
 				break;
