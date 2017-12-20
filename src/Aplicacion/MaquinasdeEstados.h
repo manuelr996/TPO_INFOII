@@ -66,10 +66,16 @@ typedef enum
 typedef enum
 {
 	INIT_CONFIGURACION = 0,
-	HUMEDADMINIMA,
-	HUMEDADMAXIMA,
-	TEMPORIZADOR,
-	HORA_RIEGO,
+	HUMEDADMINIMA_D,
+	HUMEDADMINIMA_U,
+	HUMEDADMAXIMA_D,
+	HUMEDADMAXIMA_U,
+	TEMPORIZADOR_HH,
+	TEMPORIZADOR_MM,
+	TEMPORIZADOR_SS,
+	HORA_RIEGO_HH,
+	HORA_RIEGO_MM,
+	HORA_RIEGO_SS,
 	CERRAR_CONFIGURACION
 }EstadosConfiguracion;
 
@@ -82,7 +88,6 @@ extern EstadosManual EstadoManual;
 extern EstadosTemporizado EstadoTemporizado;
 extern EstadosAutomatico EstadoAutomatico;
 
-extern uint8_t btn;
 extern uint32_t T_Riego;
 extern struct RTC_t AlarmTime;
 /***********************************************************************************************************************************
@@ -95,17 +100,22 @@ void RiegoOff(void);
 void RiegoAutomaticoOn(void);
 void RiegoAutomaticoOff(void);
 
-void PrintPotenciometro(void);
+void PrintHumedad(void);
 void PrintHour(void);
 void ConfiguracionInicializada(void);
-void SetHumedadMinima(void);
-void SetHumedadMaxima(void);
+void SetHumedadMinimaDecenas(void);
+void SetHumedadMinimaUnidades(void);
+void SetHumedadMaximaDecenas(void);
+void SetHumedadMaximaUnidades(void);
 void SetTemporizador(void);
 void SetHoraTemporizador(void);
 void ConfiguracionFinalizada(void);
 
 void AguardandoOk(void);
 void PrintTimer(void);
+void PrintAlarm(void);
+void PrintStatus(void);
+void PrintCurrentTime(void);
 void VolverAguardando(void);
 void RiegoTemporizado(void);
 #endif /* APLICACION_MAQUINASDEESTADOS_H_ */

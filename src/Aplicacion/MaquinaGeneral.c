@@ -15,7 +15,7 @@
 /***********************************************************************************************************************************
  *** DEFINES PRIVADOS AL MODULO
  **********************************************************************************************************************************/
-
+uint8_t btn;
 /***********************************************************************************************************************************
  *** MACROS PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -37,7 +37,13 @@
  **********************************************************************************************************************************/
 EstadosGenerales Estado;
 
-void (*MaquinaConfiguracion[])(void) = {ConfiguracionInicializada, SetHumedadMinima, SetHumedadMaxima, SetTemporizador, SetHoraTemporizador,ConfiguracionFinalizada};
+void (*MaquinaConfiguracion[])(void) = {ConfiguracionInicializada
+										,SetHumedadMinimaDecenas
+										,SetHumedadMinimaUnidades
+										,SetHumedadMaximaDecenas
+										,SetTemporizador
+										,SetHoraTemporizador
+										,ConfiguracionFinalizada};
 void (*MaquinaManual[])(void) = {RiegoOff, RiegoOn};
 void (*MaquinaTemporizado[])(void) = {AguardandoOk, RiegoTemporizado};
 void (*MaquinaAutomatico[])(void) = {RiegoAutomaticoOn, RiegoAutomaticoOff};
@@ -63,7 +69,8 @@ void (*MaquinaAutomatico[])(void) = {RiegoAutomaticoOn, RiegoAutomaticoOff};
 */
 void MaquinaGeneral (void)
 {
-	btn = getTecla();
+	if(Estado!=CONFIGURACION)
+		btn = getTecla();
 
 	switch(Estado)
 	{

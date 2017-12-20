@@ -55,5 +55,5 @@
  **********************************************************************************************************************************/
 void Display_lcd( char *, char, char);
 void Display_LCD( char *, char , char );
-
+void MoverCursorLCD(uint8_t,uint8_t);
 #endif /* SRC_DRIVERINFOTRONIC_PR_LCD_H_ */

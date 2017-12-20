@@ -118,7 +118,8 @@ void Display_LCD( char *msg , char r , char p )
 {
 	uint8_t i;
 
-	switch( r ){
+	switch( r )
+	{
 		case RENGLON_1:
 			PushLCD( p + 0x80 , LCD_CONTROL );
 			break;
@@ -157,7 +158,16 @@ void GuardarMensajeLCD( char *mensaje, char *lugar )
 
 }
 
-void PantallaPrincipal ( void )
+void MoverCursorLCD(uint8_t chr,uint8_t rgl)
 {
+	switch( rgl )
+	{
+		case RENGLON_1:
+			PushLCD( chr + 0x80 , LCD_CONTROL );
+			break;
 
+		case RENGLON_2:
+			PushLCD( chr + 0xC0 , LCD_CONTROL );
+			break;
+	}
 }

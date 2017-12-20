@@ -71,8 +71,9 @@ void Inicializacion ( void )
 	//OWire_Init();		//DS18B20
 	InitInfotronic();  	//Sensores, Teclado, LEDs(placa), Relays
 	InitLCD ();			//LCD
-	InitUART0(); 		// UArt 0
+	InitUART0(); 		//UART 0
 	ElectroValvula_Off();
+	TimerStart(E_Display,T_Display,MostrarSensores,B_Display);
 
 	Ev1SecuenciaTempHumedad(); //Inicia secuencia de conversiones temperatura-humedad
 }

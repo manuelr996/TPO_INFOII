@@ -89,7 +89,7 @@ void Mensaje ( void )
 	static EstadosGenerales estadoRiego;
 
 	static ESTADOS_TRAMA trama = ESPERANDO_INICIO_DE_TRAMA;
-	char Buffer_Auxiliar[10];
+	//char Buffer_Auxiliar[10];
 
 	dato = PopRX();
 

@@ -26,6 +26,7 @@
 #include "PR_SoftTimers.h"
 #include "DR_ElectroValvula.h"
 #include "MaquinaGeneral.h"
+#include "Funciones.h"
 #include "DR_Infotronic.h"
 /***********************************************************************************************************************************
  *** DEFINES GLOBALES

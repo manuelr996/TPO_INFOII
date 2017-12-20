@@ -131,7 +131,7 @@ uint8_t GetRFStatus( uint8_t puerto, uint8_t bit )
 */
 void ClearGPIOInt( uint8_t puerto, uint8_t bit )
 {
-    uint32_t *p = DIRIO0IntClr;
+     uint32_t *p = DIRIO0IntClr;
 
     if( puerto )
     	p = DIRIO2IntClr;         	//Posiciono correctamente a p apuntando a DIRIO0IntClr o DIRIO2IntClr

@@ -55,9 +55,13 @@
 */
 void MostrarSensores( void )
 {
+	uint32_t Humedad = GetHumedadSuelo();
+	char aux[6];
 	FuncLluvia();
-	Display( GetHumedadSuelo() , DSP1 );
-	Display( GetTemperatura()  , DSP0 );
+	Display( Humedad , DSP1 );
+	ComponerHumedad(aux,Humedad);
+	TransmitirString(aux);
+	SetTimer(E_Display,T_Display);
 }
 /**
 	\fn  FuncLluvia
@@ -71,4 +75,13 @@ void FuncLluvia( void )
 		LedLluvia_On();
 	else
 		LedLluvia_Off();
+}
+
+void ComponerHumedad(char *string, uint32_t Hum)
+{
+	string[0] = '#';
+	string[1] = 'h';
+	string[2] = (Hum/10) + '0';
+	string[3] = (Hum%10) + '0';
+	string[4] = '$';
 }

@@ -114,8 +114,9 @@ void InitConfiguracion( void )
 	CloseEstados();
 	PrenderLed(ROJO);
 	TransmitirString("#C$");
-	Display_LCD("Configuracion   ", RENGLON_1, 0);
-	Display_LCD("OK p/continuar  ", RENGLON_2, 0);
+	Display_LCD(" Configuracion  ", RENGLON_1, 0);
+	Display_LCD(" OK p/continuar ", RENGLON_2, 0);
+	PushLCD(0x0D,LCD_CONTROL);
 	EstadoAnterior = Estado;
 	IniciarPotenciometro();
 }
@@ -152,15 +153,17 @@ void ComponerPotenciometro(uint8_t pot, char *dest)
 {
 	if(pot == 100)
 	{
-		dest = "100%";
+		dest[0] = '1';
+		pot = 0;
 	}
 	else
 	{
 		dest[0] = '0';
-		dest[1] = pot/10 + '0';
-		dest[2] = pot%10 + '0';
-		dest[3] = '\0';
 	}
+
+	dest[1] = pot/10 + '0';
+	dest[2] = pot%10 + '0';
+	dest[3] = '\0';
 }
 
 void InitAutomatico(void)
@@ -188,7 +191,7 @@ void InitTemporizado(void)
 	PrenderLed(VERDE);
 	TransmitirString("#T$");
 	Display_LCD("Modo Temporizado" , RENGLON_1 , 0 );
-	Display_LCD("  Timer:  OFF   " , RENGLON_2 , 0 );
+	TimerStart(E_Potenciometro,T_Potenciometro,PrintCurrentTime,B_Potenciometro);
 }
 
 void CloseEstados(void)
