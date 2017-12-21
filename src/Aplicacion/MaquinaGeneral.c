@@ -37,14 +37,23 @@ uint8_t btn;
  **********************************************************************************************************************************/
 EstadosGenerales Estado;
 
-void (*MaquinaConfiguracion[])(void) = {ConfiguracionInicializada
-										,SetHumedadMinimaDecenas
-										,SetHumedadMinimaUnidades
-										,SetHumedadMaximaDecenas
-										,SetHumedadMaximaUnidades
-										,SetTemporizadorHH
-										,SetHoraTemporizador
-										,ConfiguracionFinalizada};
+void (*MaquinaConfiguracion[])(void) = {ConfiguracionInicializada  	//INIT_CONFIGURACION
+										,SetHumedadMinimaDecenas	//HUMEDADMINIMA_D
+										,SetHumedadMinimaUnidades	//HUMEDADMINIMA_U
+										,SetHumedadMaximaDecenas	//HUMEDADMAXIMA_D
+										,SetHumedadMaximaUnidades	//HUMEDADMAXMIA_U
+										,SetTemporizadorHH			//TEMPORIZADOR_HH
+										,SetTemporizadorMMD			//TEMPORIZADOR_MMD
+										,SetTemporizadorMMU			//TEMPORIZADOR_MMU
+										,SetTemporizadorSSD			//TEMPORIZADOR_SSD
+										,SetTemporizadorSSU			//TEMPORIZADOR_SSU
+										,SetHoraRiegoHH				//HORA_RIEGO_HH
+										,SetHoraRiegoMMD			//HORA_RIEGO_MMD
+										,SetHoraRiegoMMU			//HORA_RIEGO_MMU
+										,SetHoraRiegoSSD			//HORA_RIEGO_SSD
+										,SetHoraRiegoSSU			//HORA_RIEGO_SSU
+										,ConfiguracionFinalizada};	//CERRAR_CONFIGURACION
+
 void (*MaquinaManual[])(void) = {RiegoOff, RiegoOn};
 void (*MaquinaTemporizado[])(void) = {AguardandoOk, RiegoTemporizado};
 void (*MaquinaAutomatico[])(void) = {RiegoAutomaticoOn, RiegoAutomaticoOff};

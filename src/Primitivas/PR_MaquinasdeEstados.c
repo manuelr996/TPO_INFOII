@@ -123,6 +123,7 @@ void InitConfiguracion( void )
 
 void CloseConfiguracion(void)
 {
+	PushLCD(0x0C, LCD_CONTROL);
 	DetenerPotenciometro();
 	SwitchEstados(EstadoAnterior);
 }

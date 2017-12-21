@@ -125,6 +125,7 @@ typedef struct		//Estructura para registro CTIME
  **********************************************************************************************************************************/
 // extern tipo nombreVariable;
 extern RTC_t currentTime;
+extern RTC_t Alarm;
 extern uint8_t AlarmBuffer;
 /***********************************************************************************************************************************
  *** PROTOTIPOS DE FUNCIONES GLOBALES

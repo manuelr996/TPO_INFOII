@@ -3,7 +3,7 @@
  * @file		PR_RTC.c
  * @brief		Descripcion del modulo
  * @date		16 dic. 2017
- * @author		Tomás Bautista Ordóñez
+ * @author		Rafaele Manuel Adrian
  *
  **********************************************************************************************************************************/
 
@@ -48,8 +48,8 @@
  *** FUNCIONES GLOBALES AL MODULO
  **********************************************************************************************************************************/
 /**
-	\fn  Nombre de la Funcion
-	\brief Descripcion
+	\fn  SetAlarm
+	\brief Setea la alarma
  	\author Manuel A. Rafaele
  	\date 16 dic. 2017
  	\param [in] parametros de entrada
@@ -59,8 +59,9 @@
 
 void SetAlarm(struct RTC_t *rtc)
 {
-	RTC_ALMIN = rtc->Minutes;
-	RTC_ALHOUR = rtc->Hours;
+	Alarm.Hours	 = rtc->Hours;
+	Alarm.Minutes = rtc->Minutes;
+	Alarm.Seconds = rtc->Seconds;
 }
 
 void DecrementoTiempo(RTC_t *rtc)
@@ -81,7 +82,15 @@ void DecrementoTiempo(RTC_t *rtc)
 	else
 		rtc->Seconds--;
 }
-
+/**
+	\fn  IncrementoTiempo
+	\brief Descripcion
+ 	\author Manuel A. Rafaele
+ 	\date 16 dic. 2017
+ 	\param [in] parametros de entrada
+ 	\param [out] parametros de salida
+	\return tipo y descripcion de retorno
+*/
 void IncrementoTiempo(RTC_t *rtc)
 {
 	if(rtc->Seconds == 59)
@@ -100,12 +109,28 @@ void IncrementoTiempo(RTC_t *rtc)
 	else
 		rtc->Seconds++;
 }
-
+/**
+	\fn  GetTime
+	\brief Descripcion
+ 	\author Manuel A. Rafaele
+ 	\date 16 dic. 2017
+ 	\param [in] parametros de entrada
+ 	\param [out] parametros de salida
+	\return tipo y descripcion de retorno
+*/
 RTC_t GetTime(void)
 {
 	return currentTime;
 }
-
+/**
+	\fn  DiferenciaTiempos
+	\brief Descripcion
+ 	\author Manuel A. Rafaele
+ 	\date 16 dic. 2017
+ 	\param [in] parametros de entrada
+ 	\param [out] parametros de salida
+	\return tipo y descripcion de retorno
+*/
 RTC_t DiferenciaTiempos(RTC_t *rtc)
 {
 	RTC_t aux = {0};
@@ -114,14 +139,30 @@ RTC_t DiferenciaTiempos(RTC_t *rtc)
 	aux.Minutes = currentTime.Minutes - rtc->Minutes;
 	return aux;
 }
-
+/**
+	\fn  Alarma
+	\brief Descripcion
+ 	\author Manuel A. Rafaele
+ 	\date 16 dic. 2017
+ 	\param [in] parametros de entrada
+ 	\param [out] parametros de salida
+	\return tipo y descripcion de retorno
+*/
 uint8_t Alarma(void)
 {
 	uint8_t aux = AlarmBuffer;
 	AlarmBuffer = 0;
 	return aux;
 }
-
+/**
+	\fn  Nombre de la Funcion
+	\brief Descripcion
+ 	\author Manuel A. Rafaele
+ 	\date 16 dic. 2017
+ 	\param [in] parametros de entrada
+ 	\param [out] parametros de salida
+	\return tipo y descripcion de retorno
+*/
 RTC_t FromGetTimer(uint32_t tiempo, uint8_t base)
 {
 	RTC_t aux = {0};
@@ -129,27 +170,37 @@ RTC_t FromGetTimer(uint32_t tiempo, uint8_t base)
 	{
 	case MIN:
 		aux.DayOfWeek = tiempo/1440;
-		if(aux.DayOfWeek > 0)
-		{
-			tiempo -= 1440;
-		}
-		aux.Hours 	  = ((float)tiempo)/60;
-		aux.Minutes   = tiempo%60;
+		tiempo %= 1440;
+		aux.Hours 	  = tiempo/60;
+		tiempo %= 60;
+		aux.Minutes   = tiempo;
 		break;
 	case SEG:
-		aux.Hours 	= (tiempo/=3600);
-		aux.Minutes = (tiempo/=60);
+		aux.Hours 	= tiempo/3600;
+		tiempo%=3600;
+		aux.Minutes = tiempo/60;
+		tiempo%=60;
 		aux.Seconds = tiempo;
 		break;
 	case DEC:
 		aux.Hours	= tiempo/36000;
-		aux.Minutes = tiempo%36000;
+		tiempo%=36000;
+		aux.Minutes = tiempo/3600;
+		tiempo%=3600;
 		aux.Seconds = tiempo-((aux.Hours*3600)+(aux.Minutes*60));
 		break;
 	}
 	return aux;
 }
-
+/**
+	\fn  Nombre de la Funcion
+	\brief Descripcion
+ 	\author Manuel A. Rafaele
+ 	\date 16 dic. 2017
+ 	\param [in] parametros de entrada
+ 	\param [out] parametros de salida
+	\return tipo y descripcion de retorno
+*/
 uint32_t ToTimer(RTC_t *src, uint8_t base)
 {
 	uint32_t aux = 0;
@@ -172,7 +223,15 @@ uint32_t ToTimer(RTC_t *src, uint8_t base)
 
 	return aux;
 }
-
+/**
+	\fn  Nombre de la Funcion
+	\brief Descripcion
+ 	\author Manuel A. Rafaele
+ 	\date 16 dic. 2017
+ 	\param [in] parametros de entrada
+ 	\param [out] parametros de salida
+	\return tipo y descripcion de retorno
+*/
 void ActualizarRTC(const char *src)
 {
 	RTC_t auxrtc;

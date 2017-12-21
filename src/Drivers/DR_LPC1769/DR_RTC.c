@@ -34,6 +34,7 @@
  **********************************************************************************************************************************/
 RTC_t currentTime;
 RTC_t defaultTime = {0};
+RTC_t Alarm;
 uint8_t AlarmBuffer;
 
 /***********************************************************************************************************************************
@@ -67,7 +68,7 @@ void InitRTC (void)
 
 	ISER0 |= (0x1 << 17);
 
-	TimerStart(E_RTC,T_RTC,TimeUpdate,B_RTC);
+	TimerStart(E_RTC,T_RTC,TimeUpdate,B_RTC); //inicio un timer que refresque los buffers
 }
 
 void TimeUpdate(void)
@@ -79,6 +80,11 @@ void TimeUpdate(void)
 	currentTime.DayofMonth = RTC_CTIME->CTIME1.bits.DayOfMonth;
 	currentTime.Month = RTC_CTIME->CTIME1.bits.Month;
 	currentTime.Year = RTC_CTIME->CTIME1.bits.Year;
+
+	RTC_ALMIN = Alarm.Minutes;
+	RTC_ALHOUR = Alarm.Hours;
+	RTC_ALSEC = Alarm.Seconds;
+
 	SetTimer(E_RTC,T_RTC);
 }
 
