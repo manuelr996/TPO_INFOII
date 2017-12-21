@@ -68,7 +68,7 @@
 
 #define 	ADCevent 		0
 #define		ADCbase			DEC
-#define 	ADCTHtime		2
+#define 	ADCTHtime		5
 #define 	ADCPtime		1
 
 #define		STOP			0
@@ -87,10 +87,13 @@
 #define 	POTE 				5
 #define 	S_HUMEDAD 			2
 #define 	S_TEMPERATURA		5 //antes era 1
+
+#define 	TAMBUFFERTEMP		20
 /***********************************************************************************************************************************
  *** MACROS GLOBALES
  **********************************************************************************************************************************/
-
+#define 	ConvHum(x)   		100-((x)/41)
+#define 	ConvTemp(x)			(((x)*330)*10)/4096		//*10 para poder usar el decimal mas facil
 /***********************************************************************************************************************************
  *** TIPO DE DATOS GLOBALES
  **********************************************************************************************************************************/
@@ -116,9 +119,9 @@ typedef struct
  *** VARIABLES GLOBALES
  **********************************************************************************************************************************/
 // extern tipo nombreVariable;
-extern volatile uint8_t HumedadSuelo;
+extern volatile uint8_t 	HumedadSuelo;
 extern volatile uint32_t	vPotenciometro;
-extern volatile uint8_t	Temperatura;
+extern volatile uint16_t	bufferTemp[ TAMBUFFERTEMP ];
 /***********************************************************************************************************************************
  *** PROTOTIPOS DE FUNCIONES GLOBALES
  **********************************************************************************************************************************/

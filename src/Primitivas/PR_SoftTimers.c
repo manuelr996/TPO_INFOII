@@ -76,7 +76,7 @@ void TimerStart(uint8_t event, uint32_t time, Timer_Handler handler , uint8_t ba
 			time *= MINUTOS;
 			break;
 		case CEN:
-			time += CENTESIMAS;
+			time *= CENTESIMAS;
 	}
 
 	Tmr_Run[event] = time;
@@ -114,7 +114,7 @@ void SetTimer( uint8_t event, uint32_t time )
 			time *= MINUTOS;
 			break;
 		case CEN:
-			time += CENTESIMAS;
+			time *= CENTESIMAS;
 	}
 	Tmr_Run[event] = time;
 }

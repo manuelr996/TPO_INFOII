@@ -56,21 +56,20 @@
 void MostrarSensores( void )
 {
 	uint8_t Humedad = GetHumedadSuelo();
-	uint8_t Temp = GetTemperatura();
+	float Temp = GetTemperatura();
 
 	char aux[6];
 
 
 	FuncLluvia();
 
-	Display( Temp , DSP0 );
 	Display( Humedad , DSP1 );
-
 	ComponerMedicion( aux , Humedad );
 	TransmitirString( aux );
 
-	ComponerMedicion( aux , Temp );
-	TransmitirString( aux );
+	Display( Temp , DSP0 );
+	//ComponerMedicion( aux , Temp );
+	//TransmitirString( aux );
 
 	SetTimer(E_Display,T_Display);
 }

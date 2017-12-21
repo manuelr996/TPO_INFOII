@@ -69,20 +69,32 @@ const uint8_t Tabla_Digitos_BCD_7seg[10] = { 0x3f, 0x06, 0x5B, 0x4f, 0x66, 0x6D,
 	TICKINT = 1;
 }*/
 
-void Display(unsigned int Val,unsigned char dsp)
+void Display(float Val,unsigned char dsp)
 {
 	unsigned char a ;
+	uint8_t Fflag = 0;
+	uint16_t ValInt;
 	char aux[4];
+
+	ValInt = (uint16_t)Val;
 	aux[0] = aux[1] = aux[2] = aux[3] = 0;
 
+	if( Val - ValInt != 0 )				//Evaluo si tiene decimales
+	{
+		ValInt = (uint16_t)(Val*10);
+		Fflag = 1;
+	}
 	// Convierto a 7 Seg.
 	for(a = 2 ; a ; a-- )
 	{
-		aux[a] = Tabla_Digitos_BCD_7seg[ Val % 10];
-		Val /= 10;
+		aux[a] = Tabla_Digitos_BCD_7seg[ ValInt % 10];
+		ValInt /= 10;
 	}
 
-	aux[ 0 ] = Tabla_Digitos_BCD_7seg[ Val ];
+	aux[ 0 ] = Tabla_Digitos_BCD_7seg[ ValInt ];
+
+	if( Fflag )
+		aux[ 1 ] |= 1 << 7; //pongo el dp
 
 	switch(dsp)
 	{

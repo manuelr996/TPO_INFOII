@@ -42,7 +42,7 @@
 uint8_t GetHumedadSuelo (void);
 uint32_t GetPotenciometroHumedad (void);
 uint32_t GetPotenciometroHora (void);
-uint8_t GetTemperatura (void);
+float GetTemperatura (void);
 
 void Ev1SecuenciaTempHumedad ( void );
 void Ev2SecuenciaTempHUmedad ( void );

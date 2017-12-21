@@ -33,7 +33,7 @@
  **********************************************************************************************************************************/
 volatile uint8_t 	HumedadSuelo;
 volatile uint32_t	vPotenciometro;
-volatile uint8_t	Temperatura;
+volatile uint16_t	bufferTemp[ TAMBUFFERTEMP ]={250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250};
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -92,14 +92,14 @@ void ADC_IRQHandler( void )
 {
 	uint32_t lectura = AD0GDR;
 	uint32_t conversion;
-
+	static uint8_t indTemp = 0;
 
 	conversion = ( lectura >> ADDR_RESULTBIT ) & ADDR_RESULTMASK;	//Dejo el dato de la conversion bien expresado
 
 	switch ( (lectura >> CHINBIT) & CHINMASK  )						//Hago un switch con el CHIN (ultimo canal convertido)
 		{
 			case S_HUMEDAD:
-				HumedadSuelo = 	 100 - ( conversion / 41 );			//Cargo la conversion al buffer
+				HumedadSuelo = 	 ConvHum(conversion);			//Cargo la conversion al buffer
 				break;
 			/*
 			 * case POTE:
@@ -107,7 +107,9 @@ void ADC_IRQHandler( void )
 				break;
 			*/
 			case S_TEMPERATURA:
-				Temperatura = (conversion* 330 ) / 4096;			//Cargo la conversion al buffer				4095_____3300mV    LM35=>   10mV____1ºC				Temperatura = (ADC*330)/4095																					//	 ADC_____x=ADCmV		   ADCmV____x=Temperatura
+				bufferTemp[ indTemp ] = ConvTemp(conversion);		//Cargo la conversion al array buffer				4095_____3300mV    LM35=>   10mV____1ºC				Temperatura = (ADC*330)/4095																					//	 ADC_____x=ADCmV		   ADCmV____x=Temperatura
+				indTemp++;
+				indTemp %= TAMBUFFERTEMP;
 				break;
 			default:
 				break;

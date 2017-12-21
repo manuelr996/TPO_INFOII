@@ -53,5 +53,5 @@
  *** PROTOTIPOS DE FUNCIONES GLOBALES
  **********************************************************************************************************************************/
 //void Display(unsigned int);
-void Display(unsigned int Val,unsigned char dsp);
+void Display(float Val,unsigned char dsp);
 #endif /* PR_7SEG_H_ */
