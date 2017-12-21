@@ -15,7 +15,8 @@
 /***********************************************************************************************************************************
  *** DEFINES PRIVADOS AL MODULO
  **********************************************************************************************************************************/
-
+#define temp 0
+#define hum 1
 /***********************************************************************************************************************************
  *** MACROS PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -58,19 +59,19 @@ void MostrarSensores( void )
 	uint8_t Humedad = GetHumedadSuelo();
 	uint16_t Temp = GetTemperatura();
 
-	char aux[6];
+	char aux[8];
 
 
 	FuncLluvia();
 
 	Display( Humedad , DSP1 );
-	ComponerMedicion( aux , Humedad );
+	ComponerMedicion( aux , Humedad, hum);
 	TransmitirString( aux );
 
 	Display( Temp , DSP0 );
 	PrenderDP(1);
-	//ComponerMedicion( aux , Temp );
-	//TransmitirString( aux );
+	ComponerMedicion( aux , Temp, temp);
+	TransmitirString( aux );
 
 	SetTimer(E_Display,T_Display);
 }
@@ -88,11 +89,26 @@ void FuncLluvia( void )
 		LedLluvia_Off();
 }
 
-void ComponerMedicion(char *string, uint8_t med)
+void ComponerMedicion(char *string, uint8_t med, uint8_t flag)
 {
 	string[0] = '#';
-	string[1] = 'h';
-	string[2] = (med/10) + '0';
-	string[3] = (med%10) + '0';
-	string[4] = '$';
+	if(flag == temp)
+	{
+		string[1] = 't';
+		string[2] = (med/100) +'0' ;
+		med%=100;
+		string[3] = (med/10) +'0';
+		med%=10;
+		string[4] = med+'0';
+		string[5] = '$';
+		string[7] = '\0';
+	}
+	else
+	{
+		string[1] = 'h';
+		string[2] = (med/10) + '0';
+		string[3] = (med%10) + '0';
+		string[4] = '$';
+		string[6] = '\0';
+	}
 }

@@ -84,8 +84,8 @@ void Mensaje ( void )
 	static uint8_t comandoDatos = 0;
 	static uint8_t datosTomados = 0;
 	//static uint8_t auxDatos = 0;
-	static uint16_t auxRTC [DATOS_ESPERADOS_RTC] = {0};
-	static uint16_t auxCFG [DATOS_ESPERADOS_CONFIG] = {0};
+	static char auxRTC [DATOS_ESPERADOS_RTC] = {0};
+	static char auxCFG [DATOS_ESPERADOS_CONFIG] = {0};
 	static EstadosGenerales estadoRiego;
 
 	static ESTADOS_TRAMA trama = ESPERANDO_INICIO_DE_TRAMA;
@@ -113,29 +113,29 @@ void Mensaje ( void )
 					estadoRiego = MANUAL;
 					trama = ESPERANDO_FIN_DE_TRAMA;
 				}
-				if(dato == 'A')
+				else if(dato == 'A')
 				{
 					estadoRiego = AUTOMATICO;
 					trama = ESPERANDO_FIN_DE_TRAMA;
 				}
-				if(dato == 'T')
+				else if(dato == 'T')
 				{
 					estadoRiego = TEMPORIZADO;
 					trama = ESPERANDO_FIN_DE_TRAMA;
 				}
-				if(dato == 'C')
+				else if(dato == 'C')
 				{
 					estadoRiego = NO_KEY;
 					comandoDatos = 'C';
 					trama = ESPERANDO_DATOS;
 				}
-				if(dato == 'R')
+				else if(dato == 'R')
 				{
 					estadoRiego = NO_KEY;
 					comandoDatos = 'R';
 					trama = ESPERANDO_DATOS;
 				}
-				if(dato == 'O')
+				else if(dato == 'O')
 				{
 					UartOk = 1;
 					trama = ESPERANDO_FIN_DE_TRAMA;
@@ -152,9 +152,9 @@ void Mensaje ( void )
 			case ESPERANDO_DATOS:
 				if(comandoDatos == 'R')
 				{
-					if((datosTomados < DATOS_ESPERADOS_RTC) && (dato < '9' && dato > '0'))
+					if((datosTomados < DATOS_ESPERADOS_RTC) && (dato <= '9' && dato >= '0'))
 					{
-						auxRTC[datosTomados] = dato;
+						auxRTC[datosTomados] = (char) dato;
 						datosTomados++;
 					}
 					if(datosTomados ==  DATOS_ESPERADOS_RTC)
@@ -172,9 +172,9 @@ void Mensaje ( void )
 				}
 				else if(comandoDatos == 'C')
 				{
-					if((datosTomados < DATOS_ESPERADOS_CONFIG) && ((dato < '9' && dato > '0') || dato == ':'))
+					if((datosTomados < DATOS_ESPERADOS_CONFIG) && ((dato <= '9' && dato >= '0') || dato == ':'))
 					{
-						auxCFG[datosTomados] = dato;
+						auxCFG[datosTomados] = (char)dato;
 						datosTomados++;
 					}
 					if(datosTomados == DATOS_ESPERADOS_CONFIG)

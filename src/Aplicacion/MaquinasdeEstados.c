@@ -304,10 +304,10 @@ void SetHumedadMaximaUnidades(void)
     case SUMAR:
     	if(vConfig<100)
     		vConfig++;
+    	break;
 	case RESTAR:
     	if(vConfig > HumedadMinima)
     		vConfig--;
-    	break;
     	break;
 	case ADELANTE:
 		HumedadMaxima = vConfig;

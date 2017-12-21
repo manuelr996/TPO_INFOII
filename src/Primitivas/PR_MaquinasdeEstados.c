@@ -128,7 +128,7 @@ void CloseConfiguracion(void)
 	SwitchEstados(EstadoAnterior);
 }
 
-void CargarConfiguracion(const char *src) //recibe las configuraciones en un formato hhHHhhmmHHMM
+void CargarConfiguracion(const int16_t *src) //recibe las configuraciones en un formato hhHHhhmmHHMM
 {
 	RTC_t aux;
 	EV_RIEGO_ON;

@@ -232,7 +232,7 @@ uint32_t ToTimer(RTC_t *src, uint8_t base)
  	\param [out] parametros de salida
 	\return tipo y descripcion de retorno
 */
-void ActualizarRTC(const uint16_t *src)
+void ActualizarRTC(const char *src)
 {
 	RTC_t auxrtc;
 

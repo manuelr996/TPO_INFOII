@@ -134,8 +134,6 @@ int16_t PopTX( void )
 		outTX ++;
 		outTX %= MAX_BUFF_TX;
 	}
-	else
-		flagTx = 0;
 	return salida;
 }
 
@@ -186,14 +184,14 @@ void UART0_IRQHandler (void)
 		{
 			dato=PopTX();
 			if( dato != -1)
-				UART0THR = dato;
-//			else
-//				flagTx = 0;
+				UART0THR = (char)dato;
+			else
+				flagTx = 0;
 		}
 		if ( iir & 0x04 ) //Data ready
 		{
 			aux=UART0RBR;
-			PushRX(aux );
+			PushRX(aux);
 		}
 
 	}
