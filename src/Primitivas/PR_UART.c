@@ -84,8 +84,8 @@ void Mensaje ( void )
 	static uint8_t comandoDatos = 0;
 	static uint8_t datosTomados = 0;
 	//static uint8_t auxDatos = 0;
-	static char auxRTC [DATOS_ESPERADOS_RTC] = {0};
-	static char auxCFG [DATOS_ESPERADOS_CONFIG] = {0};
+	static uint16_t auxRTC [DATOS_ESPERADOS_RTC] = {0};
+	static uint16_t auxCFG [DATOS_ESPERADOS_CONFIG] = {0};
 	static EstadosGenerales estadoRiego;
 
 	static ESTADOS_TRAMA trama = ESPERANDO_INICIO_DE_TRAMA;
@@ -104,10 +104,6 @@ void Mensaje ( void )
 				{
 					trama = ESPERANDO_COMANDO;
 				}
-
-				else
-					TransmitirString(MENSAJE_ERROR);
-
 				break;
 
 			case ESPERANDO_COMANDO:
@@ -156,7 +152,7 @@ void Mensaje ( void )
 			case ESPERANDO_DATOS:
 				if(comandoDatos == 'R')
 				{
-					if((datosTomados < DATOS_ESPERADOS_RTC) && (dato > '9' && dato < '0'))
+					if((datosTomados < DATOS_ESPERADOS_RTC) && (dato < '9' && dato > '0'))
 					{
 						auxRTC[datosTomados] = dato;
 						datosTomados++;
@@ -176,7 +172,7 @@ void Mensaje ( void )
 				}
 				else if(comandoDatos == 'C')
 				{
-					if((datosTomados < DATOS_ESPERADOS_CONFIG) && ((dato > '9' && dato < '0') || dato == ':'))
+					if((datosTomados < DATOS_ESPERADOS_CONFIG) && ((dato < '9' && dato > '0') || dato == ':'))
 					{
 						auxCFG[datosTomados] = dato;
 						datosTomados++;

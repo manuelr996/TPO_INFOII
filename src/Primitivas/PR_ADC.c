@@ -80,15 +80,15 @@ uint32_t GetPotenciometroHora(void)
  	\author Tomás Bautista Ordóñez
  	\date 9 oct. 2017
 */
-float GetTemperatura (void)
+uint16_t GetTemperatura (void)
 {
 	uint8_t i;
-	float Temperatura = 0;
+	uint16_t Temperatura = 0;
 	for( i = 0 ; i < TAMBUFFERTEMP ; i++ )
 		Temperatura += bufferTemp[ i ];
 
-	Temperatura /= (float)TAMBUFFERTEMP;
-	Temperatura /= (float)10;				//para acomodar la temperatura a 2 decena, unidad y decimales
+	Temperatura /= TAMBUFFERTEMP;
+
 	return Temperatura;
 }
 

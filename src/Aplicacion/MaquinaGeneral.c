@@ -42,12 +42,14 @@ void (*MaquinaConfiguracion[])(void) = {ConfiguracionInicializada  	//INIT_CONFI
 										,SetHumedadMinimaUnidades	//HUMEDADMINIMA_U
 										,SetHumedadMaximaDecenas	//HUMEDADMAXIMA_D
 										,SetHumedadMaximaUnidades	//HUMEDADMAXMIA_U
-										,SetTemporizadorHH			//TEMPORIZADOR_HH
+										,SetTemporizadorHHD			//TEMPORIZADOR_HH
+										,SetTemporizadorHHU			//TEMPORIZADOR_HH
 										,SetTemporizadorMMD			//TEMPORIZADOR_MMD
 										,SetTemporizadorMMU			//TEMPORIZADOR_MMU
 										,SetTemporizadorSSD			//TEMPORIZADOR_SSD
 										,SetTemporizadorSSU			//TEMPORIZADOR_SSU
-										,SetHoraRiegoHH				//HORA_RIEGO_HH
+										,SetHoraRiegoHHD			//HORA_RIEGO_HH
+										,SetHoraRiegoHHU			//HORA_RIEGO_HH
 										,SetHoraRiegoMMD			//HORA_RIEGO_MMD
 										,SetHoraRiegoMMU			//HORA_RIEGO_MMU
 										,SetHoraRiegoSSD			//HORA_RIEGO_SSD

@@ -24,6 +24,7 @@ int main(void)
 {
 	Inicializacion();
 
+
 	while(1)
     {
 		Mensaje();

@@ -39,14 +39,14 @@
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PUBLICAS
  **********************************************************************************************************************************/
-uint8_t BufferRx[MAX_BUFF_RX];
-uint8_t BufferTx[MAX_BUFF_TX];
+uint8_t BufferRx[MAX_BUFF_RX] = {0};
+uint8_t BufferTx[MAX_BUFF_TX] = {0};
 uint8_t	inRX,outRX,inTX,outTX;
 
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
-uint8_t flagTx;
+uint8_t flagTx = 0;
 
 /***********************************************************************************************************************************
  *** PROTOTIPO DE FUNCIONES PRIVADAS AL MODULO
@@ -134,6 +134,8 @@ int16_t PopTX( void )
 		outTX ++;
 		outTX %= MAX_BUFF_TX;
 	}
+	else
+		flagTx = 0;
 	return salida;
 }
 
@@ -185,9 +187,8 @@ void UART0_IRQHandler (void)
 			dato=PopTX();
 			if( dato != -1)
 				UART0THR = dato;
-			else
-				flagTx = 0;
-
+//			else
+//				flagTx = 0;
 		}
 		if ( iir & 0x04 ) //Data ready
 		{

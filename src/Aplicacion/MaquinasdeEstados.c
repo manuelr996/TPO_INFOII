@@ -22,11 +22,12 @@
 #define Min_en_Seg	60
 
 
-#define Hr 	 0
-#define MinD 1
-#define MinU 2
-#define SegU 3
-#define SegD 4
+#define HrD	 0
+#define HrU	 1
+#define MinD 2
+#define MinU 3
+#define SegU 4
+#define SegD 5
 
 #define Decena 0
 #define Unidad 1
@@ -161,7 +162,9 @@ void PrintHour(void)
 
 	Display_LCD(vString, RENGLON_2, 8);
 
-	if(vUnidad == Hr)
+	if(vUnidad == HrD)
+		MoverCursorLCD(8,RENGLON_2);
+	else if(vUnidad == HrU)
 		MoverCursorLCD(9,RENGLON_2);
 	else if(vUnidad == MinD)
 		MoverCursorLCD(11,RENGLON_2);
@@ -308,11 +311,11 @@ void SetHumedadMaximaUnidades(void)
     	break;
 	case ADELANTE:
 		HumedadMaxima = vConfig;
-		vUnidad = Hr;
+		vUnidad = HrD;
 		TimerStart(E_Potenciometro,T_Potenciometro,PrintHour,B_Potenciometro);
 		Display_LCD( " Temp. de Riego " , RENGLON_1 , 0 );
 		Display_LCD( "Tiempo=         " , RENGLON_2 , 0 );
-		EstadoConfiguracion = TEMPORIZADOR_HH;
+		EstadoConfiguracion = TEMPORIZADOR_HHD;
 		break;
     case ATRAS:
     	vUnidad = Decena;
@@ -329,7 +332,46 @@ void SetHumedadMaximaUnidades(void)
 	}
 }
 
-void SetTemporizadorHH(void)
+void SetTemporizadorHHD(void)
+{
+	btnConfig = getTecla();
+	switch(btnConfig)
+	{
+	case SUMAR:
+		if((vConfig+Hr_en_Seg*10) < Hs24_en_Seg)
+			vConfig += Hr_en_Seg*10;
+		else
+			vConfig = Hs24_en_Seg;
+		break;
+	case RESTAR:
+		if((vConfig-Hr_en_Seg*10) > 0)
+			vConfig -= Hr_en_Seg*10;
+		else
+			vConfig = 0;
+		break;
+	case ADELANTE:
+		vUnidad = HrU;
+		EstadoConfiguracion = TEMPORIZADOR_HHU;
+		break;
+	case ATRAS:
+    	Display_LCD(" Humedad Maxima ", RENGLON_1, 0);
+    	Display_LCD("Humedad Max=   %", RENGLON_2, 0);
+		TimerStart(E_Potenciometro,T_Potenciometro,PrintHumedad,B_Potenciometro);
+    	vUnidad = Unidad;
+		vConfig = 0;
+    	EstadoConfiguracion = HUMEDADMAXIMA_U;
+		break;
+	case SALIR:
+		T_Riego = vConfig;
+		vConfig = 0;
+		TimerStop(E_Potenciometro);
+		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
+		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
+		EstadoConfiguracion = CERRAR_CONFIGURACION;
+		break;
+	}
+}
+void SetTemporizadorHHU(void)
 {
 	btnConfig = getTecla();
 	switch(btnConfig)
@@ -351,12 +393,8 @@ void SetTemporizadorHH(void)
 		EstadoConfiguracion = TEMPORIZADOR_MMD;
 		break;
 	case ATRAS:
-    	Display_LCD(" Humedad Maxima ", RENGLON_1, 0);
-    	Display_LCD("Humedad Max=   %", RENGLON_2, 0);
-		TimerStart(E_Potenciometro,T_Potenciometro,PrintHumedad,B_Potenciometro);
-    	vUnidad = Unidad;
-		vConfig = 0;
-    	EstadoConfiguracion = HUMEDADMAXIMA_U;
+		vUnidad = HrD;
+		EstadoConfiguracion = TEMPORIZADOR_HHD;
 		break;
 	case SALIR:
 		T_Riego = vConfig;
@@ -375,13 +413,13 @@ void SetTemporizadorMMD(void)
 	switch(btnConfig)
 	{
 	case SUMAR:
-		if((vConfig+Min_en_Seg) < Hs24_en_Seg)
+		if((vConfig+Min_en_Seg*10) < Hs24_en_Seg)
 			vConfig += Min_en_Seg*10;
 		else
 			vConfig = Hs24_en_Seg;
 		break;
 	case RESTAR:
-		if((vConfig-Min_en_Seg) > 0)
+		if((vConfig-Min_en_Seg*10) > 0)
 			vConfig -= Min_en_Seg*10;
 		else
 			vConfig = 0;
@@ -391,8 +429,8 @@ void SetTemporizadorMMD(void)
 		EstadoConfiguracion = TEMPORIZADOR_MMU;
 		break;
 	case ATRAS:
-		vUnidad = Hr;
-		EstadoConfiguracion = TEMPORIZADOR_HH;
+		vUnidad = HrU;
+		EstadoConfiguracion = TEMPORIZADOR_HHU;
 		break;
 	case SALIR:
 		T_Riego = vConfig;
@@ -493,10 +531,10 @@ void SetTemporizadorSSU(void)
 		break;
 	case ADELANTE:
 		T_Riego = vConfig;
-		vUnidad = Hr;
+		vUnidad = HrD;
 		Display_LCD("   Hora Alarma   ", RENGLON_1, 0);
 		Display_LCD( "Hora:           ", RENGLON_2, 0);
-		EstadoConfiguracion = HORA_RIEGO_HH;
+		EstadoConfiguracion = HORA_RIEGO_HHD;
 		break;
 	case ATRAS:
 		vUnidad = SegD;
@@ -513,7 +551,46 @@ void SetTemporizadorSSU(void)
 	}
 }
 
-void SetHoraRiegoHH(void)
+void SetHoraRiegoHHD(void)
+{
+	btnConfig = getTecla();
+	switch(btnConfig)
+	{
+	case SUMAR:
+		if((vConfig+Hr_en_Seg*10) < Hs24_en_Seg)
+			vConfig += Hr_en_Seg*10;
+		else
+			vConfig = Hs24_en_Seg;
+		break;
+	case RESTAR:
+		if((vConfig-Hr_en_Seg*10) > 0)
+			vConfig -= Hr_en_Seg*10;
+		else
+			vConfig = 0;
+		break;
+	case ADELANTE:
+		vUnidad = HrU;
+		EstadoConfiguracion = HORA_RIEGO_HHU;
+		break;
+	case ATRAS:
+		vUnidad = SegU;
+		Display_LCD( " Temp. de Riego " , RENGLON_1 , 0 );
+		Display_LCD( "Tiempo=         " , RENGLON_2 , 0 );
+		EstadoConfiguracion = TEMPORIZADOR_SSU;
+		break;
+	case SALIR:
+		SetAlarm(&AlarmTime);
+		vConfig = 0;
+		TimerStop(E_Potenciometro);
+		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
+		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
+		EstadoConfiguracion = CERRAR_CONFIGURACION;
+		break;
+	}
+
+}
+
+void SetHoraRiegoHHU(void)
 {
 	btnConfig = getTecla();
 	switch(btnConfig)
@@ -535,10 +612,8 @@ void SetHoraRiegoHH(void)
 		EstadoConfiguracion = HORA_RIEGO_MMD;
 		break;
 	case ATRAS:
-		vUnidad = SegU;
-		Display_LCD( " Temp. de Riego " , RENGLON_1 , 0 );
-		Display_LCD( "Tiempo=         " , RENGLON_2 , 0 );
-		EstadoConfiguracion = TEMPORIZADOR_SSU;
+		vUnidad = HrD;
+		EstadoConfiguracion = HORA_RIEGO_HHD;
 		break;
 	case SALIR:
 		SetAlarm(&AlarmTime);
@@ -573,8 +648,8 @@ void SetHoraRiegoMMD(void)
 		EstadoConfiguracion = HORA_RIEGO_MMU;
 		break;
 	case ATRAS:
-		vUnidad = Hr;
-		EstadoConfiguracion = HORA_RIEGO_HH;
+		vUnidad = HrU;
+		EstadoConfiguracion = HORA_RIEGO_HHU;
 		break;
 	case SALIR:
 		SetAlarm(&AlarmTime);

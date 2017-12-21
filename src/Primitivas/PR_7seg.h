@@ -36,6 +36,7 @@
 #define DSP0        0
 #define DSP1        1
 
+#define POSDP		7
 /***********************************************************************************************************************************
  *** MACROS GLOBALES
  **********************************************************************************************************************************/
@@ -53,5 +54,6 @@
  *** PROTOTIPOS DE FUNCIONES GLOBALES
  **********************************************************************************************************************************/
 //void Display(unsigned int);
-void Display(float Val,unsigned char dsp);
+void Display(unsigned int Val,unsigned char dsp);
+void PrenderDP(uint8_t posicion);
 #endif /* PR_7SEG_H_ */

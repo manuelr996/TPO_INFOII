@@ -56,7 +56,7 @@
 void MostrarSensores( void )
 {
 	uint8_t Humedad = GetHumedadSuelo();
-	float Temp = GetTemperatura();
+	uint16_t Temp = GetTemperatura();
 
 	char aux[6];
 
@@ -68,6 +68,7 @@ void MostrarSensores( void )
 	TransmitirString( aux );
 
 	Display( Temp , DSP0 );
+	PrenderDP(1);
 	//ComponerMedicion( aux , Temp );
 	//TransmitirString( aux );
 

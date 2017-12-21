@@ -70,12 +70,14 @@ typedef enum
 	HUMEDADMINIMA_U,	//Humedad Minima - Unidad
 	HUMEDADMAXIMA_D,	//Humedad Maxima - Decenas
 	HUMEDADMAXIMA_U,	//Humedad Maxima - Unidad
-	TEMPORIZADOR_HH,	//Tiempo Riego - Horas
+	TEMPORIZADOR_HHD,	//Tiempo Riego - Horas
+	TEMPORIZADOR_HHU,	//Tiempo Riego - Horas
 	TEMPORIZADOR_MMD,	//Tiempo Riego - Minutos(Decenas)
 	TEMPORIZADOR_MMU,	//Tiempo Riego - Minutos(Unidades)
 	TEMPORIZADOR_SSD,	//Tiempo Riego - Segundos(Decenas)
 	TEMPORIZADOR_SSU,	//Tiempo Riego - Segundos(Unidades)
-	HORA_RIEGO_HH,		//Hora Riego - Horas
+	HORA_RIEGO_HHD,		//Hora Riego - Horas
+	HORA_RIEGO_HHU,		//Hora Riego - Horas
 	HORA_RIEGO_MMD,		//Hora Riego - Minutos(Decenas)
 	HORA_RIEGO_MMU,		//Hora Riego - Minutos(Unidades)
 	HORA_RIEGO_SSD,		//Hora RIego - Segundos(Decenas)
@@ -111,12 +113,14 @@ void SetHumedadMinimaDecenas(void);
 void SetHumedadMinimaUnidades(void);
 void SetHumedadMaximaDecenas(void);
 void SetHumedadMaximaUnidades(void);
-void SetTemporizadorHH(void);
+void SetTemporizadorHHD(void);
+void SetTemporizadorHHU(void);
 void SetTemporizadorMMD(void);
 void SetTemporizadorMMU(void);
 void SetTemporizadorSSD(void);
 void SetTemporizadorSSU(void);
-void SetHoraRiegoHH(void);
+void SetHoraRiegoHHD(void);
+void SetHoraRiegoHHU(void);
 void SetHoraRiegoMMD(void);
 void SetHoraRiegoMMU(void);
 void SetHoraRiegoSSD(void);
