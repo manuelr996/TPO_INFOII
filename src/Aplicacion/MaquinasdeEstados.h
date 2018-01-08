@@ -33,9 +33,9 @@
 #define B_Riego SEG
 #define E_Riego (uint8_t)1
 
-#define E_Potenciometro (uint8_t)2
-#define B_Potenciometro SEG
-#define T_Potenciometro 1
+#define E_Print (uint8_t)2
+#define B_Print SEG
+#define T_Print 3
 /***********************************************************************************************************************************
  *** MACROS GLOBALES
  **********************************************************************************************************************************/
@@ -95,7 +95,7 @@ extern EstadosTemporizado EstadoTemporizado;
 extern EstadosAutomatico EstadoAutomatico;
 
 extern uint32_t T_Riego;
-extern struct RTC_t AlarmTime;
+extern RTC_t AlarmTime;
 /***********************************************************************************************************************************
  *** PROTOTIPOS DE FUNCIONES GLOBALES
  **********************************************************************************************************************************/
@@ -103,6 +103,9 @@ extern struct RTC_t AlarmTime;
 void RiegoOn(void);
 void RiegoOff(void);
 
+void PrintHumMin(void);
+void PrintHumMax(void);
+void PrintEstadoAutomatico(void);
 void RiegoAutomaticoOn(void);
 void RiegoAutomaticoOff(void);
 

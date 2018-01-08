@@ -66,17 +66,6 @@
 /***********************************************************************************************************************************
  *** TIPO DE DATOS GLOBALES
  **********************************************************************************************************************************/
-typedef struct RTC_t 		//Estructura para las primitivas
-{
-	uint32_t Seconds:6;
-	uint32_t Minutes:6;
-	uint32_t Hours:5;
-	uint32_t DayOfWeek:3;
-	uint32_t DayofMonth:5;
-	uint32_t Month:4;
-	uint32_t Year:12;
-}RTC_t;
-
 typedef struct		//Estructura para registro CTIME
 {
 
@@ -132,6 +121,6 @@ extern uint8_t AlarmBuffer;
  **********************************************************************************************************************************/
 void InitRTC ( void );					/* Inicializa al RTC */
 void TimeUpdate(void);			/* 		Get time	 */
-void SetRTCTime (const struct RTC_t *);		/*		Set time	 */
+void SetRTCTime (const RTC_t *);		/*		Set time	 */
 
 #endif /* DR_RTC_H_ */

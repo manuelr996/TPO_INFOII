@@ -39,7 +39,7 @@
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES
  **********************************************************************************************************************************/
-// extern tipo nombreVariable;
+
 
 /***********************************************************************************************************************************
  *** PROTOTIPOS DE FUNCIONES GLOBALES
@@ -49,9 +49,9 @@ void InitAutomatico(void);
 void InitTemporizado(void);
 void InitConfiguracion(void);
 void CloseConfiguracion(void);
-void CargarConfiguracion(const int16_t*);
+void CargarConfiguracion(const char*);
 void CloseEstados(void);
 void SwitchEstados(uint8_t);
-void ComponerTemporizador(struct RTC_t *, char *);
-void ComponerPotenciometro(uint8_t,char *);
+void ComponerHumedad(uint8_t,char *);
+void ComponerTemporizador(RTC_t *,char*);
 #endif /* PRIMITIVAS_PR_MAQUINASDEESTADOS_H_ */

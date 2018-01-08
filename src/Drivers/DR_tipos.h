@@ -47,6 +47,17 @@ typedef		int					int32_t;
 typedef		short int			int16_t;
 typedef		char				int8_t;
 
+typedef struct	//Estructura para el RTC
+{
+	uint32_t Seconds:6;
+	uint32_t Minutes:6;
+	uint32_t Hours:5;
+	uint32_t DayOfWeek:3;
+	uint32_t DayofMonth:5;
+	uint32_t Month:4;
+	uint32_t Year:12;
+}RTC_t;
+
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES
  **********************************************************************************************************************************/

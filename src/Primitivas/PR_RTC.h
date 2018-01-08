@@ -38,15 +38,15 @@
 /***********************************************************************************************************************************
  *** PROTOTIPOS DE FUNCIONES GLOBALES
  **********************************************************************************************************************************/
-void SetAlarm(struct RTC_t *);
-void DecrementarTiempo(struct RTC_t *);
-void IncrementarTiempo(struct RTC_t *);
+void SetAlarm(RTC_t *);
+void DecrementarTiempo(RTC_t *);
+void IncrementarTiempo(RTC_t *);
 void ActualizarRTC(const char *);
-struct RTC_t GetTime(void);
-struct RTC_t DiferenciaTiempos(struct RTC_t *);
-struct RTC_t FromGetTimer(uint32_t,uint8_t);
+RTC_t GetTime(void);
+RTC_t DiferenciaTiempos(RTC_t *);
+RTC_t FromGetTimer(uint32_t,uint8_t);
 uint8_t Alarma(void);
-uint32_t ToTimer(struct RTC_t *,uint8_t);
+uint32_t ToTimer(RTC_t*,uint8_t);
 
 
 #endif /* PRIMITIVAS_PR_RTC_H_ */

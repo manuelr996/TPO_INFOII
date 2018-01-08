@@ -21,7 +21,6 @@
 #define Hr_en_Seg 	3600
 #define Min_en_Seg	60
 
-
 #define HrD	 0
 #define HrU	 1
 #define MinD 2
@@ -91,7 +90,7 @@ RTC_t TemporizadoTime;
 
 
 ///////////////////////////////////MANUAL///////////////////////////////////
-#if (1)
+
 void RiegoOn ( void )
 {
 	EV_RIEGO_ON;
@@ -115,15 +114,40 @@ void RiegoOff ( void )
 		EstadoManual = RIEGO_ON;
 	}
 }
-#endif
+
 /////////////////////////////////AUTOMATICO/////////////////////////////////
-#if (1)
+
+void PrintHumMin (void)
+{
+	Display_LCD("Humedad Min=   %", RENGLON_2 , 0 );
+	ComponerHumedad(HumedadMinima,vString);
+	Display_LCD(vString, RENGLON_2, 12);
+	TimerStart(E_Print,T_Print,PrintHumMax,B_Print);
+}
+
+void PrintHumMax (void)
+{
+	Display_LCD("Humedad Max=   %", RENGLON_2 , 0 );
+	ComponerHumedad(HumedadMaxima,vString);
+	Display_LCD(vString, RENGLON_2, 12);
+	TimerStart(E_Print,T_Print,PrintEstadoAutomatico,B_Print);
+}
+
+void PrintEstadoAutomatico (void)
+{
+	if(EstadoAutomatico == NO_REGANDO)
+		Display_LCD("   Riego: OFF   " , RENGLON_2 , 0 );
+	else
+		Display_LCD("   Riego: ON    " , RENGLON_2 , 0 );
+
+	TimerStart(E_Print,T_Print,PrintHumMin,B_Print);
+}
+
 void RiegoAutomaticoOn( void )
 {
 	EV_RIEGO_ON;
 	if(CondicionesFin())
 	{
-		Display_LCD("OFF   " , RENGLON_2 , 10 );
 		TransmitirString("#O$");
 		EstadoAutomatico = NO_REGANDO;
 	}
@@ -134,16 +158,16 @@ void RiegoAutomaticoOff( void )
 	EV_RIEGO_OFF;
 	if(CondicionesInicio())
 	{
-		Display_LCD("ON    " , RENGLON_2 , 10 );
+		TransmitirString("#O$");
 		EstadoAutomatico = REGANDO;
 	}
 }
-#endif
+
 ////////////////////////////////CONFIGURACION///////////////////////////////
-#if (1)
+
 void PrintHumedad(void)
 {
-	ComponerPotenciometro(vConfig,vString);
+	ComponerHumedad(vConfig,vString);
 	Display_LCD(vString, RENGLON_2, 12);
 
 	if(vUnidad == Decena)
@@ -151,12 +175,12 @@ void PrintHumedad(void)
 	else
 		MoverCursorLCD(14,RENGLON_2);
 
-	SetTimer(E_Potenciometro,T_Potenciometro);
+	SetTimer(E_Print,T_Print);
 }
 
 void PrintHour(void)
 {
-	AlarmTime = FromGetTimer(vConfig, SEG); //1440 = 24*60 => 4095/2.8 = 1462 -> Valor maximo del Potenciometro
+	AlarmTime = FromGetTimer(vConfig, SEG); //FromGetTimer toma un entero y lo convierte a la estructura rtc
 
 	ComponerTemporizador(&AlarmTime,vString);
 
@@ -175,7 +199,7 @@ void PrintHour(void)
 	else
 		MoverCursorLCD(15,RENGLON_2);
 
-	SetTimer(E_Potenciometro,T_Potenciometro);
+	SetTimer(E_Print,T_Print);
 }
 
 void ConfiguracionInicializada (void)
@@ -186,7 +210,7 @@ void ConfiguracionInicializada (void)
 		Display_LCD(" Humedad Minima ", RENGLON_1 , 0 );
 		Display_LCD("Humedad Min=   %", RENGLON_2 , 0 );
 		vUnidad = Decena;
-		TimerStart(E_Potenciometro,T_Potenciometro,PrintHumedad,B_Potenciometro);
+		TimerStart(E_Print,T_Print,PrintHumedad,B_Print);
 		EstadoConfiguracion = HUMEDADMINIMA_D;
 	}
 }
@@ -215,7 +239,7 @@ void SetHumedadMinimaDecenas (void)
 	case SALIR:
 		HumedadMinima = vConfig;
 		vConfig = 0;
-		TimerStop(E_Potenciometro);
+		TimerStop(E_Print);
 		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
 		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
@@ -250,7 +274,7 @@ void SetHumedadMinimaUnidades (void)
 	case SALIR:
 		HumedadMinima = vConfig;
 		vConfig = 0;
-		TimerStop(E_Potenciometro);
+		TimerStop(E_Print);
 		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
 		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
@@ -288,7 +312,7 @@ void SetHumedadMaximaDecenas (void)
 	case SALIR:
 		HumedadMaxima = vConfig;
 		vConfig = 0;
-		TimerStop(E_Potenciometro);
+		TimerStop(E_Print);
 		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
 		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
@@ -312,7 +336,7 @@ void SetHumedadMaximaUnidades(void)
 	case ADELANTE:
 		HumedadMaxima = vConfig;
 		vUnidad = HrD;
-		TimerStart(E_Potenciometro,T_Potenciometro,PrintHour,B_Potenciometro);
+		TimerStart(E_Print,T_Print,PrintHour,B_Print);
 		Display_LCD( " Temp. de Riego " , RENGLON_1 , 0 );
 		Display_LCD( "Tiempo=         " , RENGLON_2 , 0 );
 		EstadoConfiguracion = TEMPORIZADOR_HHD;
@@ -324,7 +348,7 @@ void SetHumedadMaximaUnidades(void)
 	case SALIR:
 		HumedadMaxima = vConfig;
 		vConfig = 0;
-		TimerStop(E_Potenciometro);
+		TimerStop(E_Print);
 		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
 		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
@@ -356,7 +380,7 @@ void SetTemporizadorHHD(void)
 	case ATRAS:
     	Display_LCD(" Humedad Maxima ", RENGLON_1, 0);
     	Display_LCD("Humedad Max=   %", RENGLON_2, 0);
-		TimerStart(E_Potenciometro,T_Potenciometro,PrintHumedad,B_Potenciometro);
+		TimerStart(E_Print,T_Print,PrintHumedad,B_Print);
     	vUnidad = Unidad;
 		vConfig = 0;
     	EstadoConfiguracion = HUMEDADMAXIMA_U;
@@ -364,13 +388,14 @@ void SetTemporizadorHHD(void)
 	case SALIR:
 		T_Riego = vConfig;
 		vConfig = 0;
-		TimerStop(E_Potenciometro);
+		TimerStop(E_Print);
 		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
 		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
 		break;
 	}
 }
+
 void SetTemporizadorHHU(void)
 {
 	btnConfig = getTecla();
@@ -399,7 +424,7 @@ void SetTemporizadorHHU(void)
 	case SALIR:
 		T_Riego = vConfig;
 		vConfig = 0;
-		TimerStop(E_Potenciometro);
+		TimerStop(E_Print);
 		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
 		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
@@ -435,7 +460,7 @@ void SetTemporizadorMMD(void)
 	case SALIR:
 		T_Riego = vConfig;
 		vConfig = 0;
-		TimerStop(E_Potenciometro);
+		TimerStop(E_Print);
 		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
 		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
@@ -472,7 +497,7 @@ void SetTemporizadorMMU(void)
 	case SALIR:
 		T_Riego = vConfig;
 		vConfig = 0;
-		TimerStop(E_Potenciometro);
+		TimerStop(E_Print);
 		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
 		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
@@ -508,7 +533,7 @@ void SetTemporizadorSSD(void)
 	case SALIR:
 		T_Riego = vConfig;
 		vConfig = 0;
-		TimerStop(E_Potenciometro);
+		TimerStop(E_Print);
 		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
 		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
@@ -543,7 +568,7 @@ void SetTemporizadorSSU(void)
 	case SALIR:
 		T_Riego = vConfig;
 		vConfig = 0;
-		TimerStop(E_Potenciometro);
+		TimerStop(E_Print);
 		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
 		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
@@ -581,7 +606,7 @@ void SetHoraRiegoHHD(void)
 	case SALIR:
 		SetAlarm(&AlarmTime);
 		vConfig = 0;
-		TimerStop(E_Potenciometro);
+		TimerStop(E_Print);
 		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
 		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
@@ -618,7 +643,7 @@ void SetHoraRiegoHHU(void)
 	case SALIR:
 		SetAlarm(&AlarmTime);
 		vConfig = 0;
-		TimerStop(E_Potenciometro);
+		TimerStop(E_Print);
 		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
 		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
@@ -654,7 +679,7 @@ void SetHoraRiegoMMD(void)
 	case SALIR:
 		SetAlarm(&AlarmTime);
 		vConfig = 0;
-		TimerStop(E_Potenciometro);
+		TimerStop(E_Print);
 		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
 		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
@@ -690,7 +715,7 @@ void SetHoraRiegoMMU(void)
 	case SALIR:
 		SetAlarm(&AlarmTime);
 		vConfig = 0;
-		TimerStop(E_Potenciometro);
+		TimerStop(E_Print);
 		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
 		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
@@ -727,7 +752,7 @@ void SetHoraRiegoSSD(void)
 	case SALIR:
 		SetAlarm(&AlarmTime);
 		vConfig = 0;
-		TimerStop(E_Potenciometro);
+		TimerStop(E_Print);
 		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
 		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
@@ -751,7 +776,7 @@ void SetHoraRiegoSSU(void)
 	case ADELANTE:
 		SetAlarm(&AlarmTime);
 		vConfig = 0;
-		TimerStop(E_Potenciometro);
+		TimerStop(E_Print);
 		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
 		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
@@ -763,7 +788,7 @@ void SetHoraRiegoSSU(void)
 	case SALIR:
 		SetAlarm(&AlarmTime);
 		vConfig = 0;
-		TimerStop(E_Potenciometro);
+		TimerStop(E_Print);
 		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
 		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
@@ -777,7 +802,7 @@ void ConfiguracionFinalizada (void)
 	if(btnConfig == ATRAS)
 	{
 		vUnidad = SegU;
-		TimerStart(E_Potenciometro,T_Potenciometro,PrintHour,B_Potenciometro);
+		TimerStart(E_Print,T_Print,PrintHour,B_Print);
 		Display_LCD("   Hora Alarma   ", RENGLON_1, 0);
 		Display_LCD( "Hora:           ", RENGLON_2, 0);
 		EstadoConfiguracion = HORA_RIEGO_SSU;
@@ -789,9 +814,8 @@ void ConfiguracionFinalizada (void)
 	}
 }
 
-#endif
 ////////////////////////////////TEMPORIZADO////////////////////////////////
-#if (1)
+
 void PrintTimer (void)
 {
 	TemporizadoTime = FromGetTimer(GetTimer(E_Riego),B_Riego);
@@ -800,7 +824,7 @@ void PrintTimer (void)
 	Display_LCD("T_Rest:",RENGLON_2,0);
 	Display_LCD(vString, RENGLON_2, 8);
 
-	SetTimer(E_Potenciometro,T_Potenciometro);
+	SetTimer(E_Print,T_Print);
 }
 
 void PrintCurrentTime(void)
@@ -812,7 +836,7 @@ void PrintCurrentTime(void)
 	Display_LCD("Hora:   ",RENGLON_2,0);
 	Display_LCD(vString, RENGLON_2, 8);
 
-	TimerStart(E_Potenciometro,T_Print,PrintAlarm,B_Potenciometro);
+	TimerStart(E_Print,T_Print,PrintAlarm,B_Print);
 }
 
 void PrintAlarm(void)
@@ -823,14 +847,14 @@ void PrintAlarm(void)
 
 	Display_LCD(vString, RENGLON_2, 8);
 
-	TimerStart(E_Potenciometro,T_Print,PrintStatus,B_Potenciometro);
+	TimerStart(E_Print,T_Print,PrintStatus,B_Print);
 }
 
 void PrintStatus(void)
 {
 	Display_LCD("Valvula:   OFF  ", RENGLON_2,0);
 
-	TimerStart(E_Potenciometro,T_Print,PrintCurrentTime,B_Potenciometro);
+	TimerStart(E_Print,T_Print,PrintCurrentTime,B_Print);
 }
 
 void AguardandoOk(void)
@@ -842,7 +866,7 @@ void AguardandoOk(void)
 		Display_LCD("Modo Temporizado", RENGLON_1, 0);
 		Display_LCD("T_Rest:         ", RENGLON_2, 0);
 		TimerStart(E_Riego, T_Riego, VolverAguardando, B_Riego);
-		TimerStart(E_Potenciometro,T_Potenciometro,PrintTimer,B_Potenciometro);
+		TimerStart(E_Print,T_Print,PrintTimer,B_Print);
 		EstadoTemporizado = RIEGO_TEMPORIZADO;
 	}
 }
@@ -852,8 +876,8 @@ void VolverAguardando(void)
 	Display_LCD("Modo Temporizado" , RENGLON_1 , 0 );
 	Display_LCD("  Timer:  OFF   " , RENGLON_2 , 0 );
 	EstadoTemporizado = AGUARDANDO_OK;
-	TimerStop(E_Potenciometro);
-	TimerStart(E_Potenciometro,T_Potenciometro,PrintCurrentTime,B_Potenciometro);
+	TimerStop(E_Print);
+	TimerStart(E_Print,T_Print,PrintCurrentTime,B_Print);
 	EV_RIEGO_OFF;
 }
 
@@ -861,4 +885,4 @@ void RiegoTemporizado(void)
 {
 
 }
-#endif
+

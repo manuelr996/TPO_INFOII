@@ -14,9 +14,8 @@
  * y cada dos segundos enviara la informacion que obtuvo de los sensores...
  *
  * La informacion de los sensores se enviara en dos mensajes de la siguiente manera:
- * 		-"#Tnn$" en donde nn representara el entero de la temperatura actual en °C
- * 		-"#Hnn$" en donde nn representara el entero de la humedad actual en %
- * 		-"#Pnn$" en donde nn representara el entero del Potenciometro actual en %
+ * 		-"#tnn$" en donde nn representara el entero de la temperatura actual en °C
+ * 		-"#hnn$" en donde nn representara el entero de la humedad actual en %
  * La informacion de el estado actual se  enviara de la misma forma que se recibe.
  * Es decir, "#[Estado][Accion]$" como se realiza la recepcion.
  *
@@ -118,17 +117,15 @@ void InitConfiguracion( void )
 	Display_LCD(" OK p/continuar ", RENGLON_2, 0);
 	PushLCD(0x0D,LCD_CONTROL);
 	EstadoAnterior = Estado;
-	IniciarPotenciometro();
 }
 
 void CloseConfiguracion(void)
 {
 	PushLCD(0x0C, LCD_CONTROL);
-	DetenerPotenciometro();
 	SwitchEstados(EstadoAnterior);
 }
 
-void CargarConfiguracion(const int16_t *src) //recibe las configuraciones en un formato hhHHhhmmHHMM
+void CargarConfiguracion(const char *src) //recibe las configuraciones en un formato hhHHhhmmHHMM
 {
 	RTC_t aux;
 	EV_RIEGO_ON;
@@ -150,7 +147,7 @@ void CargarConfiguracion(const int16_t *src) //recibe las configuraciones en un 
 	EV_RIEGO_OFF;
 }
 
-void ComponerPotenciometro(uint8_t pot, char *dest)
+void ComponerHumedad(uint8_t pot, char *dest)
 {
 	if(pot == 100)
 	{
@@ -174,6 +171,7 @@ void InitAutomatico(void)
 	TransmitirString("#A$");
 	Display_LCD("Modo Automatico " , RENGLON_1 , 0 );
 	Display_LCD("   Riego: OFF   " , RENGLON_2 , 0 );
+	TimerStart(E_Print,T_Print,PrintHumMin,B_Print);
 }
 
 void InitManual(void)
@@ -192,7 +190,7 @@ void InitTemporizado(void)
 	PrenderLed(VERDE);
 	TransmitirString("#T$");
 	Display_LCD("Modo Temporizado" , RENGLON_1 , 0 );
-	TimerStart(E_Potenciometro,T_Potenciometro,PrintCurrentTime,B_Potenciometro);
+	TimerStart(E_Print,T_Print,PrintCurrentTime,B_Print);
 }
 
 void CloseEstados(void)
@@ -200,8 +198,7 @@ void CloseEstados(void)
 	EV_RIEGO_OFF;
 	ApagarLeds();
 	TimerStop(E_Riego);
-	TimerStop(E_Potenciometro);
-	DetenerPotenciometro();
+	TimerStop(E_Print);
 }
 
 void ComponerTemporizador(RTC_t *timer, char *dest)
