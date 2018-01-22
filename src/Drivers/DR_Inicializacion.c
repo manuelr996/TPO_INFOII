@@ -73,7 +73,8 @@ void Inicializacion ( void )
 	InitLCD ();			//LCD
 	InitUART0(); 		//UART 0
 	ElectroValvula_Off();
-	TimerStart(E_Display,T_Display,MostrarSensores,B_Display);
 
 	Ev1SecuenciaTempHumedad(); //Inicia secuencia de conversiones temperatura-humedad
+
+	TimerStart(E_Display,T_Display,MostrarSensores,B_Display);
 }

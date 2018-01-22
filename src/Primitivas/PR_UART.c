@@ -67,8 +67,43 @@ void TransmitirString ( char * s)
 	}
 	return;
 }
-
-
+/**
+	\fn void TransmitirValvula ( void )
+	\brief despacha el estado de la valvula al buffer de transmicion
+	\return void
+*/
+void TransmitirValvula ( void )
+{
+	if( ESTADOVALVULA == ON )
+		TransmitirString( "#i$" );
+	else
+		TransmitirString( "#o$" );
+}
+/**
+	\fn void TransmitirEstado ( void )
+	\brief Agrega el estado actual de la maquina al buffer de transmision
+	\return void
+*/
+void TransmitirEstado ( void )
+{
+	switch( Estado )
+	{
+		case MANUAL:
+			TransmitirString( "#M$" );
+			break;
+		case TEMPORIZADO:
+			TransmitirString( "#T$" );
+			break;
+		case AUTOMATICO:
+			TransmitirString( "#A$" );
+			break;
+		case CONFIGURACION:
+			TransmitirString( "#C$" );
+			break;
+		default:
+			break;
+	}
+}
 /**
 	\fn void Mensaje ( void )
 	\brief epera tramas del remoto
@@ -86,7 +121,7 @@ void Mensaje ( void )
 	//static uint8_t auxDatos = 0;
 	static char auxRTC [DATOS_ESPERADOS_RTC] = {0};
 	static char auxCFG [DATOS_ESPERADOS_CONFIG] = {0};
-	static EstadosGenerales estadoRiego;
+	static EstadosGenerales estadoRiego = NO_KEY;
 
 	static ESTADOS_TRAMA trama = ESPERANDO_INICIO_DE_TRAMA;
 	//char Buffer_Auxiliar[10];
@@ -108,36 +143,42 @@ void Mensaje ( void )
 
 			case ESPERANDO_COMANDO:
 
-				if(dato == 'M')
+				if(dato == 'M')				//Comando de manual, se cambia la maquina al estado manual
 				{
 					estadoRiego = MANUAL;
 					trama = ESPERANDO_FIN_DE_TRAMA;
 				}
-				else if(dato == 'A')
+				else if(dato == 'A')		//Comando de automatico, se cambia la maquina al estado automatico
 				{
 					estadoRiego = AUTOMATICO;
 					trama = ESPERANDO_FIN_DE_TRAMA;
 				}
-				else if(dato == 'T')
+				else if(dato == 'T')		//Comando de temporizado, se cambia la maquina al estado temporizado
 				{
 					estadoRiego = TEMPORIZADO;
 					trama = ESPERANDO_FIN_DE_TRAMA;
 				}
-				else if(dato == 'C')
+				else if(dato == 'C')		//Comando de configuracion, se reciben datos de la configuracion
 				{
 					estadoRiego = NO_KEY;
 					comandoDatos = 'C';
 					trama = ESPERANDO_DATOS;
 				}
-				else if(dato == 'R')
+				else if(dato == 'R')		//Comando de RTC, se recibe la hora actal
 				{
 					estadoRiego = NO_KEY;
 					comandoDatos = 'R';
 					trama = ESPERANDO_DATOS;
 				}
-				else if(dato == 'O')
+				else if(dato == 'O')		//Comando de ok
 				{
 					UartOk = 1;
+					trama = ESPERANDO_FIN_DE_TRAMA;
+				}
+				else if(dato == 'S')		//Comando de status, se contesta con estado de la maquina y estado de la valvula
+				{
+					TransmitirEstado();
+					TransmitirValvula();
 					trama = ESPERANDO_FIN_DE_TRAMA;
 				}
 				else
@@ -145,8 +186,11 @@ void Mensaje ( void )
 					TransmitirString(MENSAJE_ERROR);
 					trama = ESPERANDO_INICIO_DE_TRAMA;
 				}
-				SwitchEstados(estadoRiego);
-				estadoRiego = NO_KEY;
+				if(estadoRiego!=NO_KEY)
+				{
+					SwitchEstados(estadoRiego);
+					estadoRiego = NO_KEY;
+				}
 				break;
 
 			case ESPERANDO_DATOS:

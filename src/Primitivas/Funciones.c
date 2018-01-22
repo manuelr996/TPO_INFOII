@@ -84,9 +84,15 @@ void MostrarSensores( void )
 void FuncLluvia( void )
 {
 	 if( GetLluvia() == ON )
-		LedLluvia_On();
-	else
+	 {
+		 LedLluvia_On();
+		 TransmitirString(MENSAJE_LLUVIA_ON);
+	 }
+	 else
+	 {
 		LedLluvia_Off();
+		TransmitirString(MENSAJE_LLUVIA_OFF);
+	 }
 }
 
 void ComponerMedicion(char *string, uint8_t med, uint8_t flag)

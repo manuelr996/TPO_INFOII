@@ -87,10 +87,7 @@ void MaquinaGeneral (void)
 	switch(Estado)
 	{
 	case RESET_G:
-		Estado = MANUAL;
 		btn = B_MANUAL;
-		Display_LCD("   Modo Manual  " , RENGLON_1 , 0 );
-		Display_LCD("   Riego: OFF   " , RENGLON_2 , 0 );
 		break;
 	case CONFIGURACION:
 		MaquinaConfiguracion[EstadoConfiguracion]();

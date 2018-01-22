@@ -48,5 +48,6 @@ extern uint8_t UartOk;
  **********************************************************************************************************************************/
 void TransmitirString ( char * s);
 void Mensaje ( void );
-
+void TransmitirEstado ( void );
+void TransmitirValvula ( void );
 #endif /* PRIMITIVAS_PR_UART_H_ */

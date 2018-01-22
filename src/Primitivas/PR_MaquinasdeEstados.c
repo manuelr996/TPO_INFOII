@@ -71,7 +71,7 @@ void SwitchEstados(EstadosGenerales nuevoEstado)
 	switch(nuevoEstado)
 	{
 	case RESET_G:
-		Estado = RESET_G;
+		Estado = MANUAL;
 	case AUTOMATICO:
 		InitAutomatico();
 		Estado = AUTOMATICO;
@@ -195,7 +195,11 @@ void InitTemporizado(void)
 
 void CloseEstados(void)
 {
-	EV_RIEGO_OFF;
+	if( ESTADOVALVULA == ON )
+	{
+		EV_RIEGO_OFF;
+		TransmitirString( "#o$" );
+	}
 	ApagarLeds();
 	TimerStop(E_Riego);
 	TimerStop(E_Print);
