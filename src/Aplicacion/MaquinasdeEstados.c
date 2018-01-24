@@ -98,7 +98,7 @@ void RiegoOn ( void )
 	{
 		UartOk = 0;
 		Display_LCD("OFF" , RENGLON_2 , 10 );
-		TransmitirString("#o$");
+		TransmitirString("#o$\0");
 		EstadoManual = RIEGO_OFF;
 	}
 }
@@ -110,7 +110,7 @@ void RiegoOff ( void )
 	{
 		UartOk = 0;
 		Display_LCD("ON " , RENGLON_2 , 10 );
-		TransmitirString("#i$");
+		TransmitirString("#i$\0");
 		EstadoManual = RIEGO_ON;
 	}
 }
@@ -148,7 +148,7 @@ void RiegoAutomaticoOn( void )
 	EV_RIEGO_ON;
 	if(CondicionesFin())
 	{
-		TransmitirString("#o$");
+		TransmitirString("#o$\0");
 		EstadoAutomatico = NO_REGANDO;
 	}
 }
@@ -158,7 +158,7 @@ void RiegoAutomaticoOff( void )
 	EV_RIEGO_OFF;
 	if(CondicionesInicio())
 	{
-		TransmitirString("#i$");
+		TransmitirString("#i$\0");
 		EstadoAutomatico = REGANDO;
 	}
 }
@@ -863,7 +863,7 @@ void AguardandoOk(void)
 	{
 		UartOk = 0;
 		EV_RIEGO_ON;
-		TransmitirString( "#i$" );
+		TransmitirString( "#i$\0" );
 		Display_LCD("Modo Temporizado", RENGLON_1, 0);
 		Display_LCD("T_Rest:         ", RENGLON_2, 0);
 		TimerStart(E_Riego, T_Riego, VolverAguardando, B_Riego);
@@ -880,7 +880,7 @@ void VolverAguardando(void)
 	TimerStop(E_Print);
 	TimerStart(E_Print,T_Print,PrintCurrentTime,B_Print);
 	EV_RIEGO_OFF;
-	TransmitirString( "#o$" );
+	TransmitirString( "#o$\0" );
 }
 
 void RiegoTemporizado(void)

@@ -17,8 +17,8 @@
  **********************************************************************************************************************************/
 #define DATOS_ESPERADOS_RTC 6
 #define DATOS_ESPERADOS_CONFIG 18
-#define MENSAJE_ERROR "#ERROR$"
-#define MENSAJE_OK "#OK$"
+#define MENSAJE_ERROR "#ERROR$\0"
+#define MENSAJE_OK "#OK$\0"
 /***********************************************************************************************************************************
  *** MACROS PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -75,9 +75,9 @@ void TransmitirString ( char * s)
 void TransmitirValvula ( void )
 {
 	if( ESTADOVALVULA == ON )
-		TransmitirString( "#i$" );
+		TransmitirString( "#i$\0" );
 	else
-		TransmitirString( "#o$" );
+		TransmitirString( "#o$\0" );
 }
 /**
 	\fn void TransmitirEstado ( void )
@@ -89,16 +89,16 @@ void TransmitirEstado ( void )
 	switch( Estado )
 	{
 		case MANUAL:
-			TransmitirString( "#M$" );
+			TransmitirString( "#M$\0" );
 			break;
 		case TEMPORIZADO:
-			TransmitirString( "#T$" );
+			TransmitirString( "#T$\0" );
 			break;
 		case AUTOMATICO:
-			TransmitirString( "#A$" );
+			TransmitirString( "#A$\0" );
 			break;
 		case CONFIGURACION:
-			TransmitirString( "#C$" );
+			TransmitirString( "#C$\0" );
 			break;
 		default:
 			break;
