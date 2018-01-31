@@ -81,7 +81,7 @@ void InitADC ( void )
 
 	//Interrupciones:
 	AD0INTEN = 1 << ADINTEN_GLOB;			//Interrumpe el flag DONE del registro global
-	ISER0 |= 1 << NVIC_ADC;					//Deshabilito la interrupcion de ADC en el NVIC
+	ISER0 |= 1 << NVIC_ADC;					//Habilito la interrupcion de ADC en el NVIC
 
 	//Activacion y disparo del ADC:
 	ADCPDN = OFF;							//Prendo el ADC

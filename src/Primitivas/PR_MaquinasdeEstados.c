@@ -127,7 +127,8 @@ void CloseConfiguracion(void)
 
 void CargarConfiguracion(const char *src) //recibe las configuraciones en un formato hhHHhhmmHHMM
 {
-	RTC_t aux;
+	RTC_t aux; aux.DayOfWeek=0; aux.DayofMonth=0; aux.Hours=0; aux.Minutes=0; aux.Month=0; aux.Seconds=0; aux.Year=0;
+
 	EV_RIEGO_ON;
 	HumedadMinima 		= (src[0] - '0')*10;
 	HumedadMinima 		+= (src[1] - '0');

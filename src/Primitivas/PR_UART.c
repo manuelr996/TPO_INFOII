@@ -16,7 +16,7 @@
  *** DEFINES PRIVADOS AL MODULO
  **********************************************************************************************************************************/
 #define DATOS_ESPERADOS_RTC 6
-#define DATOS_ESPERADOS_CONFIG 18
+#define DATOS_ESPERADOS_CONFIG 14
 #define MENSAJE_ERROR "#ERROR$\0"
 #define MENSAJE_OK "#OK$\0"
 /***********************************************************************************************************************************
@@ -227,11 +227,6 @@ void Mensaje ( void )
 						comandoDatos = 0;
 						CargarConfiguracion(auxCFG);
 						trama = ESPERANDO_FIN_DE_TRAMA;
-					}
-					else
-					{
-						TransmitirString(MENSAJE_ERROR);
-						trama = ESPERANDO_INICIO_DE_TRAMA;
 					}
 				}
 				break;

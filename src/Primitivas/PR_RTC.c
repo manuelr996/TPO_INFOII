@@ -211,14 +211,19 @@ uint32_t ToTimer(RTC_t *src, uint8_t base)
 		aux =  src->Hours*60;
 		aux += src->Minutes;
 		aux += src->Seconds/60;
+		break;
 	case SEG:
 		aux =  src->Hours*3600;
 		aux += src->Minutes*60;
 		aux += src->Seconds;
+		break;
 	case DEC:
 		aux = src->Hours*36000;
 		aux = src->Minutes*600;
 		aux = src->Seconds*10;
+		break;
+	default:
+		break;
 	}
 
 	return aux;
