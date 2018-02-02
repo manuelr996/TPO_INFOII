@@ -213,6 +213,12 @@ void ConfiguracionInicializada (void)
 		TimerStart(E_Print,T_Print,PrintHumedad,B_Print);
 		EstadoConfiguracion = HUMEDADMINIMA_D;
 	}
+	else if( btnConfig == SALIR )
+	{
+		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
+		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
+		EstadoConfiguracion = CERRAR_CONFIGURACION;
+	}
 }
 
 void SetHumedadMinimaDecenas (void)
