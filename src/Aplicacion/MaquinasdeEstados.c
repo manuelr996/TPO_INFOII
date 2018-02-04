@@ -15,7 +15,6 @@
 /***********************************************************************************************************************************
  *** DEFINES PRIVADOS AL MODULO
  **********************************************************************************************************************************/
-#define T_Print 3
 
 #define Hs24_en_Seg 86399
 #define Hr_en_Seg 	3600
@@ -98,7 +97,7 @@ void RiegoOn ( void )
 	{
 		UartOk = 0;
 		Display_LCD("OFF" , RENGLON_2 , 10 );
-		TransmitirString("#o$\0");
+		TransmitirString(C_REGANDO_O);
 		EstadoManual = RIEGO_OFF;
 	}
 }
@@ -110,7 +109,7 @@ void RiegoOff ( void )
 	{
 		UartOk = 0;
 		Display_LCD("ON " , RENGLON_2 , 10 );
-		TransmitirString("#i$\0");
+		TransmitirString(C_REGANDO_I);
 		EstadoManual = RIEGO_ON;
 	}
 }
@@ -122,7 +121,7 @@ void PrintHumMin (void)
 	Display_LCD("Humedad Min=   %", RENGLON_2 , 0 );
 	ComponerHumedad(HumedadMinima,vString);
 	Display_LCD(vString, RENGLON_2, 12);
-	TimerStart(E_Print,T_Print,PrintHumMax,B_Print);
+	TimerStart(E_Print,T_Print_largo,PrintHumMax,B_Print);
 }
 
 void PrintHumMax (void)
@@ -130,7 +129,7 @@ void PrintHumMax (void)
 	Display_LCD("Humedad Max=   %", RENGLON_2 , 0 );
 	ComponerHumedad(HumedadMaxima,vString);
 	Display_LCD(vString, RENGLON_2, 12);
-	TimerStart(E_Print,T_Print,PrintEstadoAutomatico,B_Print);
+	TimerStart(E_Print,T_Print_largo,PrintEstadoAutomatico,B_Print);
 }
 
 void PrintEstadoAutomatico (void)
@@ -140,7 +139,7 @@ void PrintEstadoAutomatico (void)
 	else
 		Display_LCD("   Riego: ON    " , RENGLON_2 , 0 );
 
-	TimerStart(E_Print,T_Print,PrintHumMin,B_Print);
+	TimerStart(E_Print,T_Print_largo,PrintHumMin,B_Print);
 }
 
 void RiegoAutomaticoOn( void )
@@ -148,7 +147,7 @@ void RiegoAutomaticoOn( void )
 	EV_RIEGO_ON;
 	if(CondicionesFin())
 	{
-		TransmitirString("#o$\0");
+		TransmitirString(C_REGANDO_O);
 		EstadoAutomatico = NO_REGANDO;
 	}
 }
@@ -158,7 +157,7 @@ void RiegoAutomaticoOff( void )
 	EV_RIEGO_OFF;
 	if(CondicionesInicio())
 	{
-		TransmitirString("#i$\0");
+		TransmitirString(C_REGANDO_I);
 		EstadoAutomatico = REGANDO;
 	}
 }
@@ -210,6 +209,7 @@ void ConfiguracionInicializada (void)
 		Display_LCD(" Humedad Minima ", RENGLON_1 , 0 );
 		Display_LCD("Humedad Min=   %", RENGLON_2 , 0 );
 		vUnidad = Decena;
+		vConfig = HumedadMinima;
 		TimerStart(E_Print,T_Print,PrintHumedad,B_Print);
 		EstadoConfiguracion = HUMEDADMINIMA_D;
 	}
@@ -268,6 +268,7 @@ void SetHumedadMinimaUnidades (void)
     	break;
     case ADELANTE:
 		HumedadMinima = vConfig;
+		vConfig = HumedadMaxima;
     	vUnidad = Decena; //editamos decenas
     	Display_LCD(" Humedad Maxima ", RENGLON_1, 0);
     	Display_LCD("Humedad Max=   %", RENGLON_2, 0);
@@ -311,6 +312,7 @@ void SetHumedadMaximaDecenas (void)
 		break;
     case ATRAS:
     	vUnidad = Unidad; //editamos unidades
+    	vConfig = HumedadMinima;
 		Display_LCD(" Humedad Minima ", RENGLON_1 , 0 );
 		Display_LCD("Humedad Min=   %", RENGLON_2 , 0 );
 		EstadoConfiguracion = HUMEDADMINIMA_U;
@@ -342,6 +344,7 @@ void SetHumedadMaximaUnidades(void)
 	case ADELANTE:
 		HumedadMaxima = vConfig;
 		vUnidad = HrD;
+		vConfig = T_Riego;
 		TimerStart(E_Print,T_Print,PrintHour,B_Print);
 		Display_LCD( " Temp. de Riego " , RENGLON_1 , 0 );
 		Display_LCD( "Tiempo=         " , RENGLON_2 , 0 );
@@ -388,7 +391,7 @@ void SetTemporizadorHHD(void)
     	Display_LCD("Humedad Max=   %", RENGLON_2, 0);
 		TimerStart(E_Print,T_Print,PrintHumedad,B_Print);
     	vUnidad = Unidad;
-		vConfig = 0;
+		vConfig = HumedadMaxima;
     	EstadoConfiguracion = HUMEDADMAXIMA_U;
 		break;
 	case SALIR:
@@ -563,6 +566,7 @@ void SetTemporizadorSSU(void)
 	case ADELANTE:
 		T_Riego = vConfig;
 		vUnidad = HrD;
+		vConfig = ToTimer( &AlarmTime , SEG );
 		Display_LCD("   Hora Alarma   ", RENGLON_1, 0);
 		Display_LCD( "Hora:           ", RENGLON_2, 0);
 		EstadoConfiguracion = HORA_RIEGO_HHD;
@@ -605,6 +609,7 @@ void SetHoraRiegoHHD(void)
 		break;
 	case ATRAS:
 		vUnidad = SegU;
+		vConfig = T_Riego;
 		Display_LCD( " Temp. de Riego " , RENGLON_1 , 0 );
 		Display_LCD( "Tiempo=         " , RENGLON_2 , 0 );
 		EstadoConfiguracion = TEMPORIZADOR_SSU;
@@ -808,6 +813,7 @@ void ConfiguracionFinalizada (void)
 	if(btnConfig == ATRAS)
 	{
 		vUnidad = SegU;
+		vConfig = ToTimer( &AlarmTime, SEG );
 		TimerStart(E_Print,T_Print,PrintHour,B_Print);
 		Display_LCD("   Hora Alarma   ", RENGLON_1, 0);
 		Display_LCD( "Hora:           ", RENGLON_2, 0);
@@ -822,7 +828,7 @@ void ConfiguracionFinalizada (void)
 
 ////////////////////////////////TEMPORIZADO////////////////////////////////
 
-void PrintTimer (void)
+void PrintRemainingTime (void)
 {
 	TemporizadoTime = FromGetTimer(GetTimer(E_Riego),B_Riego);
 
@@ -842,26 +848,40 @@ void PrintCurrentTime(void)
 	Display_LCD("Hora:   ",RENGLON_2,0);
 	Display_LCD(vString, RENGLON_2, 8);
 
-	TimerStart(E_Print,T_Print,PrintAlarm,B_Print);
+	TimerStart(E_Print,T_Print_largo,PrintAlarm,B_Print);
 }
 
 void PrintAlarm(void)
 {
+	RTC_t aux = GetAlarm();
+
 	Display_LCD("Alarma: ",RENGLON_2,0);
 
-	ComponerTemporizador(&AlarmTime,vString);
+	ComponerTemporizador(&aux,vString);
 
 	Display_LCD(vString, RENGLON_2, 8);
 
-	TimerStart(E_Print,T_Print,PrintStatus,B_Print);
+	TimerStart(E_Print,T_Print_largo,PrintStatus,B_Print);
 }
 
 void PrintStatus(void)
 {
 	Display_LCD("Valvula:   OFF  ", RENGLON_2,0);
 
-	TimerStart(E_Print,T_Print,PrintCurrentTime,B_Print);
+	TimerStart(E_Print,T_Print_largo,PrintTimer,B_Print);
 }
+
+void PrintTimer(void)
+{
+	TemporizadoTime = FromGetTimer(T_Riego,B_Riego);
+
+	ComponerTemporizador(&TemporizadoTime,vString);
+	Display_LCD("T_Riego:",RENGLON_2,0);
+	Display_LCD(vString, RENGLON_2, 8);
+
+	TimerStart(E_Print,T_Print_largo,PrintCurrentTime,B_Print);
+}
+
 
 void AguardandoOk(void)
 {
@@ -869,11 +889,11 @@ void AguardandoOk(void)
 	{
 		UartOk = 0;
 		EV_RIEGO_ON;
-		TransmitirString( "#i$\0" );
+		TransmitirString( C_REGANDO_I );
 		Display_LCD("Modo Temporizado", RENGLON_1, 0);
 		Display_LCD("T_Rest:         ", RENGLON_2, 0);
 		TimerStart(E_Riego, T_Riego, VolverAguardando, B_Riego);
-		TimerStart(E_Print,T_Print,PrintTimer,B_Print);
+		TimerStart(E_Print,T_Print,PrintRemainingTime,B_Print);
 		EstadoTemporizado = RIEGO_TEMPORIZADO;
 	}
 }
@@ -884,9 +904,9 @@ void VolverAguardando(void)
 	Display_LCD("  Timer:  OFF   " , RENGLON_2 , 0 );
 	EstadoTemporizado = AGUARDANDO_OK;
 	TimerStop(E_Print);
-	TimerStart(E_Print,T_Print,PrintCurrentTime,B_Print);
+	TimerStart(E_Print,T_Print_largo,PrintCurrentTime,B_Print);
 	EV_RIEGO_OFF;
-	TransmitirString( "#o$\0" );
+	TransmitirString( C_REGANDO_O );
 }
 
 void RiegoTemporizado(void)

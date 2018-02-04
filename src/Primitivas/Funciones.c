@@ -58,8 +58,9 @@ void MostrarSensores( void )
 {
 	uint8_t Humedad = GetHumedadSuelo();
 	uint16_t Temp = GetTemperatura();
+	int i;
 
-	char aux[8];
+	char aux[9] = {0};
 
 
 	FuncLluvia();
@@ -67,6 +68,9 @@ void MostrarSensores( void )
 	Display( Humedad , DSP1 );
 	ComponerMedicion( aux , Humedad, hum);
 	TransmitirString( aux );
+
+	for(i = 0 ; i < 10 ; i++)
+		aux[i] = 0;
 
 	Display( Temp , DSP0 );
 	PrenderDP(1);
@@ -107,7 +111,7 @@ void ComponerMedicion(char *string, uint8_t med, uint8_t flag)
 		med%=10;
 		string[4] = med+'0';
 		string[5] = '$';
-		string[7] = '\0';
+		string[7] = '\n';
 	}
 	else
 	{
@@ -115,6 +119,6 @@ void ComponerMedicion(char *string, uint8_t med, uint8_t flag)
 		string[2] = (med/10) + '0';
 		string[3] = (med%10) + '0';
 		string[4] = '$';
-		string[6] = '\0';
+		string[6] = '\n';
 	}
 }

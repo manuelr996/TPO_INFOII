@@ -1,5 +1,5 @@
 /*
-* @file		PR_UART.c
++* @file		PR_UART.c
  * @brief		Descripcion del modulo
  * @date		5 de oct. de 2017
  * @author		Ing. Marcelo Trujillo
@@ -17,8 +17,8 @@
  **********************************************************************************************************************************/
 #define DATOS_ESPERADOS_RTC 6
 #define DATOS_ESPERADOS_CONFIG 14
-#define MENSAJE_ERROR "#ERROR$\0"
-#define MENSAJE_OK "#OK$\0"
+#define MENSAJE_ERROR "#ERROR$\n"
+#define MENSAJE_OK "#OK$\n"
 /***********************************************************************************************************************************
  *** MACROS PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -75,9 +75,9 @@ void TransmitirString ( char * s)
 void TransmitirValvula ( void )
 {
 	if( ESTADOVALVULA == ON )
-		TransmitirString( "#i$\0" );
+		TransmitirString( C_REGANDO_I );
 	else
-		TransmitirString( "#o$\0" );
+		TransmitirString( C_REGANDO_O );
 }
 /**
 	\fn void TransmitirEstado ( void )
@@ -89,16 +89,16 @@ void TransmitirEstado ( void )
 	switch( Estado )
 	{
 		case MANUAL:
-			TransmitirString( "#M$\0" );
+			TransmitirString(C_MANUAL);
 			break;
 		case TEMPORIZADO:
-			TransmitirString( "#T$\0" );
+			TransmitirString(C_TEMPORIZADO);
 			break;
 		case AUTOMATICO:
-			TransmitirString( "#A$\0" );
+			TransmitirString(C_AUTOMATICO);
 			break;
 		case CONFIGURACION:
-			TransmitirString( "#C$\0" );
+			TransmitirString(C_CONFIGURACION);
 			break;
 		default:
 			break;
@@ -201,7 +201,7 @@ void Mensaje ( void )
 						auxRTC[datosTomados] = (char) dato;
 						datosTomados++;
 					}
-					if(datosTomados ==  DATOS_ESPERADOS_RTC)
+					else if(datosTomados ==  DATOS_ESPERADOS_RTC)
 					{
 						datosTomados = 0;
 						comandoDatos = 0;
@@ -241,6 +241,9 @@ void Mensaje ( void )
 				{
 					TransmitirString(MENSAJE_ERROR);
 				}
+
+				datosTomados = 0;
+				comandoDatos = 0;
 				break;
 
 			default:

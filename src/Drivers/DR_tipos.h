@@ -58,6 +58,19 @@ typedef struct	//Estructura para el RTC
 	uint32_t Year:12;
 }RTC_t;
 
+typedef struct //Estructura para globalizar las configuraciones
+{
+	uint32_t HumMin:7; 		//HumedadMinima 		- 7  bits - 0.87 bytes
+	uint32_t HumMax:7; 		//HumedadMaxima 		- 14 bits - 1.75 bytes
+	uint32_t HrTemp:5; 		//Hora Temporizador 	- 19 bits - 2.37 bytes
+	uint32_t MnTemp:6; 		//Minutos Temporizador 	- 25 bits - 3.12 bytes
+	uint32_t HrAlrm:5; 		//Hora Alarma 			- 30 bits - 3.75 bytes
+	uint32_t UltEst:2;		//Ultimo Estado			- 32 bits - 4.00 bytes
+	uint8_t	 MnAlrm:6;		//Minutos Alarma 		- 38 bits - 4.75 bytes
+	uint8_t  AlrmOn:1;		//Encendido Alarma 		- 39 bits - 4.87 bytes
+	uint8_t  RESERVED:1;	//S/Uso					- 40 bits - 5.00 bytes
+}CONFIG_t;
+
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES
  **********************************************************************************************************************************/

@@ -93,7 +93,7 @@ void RTC_IRQHandler(void)
 	if (GetFailFlag) // Si se detecto una falla de poder se solicita la temperatura al software acompañante
 	{
 		CLRFailFlag;
-		TransmitirString("#RF$"); //RF: comando de RTC Failure solicita por el puerto UART el envio de la hora actual para re-sincronizar
+		TransmitirString("#RF$\n"); //RF: comando de RTC Failure solicita por el puerto UART el envio de la hora actual para re-sincronizar
 		SetRTCTime(&defaultTime); //En el mientras tanto se
 		StandByTimer(E_RTC, PAUSE);
 	}

@@ -112,7 +112,7 @@ void InitConfiguracion( void )
 {
 	CloseEstados();
 	PrenderLed(ROJO);
-	TransmitirString("#C$");
+	TransmitirString(C_CONFIGURACION);
 	Display_LCD(" Configuracion  ", RENGLON_1, 0);
 	Display_LCD(" OK p/continuar ", RENGLON_2, 0);
 	PushLCD(0x0D,LCD_CONTROL);
@@ -127,7 +127,7 @@ void CloseConfiguracion(void)
 
 void CargarConfiguracion(const char *src) //recibe las configuraciones en un formato hhHHhhmmHHMM
 {
-	RTC_t aux; aux.DayOfWeek=0; aux.DayofMonth=0; aux.Hours=0; aux.Minutes=0; aux.Month=0; aux.Seconds=0; aux.Year=0;
+	RTC_t aux = {0}; //aux.DayOfWeek=0; aux.DayofMonth=0; aux.Hours=0; aux.Minutes=0; aux.Month=0; aux.Seconds=0; aux.Year=0;
 
 	EV_RIEGO_ON;
 	HumedadMinima 		= (src[0] - '0')*10;
@@ -140,11 +140,12 @@ void CargarConfiguracion(const char *src) //recibe las configuraciones en un for
 	aux.Minutes			= (src[7] - '0')*10;
 	aux.Minutes			+= (src[8] - '0');
 	T_Riego = ToTimer(&aux,SEG);
-	AlarmTime.Hours		= (src[9] - '0')*10;
-	AlarmTime.Hours 	+= (src[10] - '0');
+	aux.Hours		= (src[9] - '0')*10;
+	aux.Hours 	+= (src[10] - '0');
 	//un espacio por los ':'
-	AlarmTime.Minutes	= (src[12] - '0')*10;
-	AlarmTime.Minutes 	+= (src[13] - '0');
+	aux.Minutes	= (src[12] - '0')*10;
+	aux.Minutes 	+= (src[13] - '0');
+	SetAlarm(&aux);
 	EV_RIEGO_OFF;
 }
 
@@ -169,7 +170,7 @@ void InitAutomatico(void)
 {
 	CloseEstados();
 	PrenderLed(VERDE);
-	TransmitirString("#A$");
+	TransmitirString(C_AUTOMATICO);
 	Display_LCD("Modo Automatico " , RENGLON_1 , 0 );
 	Display_LCD("   Riego: OFF   " , RENGLON_2 , 0 );
 	TimerStart(E_Print,T_Print,PrintHumMin,B_Print);
@@ -179,7 +180,7 @@ void InitManual(void)
 {
 	CloseEstados();
 	PrenderLed(AZUL);
-	TransmitirString("#M$");
+	TransmitirString(C_MANUAL);
 	Display_LCD("   Modo Manual  " , RENGLON_1 , 0 );
 	Display_LCD("   Riego: OFF   " , RENGLON_2 , 0 );
 }
@@ -189,7 +190,7 @@ void InitTemporizado(void)
 	CloseEstados();
 	PrenderLed(ROJO);
 	PrenderLed(VERDE);
-	TransmitirString("#T$");
+	TransmitirString(C_TEMPORIZADO);
 	Display_LCD("Modo Temporizado" , RENGLON_1 , 0 );
 	TimerStart(E_Print,T_Print,PrintCurrentTime,B_Print);
 }
@@ -199,14 +200,14 @@ void CloseEstados(void)
 	if( ESTADOVALVULA == ON )
 	{
 		EV_RIEGO_OFF;
-		TransmitirString( "#o$" );
+		TransmitirString( C_REGANDO_O );
 	}
 	ApagarLeds();
 	TimerStop(E_Riego);
 	TimerStop(E_Print);
 }
 
-void ComponerTemporizador(RTC_t *timer, char *dest)
+void ComponerTemporizador(const RTC_t *timer, char *dest)
 {
 	dest[0] = (timer->Hours/10) + '0';
 	dest[1] = (timer->Hours%10) + '0';

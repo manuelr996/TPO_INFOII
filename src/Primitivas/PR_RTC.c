@@ -63,6 +63,18 @@ void SetAlarm(RTC_t *rtc)
 	Alarm.Minutes = rtc->Minutes;
 	Alarm.Seconds = rtc->Seconds;
 }
+/**
+	\fn  GetAlarm
+	\brief Devuelve la alarma
+ 	\author Tomás Bautista Ordóñez
+ 	\date 2 Ene. 2018
+	\return tipo y descripcion de retorno
+*/
+
+RTC_t GetAlarm( void )
+{
+	return Alarm;
+}
 
 void DecrementoTiempo(RTC_t *rtc)
 {
