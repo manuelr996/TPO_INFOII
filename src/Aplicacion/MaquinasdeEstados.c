@@ -17,6 +17,8 @@
  **********************************************************************************************************************************/
 
 #define Hs24_en_Seg 86399
+#define Hs24_en_Min 1440
+#define Hr_en_Min 	60
 #define Hr_en_Seg 	3600
 #define Min_en_Seg	60
 
@@ -56,16 +58,20 @@ EstadosManual EstadoManual;
 EstadosTemporizado EstadoTemporizado;
 EstadosAutomatico EstadoAutomatico;
 
+CONFIG_t config;
+
 uint32_t T_Riego;
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
-uint8_t btnConfig;
-uint8_t vUnidad = 0;
-int32_t vConfig = 0;
-char vString[9];
-RTC_t AlarmTime;
-RTC_t TemporizadoTime;
+
+uint8_t btnConfig; //lectura del boton en modo configuracion
+uint8_t vUnidad = 0; //variable utilizada para definir la unidad a la hora de editar
+int32_t vConfig = 0; //variable utilizada para almacenar los valores que se cargan en la estructura de configuracion
+char vString[9]; //variable para mostrar valores por el display
+
+RTC_t AlarmTime; //RTC para mostrar la alarma por el display
+RTC_t TemporizadoTime; //RTC para mostrar el temporizador por el display
 /***********************************************************************************************************************************
  *** PROTOTIPO DE FUNCIONES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -119,7 +125,7 @@ void RiegoOff ( void )
 void PrintHumMin (void)
 {
 	Display_LCD("Humedad Min=   %", RENGLON_2 , 0 );
-	ComponerHumedad(HumedadMinima,vString);
+	ComponerHumedad(config.humMin, vString);
 	Display_LCD(vString, RENGLON_2, 12);
 	TimerStart(E_Print,T_Print_largo,PrintHumMax,B_Print);
 }
@@ -127,7 +133,7 @@ void PrintHumMin (void)
 void PrintHumMax (void)
 {
 	Display_LCD("Humedad Max=   %", RENGLON_2 , 0 );
-	ComponerHumedad(HumedadMaxima,vString);
+	ComponerHumedad(config.humMax, vString);
 	Display_LCD(vString, RENGLON_2, 12);
 	TimerStart(E_Print,T_Print_largo,PrintEstadoAutomatico,B_Print);
 }
@@ -204,14 +210,15 @@ void PrintHour(void)
 void ConfiguracionInicializada (void)
 {
 	btnConfig = getTecla();
+
 	if(btnConfig == ADELANTE)
 	{
-		Display_LCD(" Humedad Minima ", RENGLON_1 , 0 );
-		Display_LCD("Humedad Min=   %", RENGLON_2 , 0 );
+		Display_LCD(" Humedad Maxima ", RENGLON_1 , 0 );
+		Display_LCD("Humedad Max=   %", RENGLON_2 , 0 );
 		vUnidad = Decena;
-		vConfig = HumedadMinima;
+		vConfig = config.humMax;
 		TimerStart(E_Print,T_Print,PrintHumedad,B_Print);
-		EstadoConfiguracion = HUMEDADMINIMA_D;
+		EstadoConfiguracion = HUMEDADMAXIMA_D;
 	}
 	else if( btnConfig == SALIR )
 	{
@@ -221,20 +228,95 @@ void ConfiguracionInicializada (void)
 	}
 }
 
+void SetHumedadMaximaDecenas (void)
+{
+	btnConfig = getTecla();
+
+	switch(btnConfig)
+	{
+		case SUMAR:
+		{
+			if((vConfig+10)<100)
+				vConfig += 10;
+			else
+				vConfig = 100;
+			break;
+		}
+		case RESTAR:
+		{
+			if( (vConfig-10) > config.humMin)
+				vConfig -= 10;
+			else
+				vConfig = config.humMin + 1;
+			break;
+		}
+		case ADELANTE:
+		{
+			vUnidad = Unidad; //editamos unidades
+			EstadoConfiguracion = HUMEDADMAXIMA_U;
+			break;
+		}
+		case SALIR:
+		{
+			config.humMax = vConfig;
+			TimerStop(E_Print);
+			Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
+			Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
+			EstadoConfiguracion = CERRAR_CONFIGURACION;
+			break;
+		}
+	}
+}
+
+void SetHumedadMaximaUnidades(void)
+{
+	btnConfig = getTecla();
+	switch(btnConfig)
+	{
+    case SUMAR:
+    	if(vConfig < 100)
+    		vConfig++;
+    	break;
+	case RESTAR:
+    	if( (vConfig-1) > config.humMin )
+    		vConfig--;
+    	break;
+	case ADELANTE:
+		config.humMax = vConfig;
+		vConfig = config.humMin;
+
+		Display_LCD(" Humedad Minima ", RENGLON_1 , 0 );
+		Display_LCD("Humedad Min=   %", RENGLON_2 , 0 );
+		EstadoConfiguracion = HUMEDADMINIMA_D;
+		break;
+    case ATRAS:
+    	vUnidad = Decena;
+    	EstadoConfiguracion = HUMEDADMAXIMA_D;
+    	break;
+	case SALIR:
+		config.humMax = vConfig;
+		TimerStop(E_Print);
+		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
+		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
+		EstadoConfiguracion = CERRAR_CONFIGURACION;
+		break;
+	}
+}
+
 void SetHumedadMinimaDecenas (void)
 {
 	btnConfig = getTecla();
 	switch(btnConfig)
 	{
 	case SUMAR:
-		if((vConfig+10)<100) //si no nos pasamos del limite maximo sumamos
+		if((vConfig+10) < config.humMax) //si no nos pasamos del limite maximo sumamos
 			vConfig += 10;
 		else
-			vConfig = 100;
+			vConfig = config.humMax - 1;
 		break;
 	case RESTAR:
-		if((vConfig-10)>0)
-			vConfig -= 10; //si no nos vamos al negativo restamos
+		if((vConfig-10) > 0) //si no nos vamos al negativo restamos
+			vConfig -= 10;
 		else
 			vConfig = 0;
 		break;
@@ -242,9 +324,18 @@ void SetHumedadMinimaDecenas (void)
 		vUnidad = Unidad;	//editamos unidades
 		EstadoConfiguracion = HUMEDADMINIMA_U;
 		break;
+	case ATRAS:
+		vUnidad = Unidad; //editamos unidades
+
+		config.humMin = vConfig; //cambiamos la variable que estamos editando actualmente
+		vConfig = config.humMax;
+
+    	Display_LCD(" Humedad Maxima ", RENGLON_1, 0);
+    	Display_LCD("Humedad Max=   %", RENGLON_2, 0);
+    	EstadoConfiguracion = HUMEDADMAXIMA_U;
+		break;
 	case SALIR:
-		HumedadMinima = vConfig;
-		vConfig = 0;
+		config.humMax = vConfig;
 		TimerStop(E_Print);
 		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
 		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
@@ -256,113 +347,40 @@ void SetHumedadMinimaDecenas (void)
 void SetHumedadMinimaUnidades (void)
 {
 	btnConfig = getTecla();
+
     switch(btnConfig)
     {
     case SUMAR:
-    	if(vConfig<100)
+    	if(vConfig < config.humMax)
     		vConfig++;
     	break;
     case RESTAR:
-    	if(vConfig>0)
+    	if(vConfig > 0)
     		vConfig--;
     	break;
     case ADELANTE:
-		HumedadMinima = vConfig;
-		vConfig = HumedadMaxima;
-    	vUnidad = Decena; //editamos decenas
-    	Display_LCD(" Humedad Maxima ", RENGLON_1, 0);
-    	Display_LCD("Humedad Max=   %", RENGLON_2, 0);
-    	EstadoConfiguracion = HUMEDADMAXIMA_D;
+    	config.humMin = vConfig;
+    	vConfig = config.vTempo; //la multiplicamos por 60 para obtener los segundos
+    	//TODO: DEJASTE ACA
+		vUnidad = HrD;
+
+		TimerStart(E_Print,T_Print,PrintHour,B_Print);
+		Display_LCD( " Temp. de Riego " , RENGLON_1 , 0 );
+		Display_LCD( "Tiempo=         " , RENGLON_2 , 0 );
+		EstadoConfiguracion = TEMPORIZADOR_HHD;
     	break;
     case ATRAS:
 		vUnidad = Decena; //editamos decenas
 		EstadoConfiguracion = HUMEDADMINIMA_D;
 		break;
 	case SALIR:
-		HumedadMinima = vConfig;
-		vConfig = 0;
+		config.humMin = vConfig;
 		TimerStop(E_Print);
 		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
 		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
 		break;
     }
-}
-
-void SetHumedadMaximaDecenas (void)
-{
-	btnConfig = getTecla();
-	switch(btnConfig)
-	{
-	case SUMAR:
-		if((vConfig+10)<100)
-			vConfig += 10;
-		else
-			vConfig = 100;
-		break;
-	case RESTAR:
-		if((vConfig-10)>HumedadMinima)
-			vConfig -= 10;
-		else
-			vConfig = HumedadMinima+1;
-		break;
-    case ADELANTE:
-		vUnidad = Unidad; //editamos unidades
-		EstadoConfiguracion = HUMEDADMAXIMA_U;
-		break;
-    case ATRAS:
-    	vUnidad = Unidad; //editamos unidades
-    	vConfig = HumedadMinima;
-		Display_LCD(" Humedad Minima ", RENGLON_1 , 0 );
-		Display_LCD("Humedad Min=   %", RENGLON_2 , 0 );
-		EstadoConfiguracion = HUMEDADMINIMA_U;
-		break;
-	case SALIR:
-		HumedadMaxima = vConfig;
-		vConfig = 0;
-		TimerStop(E_Print);
-		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
-		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
-		EstadoConfiguracion = CERRAR_CONFIGURACION;
-		break;
-    }
-}
-
-void SetHumedadMaximaUnidades(void)
-{
-	btnConfig = getTecla();
-	switch(btnConfig)
-	{
-    case SUMAR:
-    	if(vConfig<100)
-    		vConfig++;
-    	break;
-	case RESTAR:
-    	if(vConfig > HumedadMinima)
-    		vConfig--;
-    	break;
-	case ADELANTE:
-		HumedadMaxima = vConfig;
-		vUnidad = HrD;
-		vConfig = T_Riego;
-		TimerStart(E_Print,T_Print,PrintHour,B_Print);
-		Display_LCD( " Temp. de Riego " , RENGLON_1 , 0 );
-		Display_LCD( "Tiempo=         " , RENGLON_2 , 0 );
-		EstadoConfiguracion = TEMPORIZADOR_HHD;
-		break;
-    case ATRAS:
-    	vUnidad = Decena;
-    	EstadoConfiguracion = HUMEDADMAXIMA_D;
-    	break;
-	case SALIR:
-		HumedadMaxima = vConfig;
-		vConfig = 0;
-		TimerStop(E_Print);
-		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
-		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
-		EstadoConfiguracion = CERRAR_CONFIGURACION;
-		break;
-	}
 }
 
 void SetTemporizadorHHD(void)
@@ -371,14 +389,14 @@ void SetTemporizadorHHD(void)
 	switch(btnConfig)
 	{
 	case SUMAR:
-		if((vConfig+Hr_en_Seg*10) < Hs24_en_Seg)
-			vConfig += Hr_en_Seg*10;
+		if((vConfig+Hr_en_Min*10) < Hs24_en_Min)
+			vConfig += Hr_en_Min*10;
 		else
-			vConfig = Hs24_en_Seg;
+			vConfig = Hs24_en_Min;
 		break;
 	case RESTAR:
-		if((vConfig-Hr_en_Seg*10) > 0)
-			vConfig -= Hr_en_Seg*10;
+		if((vConfig-Hr_en_Min*10) > 0)
+			vConfig -= Hr_en_Min*10;
 		else
 			vConfig = 0;
 		break;
@@ -387,12 +405,15 @@ void SetTemporizadorHHD(void)
 		EstadoConfiguracion = TEMPORIZADOR_HHU;
 		break;
 	case ATRAS:
-    	Display_LCD(" Humedad Maxima ", RENGLON_1, 0);
-    	Display_LCD("Humedad Max=   %", RENGLON_2, 0);
+		config.vTempo = vConfig;
+		vConfig = config.humMin;
+		vUnidad = Unidad;
+
+		Display_LCD(" Humedad Minima ", RENGLON_1 , 0 );
+		Display_LCD("Humedad Min=   %", RENGLON_2 , 0 );
 		TimerStart(E_Print,T_Print,PrintHumedad,B_Print);
-    	vUnidad = Unidad;
-		vConfig = HumedadMaxima;
-    	EstadoConfiguracion = HUMEDADMAXIMA_U;
+
+		EstadoConfiguracion = HUMEDADMINIMA_U;
 		break;
 	case SALIR:
 		T_Riego = vConfig;

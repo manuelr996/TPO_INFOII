@@ -1,23 +1,23 @@
 /*******************************************************************************************************************************//**
  *
- * @file		Infotronic.h
- * @brief		Declaracion de tipos Globales
- * @date		23-03-16
- * @author		Marcelo Trujillo
+ * @file		Configuracion.h
+ * @brief		Breve descripción del objetivo del Módulo
+ * @date		05/02/2018
+ * @author		Manuel A. Rafaele
  *
  **********************************************************************************************************************************/
 
 /***********************************************************************************************************************************
  *** MODULO
  **********************************************************************************************************************************/
-
-#ifndef DR_TIPOS_H_
-#define DR_TIPOS_H_
+#ifndef APLICACION_CONFIGURACION_H_
+#define APLICACION_CONFIGURACION_H_
 
 /***********************************************************************************************************************************
  *** INCLUDES GLOBALES
  **********************************************************************************************************************************/
-#include <stdio.h>
+#include "DR_tipos.h"
+
 /***********************************************************************************************************************************
  *** DEFINES GLOBALES
  **********************************************************************************************************************************/
@@ -25,68 +25,20 @@
 /***********************************************************************************************************************************
  *** MACROS GLOBALES
  **********************************************************************************************************************************/
-#define     __R					volatile const  	// !< Modificador para solo lectura
-#define 	__W     			volatile 	       	// !<  Modificador para solo escritura
-#define 	__RW				volatile           	// !< Modificador lectura / escritura
-#define 	ON					1
-#define 	OFF					0
-
-#define 	TRUE				1
-#define 	FALSE				0
-
-//#define 	NULL				((void*) 0)
 
 /***********************************************************************************************************************************
  *** TIPO DE DATOS GLOBALES
  **********************************************************************************************************************************/
 
-typedef		unsigned int		uint32_t;
-typedef		short unsigned int	uint16_t;
-typedef		unsigned char		uint8_t ;
-typedef		int					int32_t;
-typedef		short int			int16_t;
-typedef		char				int8_t;
-
-typedef struct	//Estructura para el RTC
-{
-	uint32_t Seconds:6;
-	uint32_t Minutes:6;
-	uint32_t Hours:5;
-	uint32_t DayOfWeek:3;
-	uint32_t DayofMonth:5;
-	uint32_t Month:4;
-	uint32_t Year:12;
-}RTC_t;
-
-typedef struct //Estructura para globalizar las configuraciones
-{
-	union
-	{
-		struct
-		{
-			uint32_t vTempo:11; 	//Valor Temporizador(en minutos) 	- 11 bits - 1.37 bytes
-			uint32_t vAlarm:11; 	//Valor Alarma (en minutos)			- 22 bits - 2.75 bytes
-			uint32_t ultEst:2;		//Ultimo Estado						- 24 bits - 3.00 bytes
-			uint32_t RESERVED:8;	//Reservado Para LOWER				- 32 bits - 4.00 bytes
-			uint8_t  RESERVED_2;	//Reservado Para LOWER				- 40 bits - 5.00 bytes
-		};
-		struct
-		{
-			uint8_t  RESERVED;
-			uint16_t RESERVED_2;
-			uint16_t humMin:7;
-			uint16_t humMax:7;
-			uint16_t estAlrm:2;
-		};
-	};
-}CONFIG_t;
-
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES
  **********************************************************************************************************************************/
+// extern tipo nombreVariable;
 
 /***********************************************************************************************************************************
  *** PROTOTIPOS DE FUNCIONES GLOBALES
  **********************************************************************************************************************************/
+void CargarConfiguracion(CONFIG_t *);
+void GuardarConfiguracion(const CONFIG_t *);
 
-#endif /* DR_TIPOS_H_ */
+#endif /* APLICACION_CONFIGURACION_H_ */
