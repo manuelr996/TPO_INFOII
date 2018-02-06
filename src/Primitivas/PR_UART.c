@@ -69,7 +69,7 @@ void TransmitirString ( char * s)
 }
 /**
 	\fn void TransmitirValvula ( void )
-	\brief despacha el estado de la valvula al buffer de transmicion
+	\brief despacha el estado de la valvula al buffer de transmision
 	\return void
 */
 void TransmitirValvula ( void )
@@ -103,6 +103,43 @@ void TransmitirEstado ( void )
 		default:
 			break;
 	}
+}
+/**
+	\fn void TransmitirParametros ( void )
+	\brief despacha los parametros configurados al buffer de transmision
+	\return void
+*/
+void TransmitirParametros ( void )
+{
+	uint8_t parametros[17];
+
+	RTC_t tiempoAux = FromGetTimer(config.vTempo, MIN );
+
+	parametros[0] = '#';
+	parametros[1] = 'c';
+
+	parametros[2] = config.humMin/10 + '0';
+	parametros[3] = config.humMin%10 + '0';
+
+	parametros[4] = config.humMax/10 + '0';
+	parametros[5] = config.humMax%10 + '0';
+
+	parametros[6] = tiempoAux.Hours/10 + '0';
+	parametros[7] = tiempoAux.Hours%10 + '0';
+	parametros[8] = tiempoAux.Minutes/10 + '0';
+	parametros[9] = tiempoAux.Minutes%10 + '0';
+
+	tiempoAux = GetAlarm();
+
+	parametros[10] = tiempoAux.Hours/10 + '0';
+	parametros[11] = tiempoAux.Hours%10 + '0';
+	parametros[12] = tiempoAux.Minutes/10 + '0';
+	parametros[13] = tiempoAux.Minutes%10 + '0';
+	parametros[14] = '$';
+	parametros[15] = '\r';
+	parametros[16] = '\n';
+
+	TransmitirString( parametros );
 }
 /**
 	\fn void Mensaje ( void )
@@ -143,54 +180,59 @@ void Mensaje ( void )
 
 			case ESPERANDO_COMANDO:
 
-				if(dato == 'M')				//Comando de manual, se cambia la maquina al estado manual
+				switch( dato )
 				{
-					estadoRiego = MANUAL;
-					trama = ESPERANDO_FIN_DE_TRAMA;
+					case 'M':				//Comando de manual, se cambia la maquina al estado manual
+						estadoRiego = MANUAL;
+						trama = ESPERANDO_FIN_DE_TRAMA;
+						break;
+
+					case 'A':		//Comando de automatico, se cambia la maquina al estado automatico
+						estadoRiego = AUTOMATICO;
+						trama = ESPERANDO_FIN_DE_TRAMA;
+						break;
+
+					case 'T':		//Comando de temporizado, se cambia la maquina al estado temporizado
+						estadoRiego = TEMPORIZADO;
+						trama = ESPERANDO_FIN_DE_TRAMA;
+						break;
+
+					case 'C':		//Comando de configuracion, se reciben datos de la configuracion
+						estadoRiego = NO_KEY;
+						comandoDatos = 'C';
+						trama = ESPERANDO_DATOS;
+						break;
+
+					case 'R':		//Comando de RTC, se recibe la hora actal
+						estadoRiego = NO_KEY;
+						comandoDatos = 'R';
+						trama = ESPERANDO_DATOS;
+						break;
+
+					case 'O':		//Comando de ok
+						UartOk = 1;
+						trama = ESPERANDO_FIN_DE_TRAMA;
+						break;
+
+					case 'S':		//Comando de status, se contesta con estado de la maquina y estado de la valvula
+						TransmitirEstado();
+						TransmitirValvula();
+						TransmitirParametros();
+						trama = ESPERANDO_FIN_DE_TRAMA;
+						break;
+
+					default:
+						TransmitirString(MENSAJE_ERROR);
+						trama = ESPERANDO_INICIO_DE_TRAMA;
+						break;
 				}
-				else if(dato == 'A')		//Comando de automatico, se cambia la maquina al estado automatico
-				{
-					estadoRiego = AUTOMATICO;
-					trama = ESPERANDO_FIN_DE_TRAMA;
-				}
-				else if(dato == 'T')		//Comando de temporizado, se cambia la maquina al estado temporizado
-				{
-					estadoRiego = TEMPORIZADO;
-					trama = ESPERANDO_FIN_DE_TRAMA;
-				}
-				else if(dato == 'C')		//Comando de configuracion, se reciben datos de la configuracion
-				{
-					estadoRiego = NO_KEY;
-					comandoDatos = 'C';
-					trama = ESPERANDO_DATOS;
-				}
-				else if(dato == 'R')		//Comando de RTC, se recibe la hora actal
-				{
-					estadoRiego = NO_KEY;
-					comandoDatos = 'R';
-					trama = ESPERANDO_DATOS;
-				}
-				else if(dato == 'O')		//Comando de ok
-				{
-					UartOk = 1;
-					trama = ESPERANDO_FIN_DE_TRAMA;
-				}
-				else if(dato == 'S')		//Comando de status, se contesta con estado de la maquina y estado de la valvula
-				{
-					TransmitirEstado();
-					TransmitirValvula();
-					trama = ESPERANDO_FIN_DE_TRAMA;
-				}
-				else
-				{
-					TransmitirString(MENSAJE_ERROR);
-					trama = ESPERANDO_INICIO_DE_TRAMA;
-				}
+
 				if(estadoRiego!=NO_KEY)
 				{
 					SwitchEstados(estadoRiego);
 					estadoRiego = NO_KEY;
 				}
+
 				break;
 
 			case ESPERANDO_DATOS:

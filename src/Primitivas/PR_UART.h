@@ -34,6 +34,7 @@
 #define 	C_CONFIGURACION	"#C$\r\n"
 #define 	C_REGANDO_I		"#i$\r\n"
 #define		C_REGANDO_O		"#o$\r\n"
+#define 	C_RTC 			"#R$\r\n"
 
 /***********************************************************************************************************************************
  *** TIPO DE DATOS GLOBALES
@@ -56,4 +57,5 @@ void TransmitirString ( char * s);
 void Mensaje ( void );
 void TransmitirEstado ( void );
 void TransmitirValvula ( void );
+void TransmitirParametros( void );
 #endif /* PRIMITIVAS_PR_UART_H_ */
