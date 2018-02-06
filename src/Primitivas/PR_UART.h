@@ -57,4 +57,5 @@ void TransmitirString ( char * s);
 void Mensaje ( void );
 void TransmitirEstado ( void );
 void TransmitirValvula ( void );
+void TransmitirParametros( void );
 #endif /* PRIMITIVAS_PR_UART_H_ */

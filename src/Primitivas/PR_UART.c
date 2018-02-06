@@ -69,7 +69,7 @@ void TransmitirString ( char * s)
 }
 /**
 	\fn void TransmitirValvula ( void )
-	\brief despacha el estado de la valvula al buffer de transmicion
+	\brief despacha el estado de la valvula al buffer de transmision
 	\return void
 */
 void TransmitirValvula ( void )
@@ -103,6 +103,43 @@ void TransmitirEstado ( void )
 		default:
 			break;
 	}
+}
+/**
+	\fn void TransmitirParametros ( void )
+	\brief despacha los parametros configurados al buffer de transmision
+	\return void
+*/
+void TransmitirParametros ( void )
+{
+	uint8_t parametros[17];
+
+	RTC_t tiempoAux = FromGetTimer(config.vTempo, MIN );
+
+	parametros[0] = '#';
+	parametros[1] = 'c';
+
+	parametros[2] = config.humMin/10 + '0';
+	parametros[3] = config.humMin%10 + '0';
+
+	parametros[4] = config.humMax/10 + '0';
+	parametros[5] = config.humMax%10 + '0';
+
+	parametros[6] = tiempoAux.Hours/10 + '0';
+	parametros[7] = tiempoAux.Hours%10 + '0';
+	parametros[8] = tiempoAux.Minutes/10 + '0';
+	parametros[9] = tiempoAux.Minutes%10 + '0';
+
+	tiempoAux = GetAlarm();
+
+	parametros[10] = tiempoAux.Hours/10 + '0';
+	parametros[11] = tiempoAux.Hours%10 + '0';
+	parametros[12] = tiempoAux.Minutes/10 + '0';
+	parametros[13] = tiempoAux.Minutes%10 + '0';
+	parametros[14] = '$';
+	parametros[15] = '\r';
+	parametros[16] = '\n';
+
+	TransmitirString( parametros );
 }
 /**
 	\fn void Mensaje ( void )
@@ -180,6 +217,7 @@ void Mensaje ( void )
 					case 'S':		//Comando de status, se contesta con estado de la maquina y estado de la valvula
 						TransmitirEstado();
 						TransmitirValvula();
+						TransmitirParametros();
 						trama = ESPERANDO_FIN_DE_TRAMA;
 						break;
 
