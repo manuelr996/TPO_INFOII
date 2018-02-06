@@ -125,27 +125,31 @@ void CloseConfiguracion(void)
 	SwitchEstados(EstadoAnterior);
 }
 
-void CargarConfiguracion(const char *src) //recibe las configuraciones en un formato hhHHhhmmHHMM
+void ParsearConfiguracion(const char *src) //recibe las configuraciones en un formato hhHHhhmmHHMM
 {
 	RTC_t aux = {0}; //aux.DayOfWeek=0; aux.DayofMonth=0; aux.Hours=0; aux.Minutes=0; aux.Month=0; aux.Seconds=0; aux.Year=0;
 
 	EV_RIEGO_ON;
-	HumedadMinima 		= (src[0] - '0')*10;
-	HumedadMinima 		+= (src[1] - '0');
-	HumedadMaxima 		= (src[2] - '0')*10;
-	HumedadMaxima 		+= (src[3] - '0');
+	config.humMin 		= (src[0] - '0')*10;
+	config.humMin		+= (src[1] - '0');
+	config.humMax 		= (src[2] - '0')*10;
+	config.humMax 		+= (src[3] - '0');
 	aux.Hours			= (src[4] - '0')*10;
 	aux.Hours			+= (src[5] - '0');
 	//un espacio por los ':'
 	aux.Minutes			= (src[7] - '0')*10;
 	aux.Minutes			+= (src[8] - '0');
-	T_Riego = ToTimer(&aux,SEG);
+	config.vTempo = ToTimer(&aux,MIN);
+
 	aux.Hours		= (src[9] - '0')*10;
 	aux.Hours 	+= (src[10] - '0');
 	//un espacio por los ':'
 	aux.Minutes	= (src[12] - '0')*10;
 	aux.Minutes 	+= (src[13] - '0');
-	SetAlarm(&aux);
+	config.vAlarm = ToTimer(&aux,MIN);
+
+	SetAlarm(aux);
+
 	EV_RIEGO_OFF;
 }
 
@@ -205,6 +209,17 @@ void CloseEstados(void)
 	ApagarLeds();
 	TimerStop(E_Riego);
 	TimerStop(E_Print);
+}
+
+void ComponerTemporizadorCorto(const RTC_t *timer, char *dest)
+{
+	dest[0] = (timer->Hours/10) + '0';
+	dest[1] = (timer->Hours%10) + '0';
+	dest[2] = ':';
+	dest[3] = (timer->Minutes/10) + '0';
+	dest[4] = (timer->Minutes%10) + '0';
+	dest[5] = 0;
+	
 }
 
 void ComponerTemporizador(const RTC_t *timer, char *dest)

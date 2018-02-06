@@ -31,7 +31,7 @@
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PUBLICAS
  **********************************************************************************************************************************/
-CONFIG_t bufferParametros;
+
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -47,29 +47,24 @@ CONFIG_t bufferParametros;
  /***********************************************************************************************************************************
  *** FUNCIONES GLOBALES AL MODULO
  **********************************************************************************************************************************/
-//TODO: ARREGLA ESTO
 void CargarConfiguracion(CONFIG_t *config)
 {
-	config->estAlrm = bufferParametros.AlrmOn;
-	config->HrAlrm = bufferParametros.HrAlrm;
-	config->MnAlrm = bufferParametros.MnAlrm;
-	config->HrTemp = bufferParametros.HrTemp;
-	config->MnTemp = bufferParametros.MnTemp;
-	config->humMax = bufferParametros.HumMax;
-	config->humMin = bufferParametros.HumMin;
-	config->UltEst = bufferParametros.UltEst;
-};
+	config->estAlrm = RTC_CONFIG->estAlrm;
+	config->vTempo = RTC_CONFIG->vTempo;
+	config->vAlarm = RTC_CONFIG->vAlarm;
+	config->humMax = RTC_CONFIG->humMax;
+	config->humMin = RTC_CONFIG->humMin;
+	config->ultEst = RTC_CONFIG->ultEst;
+}
 
 void GuardarConfiguracion(const CONFIG_t *config)
 {
-	bufferParametros.AlrmOn = config->AlrmOn;
-	bufferParametros.HrAlrm = config->HrAlrm;
-	bufferParametros.MnAlrm = config->MnAlrm;
-	bufferParametros.HrTemp = config->HrTemp;
-	bufferParametros.MnTemp = config->MnTemp;
-	bufferParametros.HumMax = config->HumMax;
-	bufferParametros.HumMin = config->HumMin;
-	bufferParametros.UltEst = config->UltEst;
+	RTC_CONFIG->estAlrm = config->estAlrm;
+	RTC_CONFIG->humMax = config->humMax;
+	RTC_CONFIG->humMin = config->humMin;
+	RTC_CONFIG->ultEst = config->ultEst;
+	RTC_CONFIG->vTempo = config->vTempo;
+	RTC_CONFIG->vAlarm = config->vAlarm;
 }
 
 

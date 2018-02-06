@@ -49,9 +49,10 @@ void InitAutomatico(void);
 void InitTemporizado(void);
 void InitConfiguracion(void);
 void CloseConfiguracion(void);
-void CargarConfiguracion(const char*);
+void ParsearConfiguracion(const char*);
 void CloseEstados(void);
 void SwitchEstados(uint8_t);
 void ComponerHumedad(uint8_t,char *);
 void ComponerTemporizador(const RTC_t *,char*);
+void ComponerTemporizadorCorto(const RTC_t *,char*);
 #endif /* PRIMITIVAS_PR_MAQUINASDEESTADOS_H_ */

@@ -46,14 +46,10 @@ void (*MaquinaConfiguracion[])(void) = {ConfiguracionInicializada  	//INIT_CONFI
 										,SetTemporizadorHHU			//TEMPORIZADOR_HH
 										,SetTemporizadorMMD			//TEMPORIZADOR_MMD
 										,SetTemporizadorMMU			//TEMPORIZADOR_MMU
-										,SetTemporizadorSSD			//TEMPORIZADOR_SSD
-										,SetTemporizadorSSU			//TEMPORIZADOR_SSU
 										,SetHoraRiegoHHD			//HORA_RIEGO_HH
 										,SetHoraRiegoHHU			//HORA_RIEGO_HH
 										,SetHoraRiegoMMD			//HORA_RIEGO_MMD
 										,SetHoraRiegoMMU			//HORA_RIEGO_MMU
-										,SetHoraRiegoSSD			//HORA_RIEGO_SSD
-										,SetHoraRiegoSSU			//HORA_RIEGO_SSU
 										,ConfiguracionFinalizada};	//CERRAR_CONFIGURACION
 
 void (*MaquinaManual[])(void) = {RiegoOff, RiegoOn};

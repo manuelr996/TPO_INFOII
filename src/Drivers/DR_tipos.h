@@ -67,13 +67,13 @@ typedef struct //Estructura para globalizar las configuraciones
 			uint32_t vTempo:11; 	//Valor Temporizador(en minutos) 	- 11 bits - 1.37 bytes
 			uint32_t vAlarm:11; 	//Valor Alarma (en minutos)			- 22 bits - 2.75 bytes
 			uint32_t ultEst:2;		//Ultimo Estado						- 24 bits - 3.00 bytes
-			uint32_t RESERVED:8;	//Reservado Para LOWER				- 32 bits - 4.00 bytes
-			uint8_t  RESERVED_2;	//Reservado Para LOWER				- 40 bits - 5.00 bytes
+			uint32_t RESERVED_0:8;	//Reservado Para LOWER				- 32 bits - 4.00 bytes
+			uint8_t  RESERVED_1;	//Reservado Para LOWER				- 40 bits - 5.00 bytes
 		};
 		struct
 		{
-			uint8_t  RESERVED;
-			uint16_t RESERVED_2;
+			uint8_t  RESERVED_2;
+			uint16_t RESERVED_3;
 			uint16_t humMin:7;
 			uint16_t humMax:7;
 			uint16_t estAlrm:2;

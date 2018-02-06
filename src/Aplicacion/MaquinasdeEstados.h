@@ -27,7 +27,7 @@
 #include "DR_gpio.h"
 #include "PR_RTC.h"
 #include "PR_UART.h"
-#include "Configuracion.h";
+#include "Configuracion.h"
 /***********************************************************************************************************************************
  *** DEFINES GLOBALES
  **********************************************************************************************************************************/
@@ -72,18 +72,14 @@ typedef enum
 	HUMEDADMINIMA_U,	//Humedad Minima - Unidad
 	HUMEDADMAXIMA_D,	//Humedad Maxima - Decenas
 	HUMEDADMAXIMA_U,	//Humedad Maxima - Unidad
-	TEMPORIZADOR_HHD,	//Tiempo Riego - Horas
-	TEMPORIZADOR_HHU,	//Tiempo Riego - Horas
-	TEMPORIZADOR_MMD,	//Tiempo Riego - Minutos(Decenas)
-	TEMPORIZADOR_MMU,	//Tiempo Riego - Minutos(Unidades)
-	TEMPORIZADOR_SSD,	//Tiempo Riego - Segundos(Decenas)
-	TEMPORIZADOR_SSU,	//Tiempo Riego - Segundos(Unidades)
-	HORA_RIEGO_HHD,		//Hora Riego - Horas
-	HORA_RIEGO_HHU,		//Hora Riego - Horas
-	HORA_RIEGO_MMD,		//Hora Riego - Minutos(Decenas)
-	HORA_RIEGO_MMU,		//Hora Riego - Minutos(Unidades)
-	HORA_RIEGO_SSD,		//Hora RIego - Segundos(Decenas)
-	HORA_RIEGO_SSU,		//Hora Riego - Segundos(Unidades)
+	TEMPORIZADOR_HHD,	//Tiempo Riego - Horas (Decenas)
+	TEMPORIZADOR_HHU,	//Tiempo Riego - Horas (Unidades)
+	TEMPORIZADOR_MMD,	//Tiempo Riego - Minutos (Decenas)
+	TEMPORIZADOR_MMU,	//Tiempo Riego - Minutos (Unidades)
+	HORA_RIEGO_HHD,		//Hora Riego - Horas (Decenas)
+	HORA_RIEGO_HHU,		//Hora Riego - Horas (Unidades)
+	HORA_RIEGO_MMD,		//Hora Riego - Minutos (Decenas)
+	HORA_RIEGO_MMU,		//Hora Riego - Minutos (Unidades)
 	CERRAR_CONFIGURACION
 }EstadosConfiguracion;
 
@@ -96,7 +92,7 @@ extern EstadosManual EstadoManual;
 extern EstadosTemporizado EstadoTemporizado;
 extern EstadosAutomatico EstadoAutomatico;
 
-extern uint32_t T_Riego;
+extern CONFIG_t config;
 /***********************************************************************************************************************************
  *** PROTOTIPOS DE FUNCIONES GLOBALES
  **********************************************************************************************************************************/
@@ -121,14 +117,10 @@ void SetTemporizadorHHD(void);
 void SetTemporizadorHHU(void);
 void SetTemporizadorMMD(void);
 void SetTemporizadorMMU(void);
-void SetTemporizadorSSD(void);
-void SetTemporizadorSSU(void);
 void SetHoraRiegoHHD(void);
 void SetHoraRiegoHHU(void);
 void SetHoraRiegoMMD(void);
 void SetHoraRiegoMMU(void);
-void SetHoraRiegoSSD(void);
-void SetHoraRiegoSSU(void);
 void ConfiguracionFinalizada(void);
 
 void AguardandoOk(void);

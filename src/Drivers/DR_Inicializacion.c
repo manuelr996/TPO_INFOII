@@ -61,7 +61,8 @@ void Inicializacion ( void )
 	RIEGO_Ttime = RIEGO_TtimeRESET;
 	RIEGO_AtimeON = RIEGO_AtimeRESET;
 	HumedadSuelo = HumedadSueloRESET;
-	T_Riego = 56*60;
+
+	CargarConfiguracion(&config);
 
 	InitPLL();			//PLL
 	InitSysTick();		//SysTick

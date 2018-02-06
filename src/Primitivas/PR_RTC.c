@@ -57,11 +57,11 @@
 	\return tipo y descripcion de retorno
 */
 
-void SetAlarm(RTC_t *rtc)
+void SetAlarm(RTC_t rtc)
 {
-	Alarm.Hours	 = rtc->Hours;
-	Alarm.Minutes = rtc->Minutes;
-	Alarm.Seconds = rtc->Seconds;
+	Alarm.Hours	 = rtc.Hours;
+	Alarm.Minutes = rtc.Minutes;
+	Alarm.Seconds = rtc.Seconds;
 }
 /**
 	\fn  GetAlarm
