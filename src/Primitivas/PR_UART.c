@@ -111,7 +111,7 @@ void TransmitirEstado ( void )
 */
 void TransmitirParametros ( void )
 {
-	uint8_t parametros[17];
+	char parametros[17];
 
 	RTC_t tiempoAux = FromGetTimer(config.vTempo, MIN );
 
@@ -136,10 +136,10 @@ void TransmitirParametros ( void )
 	parametros[12] = tiempoAux.Minutes/10 + '0';
 	parametros[13] = tiempoAux.Minutes%10 + '0';
 	parametros[14] = '$';
-	parametros[15] = '\r';
-	parametros[16] = '\n';
 
 	TransmitirString( parametros );
+	TransmitirString( "\r\n" );
+
 }
 /**
 	\fn void Mensaje ( void )

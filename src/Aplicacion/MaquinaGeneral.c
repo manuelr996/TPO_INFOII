@@ -46,6 +46,7 @@ void (*MaquinaConfiguracion[])(void) = {ConfiguracionInicializada  	//INIT_CONFI
 										,SetTemporizadorHHU			//TEMPORIZADOR_HH
 										,SetTemporizadorMMD			//TEMPORIZADOR_MMD
 										,SetTemporizadorMMU			//TEMPORIZADOR_MMU
+										,SetAlarmaOn				//ALARMA_ON_OFF
 										,SetHoraRiegoHHD			//HORA_RIEGO_HH
 										,SetHoraRiegoHHU			//HORA_RIEGO_HH
 										,SetHoraRiegoMMD			//HORA_RIEGO_MMD

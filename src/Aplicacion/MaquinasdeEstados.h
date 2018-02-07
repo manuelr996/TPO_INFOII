@@ -76,6 +76,7 @@ typedef enum
 	TEMPORIZADOR_HHU,	//Tiempo Riego - Horas (Unidades)
 	TEMPORIZADOR_MMD,	//Tiempo Riego - Minutos (Decenas)
 	TEMPORIZADOR_MMU,	//Tiempo Riego - Minutos (Unidades)
+	ALARMA_ON_OFF,		//Prender o Apagar la Alarma
 	HORA_RIEGO_HHD,		//Hora Riego - Horas (Decenas)
 	HORA_RIEGO_HHU,		//Hora Riego - Horas (Unidades)
 	HORA_RIEGO_MMD,		//Hora Riego - Minutos (Decenas)
@@ -117,6 +118,7 @@ void SetTemporizadorHHD(void);
 void SetTemporizadorHHU(void);
 void SetTemporizadorMMD(void);
 void SetTemporizadorMMU(void);
+void SetAlarmaOn(void);
 void SetHoraRiegoHHD(void);
 void SetHoraRiegoHHU(void);
 void SetHoraRiegoMMD(void);

@@ -512,12 +512,17 @@ void SetTemporizadorMMU(void)
 		break;
 	case ADELANTE:
 		config.vTempo = vConfig;
-		vConfig = config.vAlarm;
-		vUnidad = HrD;
+		vConfig = config.estAlrm;
+		TimerStop(E_Print);
 
-		Display_LCD("   Hora Alarma   ", RENGLON_1, 0);
-		Display_LCD( "Hora:           ", RENGLON_2, 0);
-		EstadoConfiguracion = HORA_RIEGO_HHD;
+		//PushLCD(0x0C, LCD_CONTROL);
+		Display_LCD( " Prender Alarma?", RENGLON_1, 0);
+		if(config.estAlrm)
+			Display_LCD("Alarma:   ON    ", RENGLON_2, 0);
+		else
+			Display_LCD("Alarma:   OFF   ", RENGLON_2, 0);
+
+		EstadoConfiguracion = ALARMA_ON_OFF;
 		break;
 	case ATRAS:
 		vUnidad = MinD;
@@ -532,6 +537,50 @@ void SetTemporizadorMMU(void)
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
 		break;
 	}
+}
+
+void SetAlarmaOn(void)
+{
+	btnConfig = getTecla();
+	switch(btnConfig)
+	{
+	case SUMAR:
+		if(vConfig)
+			vConfig = 0;
+		else
+			vConfig = 1;
+		break;
+	case RESTAR:
+		if(vConfig)
+			vConfig = 0;
+		else
+			vConfig = 1;
+		break;
+	case ADELANTE:
+		config.vTempo = vConfig;
+		vConfig = config.vAlarm;
+		vUnidad = HrD;
+
+		TimerStart(E_Print,T_Print,PrintHour,B_Print);
+		Display_LCD("   Hora Alarma   ", RENGLON_1, 0);
+		Display_LCD( "Hora:           ", RENGLON_2, 0);
+		EstadoConfiguracion = HORA_RIEGO_HHD;
+		break;
+	case ATRAS:
+		config.estAlrm = vConfig;
+		vConfig = config.vTempo;
+		vUnidad = MinU;
+
+		TimerStart(E_Print,T_Print,PrintHour,B_Print);
+		Display_LCD( " Temp. de Riego " , RENGLON_1 , 0 );
+		Display_LCD( "Tiempo=         " , RENGLON_2 , 0 );
+		EstadoConfiguracion = TEMPORIZADOR_MMU;
+		break;
+	case SALIR:
+		break;
+	}
+
+
 }
 
 void SetHoraRiegoHHD(void)
@@ -558,12 +607,16 @@ void SetHoraRiegoHHD(void)
 		break;
 	case ATRAS:
 		config.vAlarm = vConfig;
-		vConfig = config.vTempo;
-		vUnidad = MinU;
+		vConfig = config.estAlrm;
+		TimerStop(E_Print);
 
-		Display_LCD( " Temp. de Riego " , RENGLON_1 , 0 );
-		Display_LCD( "Tiempo=         " , RENGLON_2 , 0 );
-		EstadoConfiguracion = TEMPORIZADOR_MMU;
+		Display_LCD( " Prender Alarma?", RENGLON_1, 0);
+		if(config.estAlrm)
+			Display_LCD("Alarma:   ON    ", RENGLON_2, 0);
+		else
+			Display_LCD("Alarma:   OFF   ", RENGLON_2, 0);
+
+		EstadoConfiguracion = ALARMA_ON_OFF;
 		break;
 	case SALIR:
 		config.vAlarm = vConfig;
@@ -737,7 +790,10 @@ void PrintCurrentTime(void)
 	Display_LCD("Hora:   ",RENGLON_2,0);
 	Display_LCD(vString, RENGLON_2, 8);
 
-	TimerStart(E_Print,T_Print_largo,PrintAlarm,B_Print);
+	if(config.estAlrm)
+		TimerStart(E_Print,T_Print_largo,PrintAlarm,B_Print);
+	else
+		TimerStart(E_Print,T_Print_largo,PrintTimer,B_Print);
 }
 
 void PrintAlarm(void)
@@ -774,7 +830,7 @@ void PrintTimer(void)
 
 void AguardandoOk(void)
 {
-	if(btn == B_OK || Alarma() || UartOk)
+	if((btn == B_OK || Alarma() || UartOk) && config.estAlrm)
 	{
 		UartOk = 0;
 		EV_RIEGO_ON;
