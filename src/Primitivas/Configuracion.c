@@ -55,6 +55,8 @@ void CargarConfiguracion(CONFIG_t *config)
 	config->humMax = RTC_CONFIG->humMax;
 	config->humMin = RTC_CONFIG->humMin;
 	config->ultEst = RTC_CONFIG->ultEst;
+
+	SetAlarm( FromGetTimer( config->vAlarm, MIN));
 }
 
 void GuardarConfiguracion(const CONFIG_t *config)
