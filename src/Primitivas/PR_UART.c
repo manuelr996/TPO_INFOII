@@ -226,6 +226,7 @@ void Mensaje ( void )
 						datosTomados = 0;
 						comandoDatos = 0;
 						ParsearConfiguracion(auxCFG);
+						GuardarConfiguracion(&config);
 						trama = ESPERANDO_FIN_DE_TRAMA;
 					}
 				}
