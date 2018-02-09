@@ -31,9 +31,6 @@
  *** VARIABLES GLOBALES PUBLICAS
  **********************************************************************************************************************************/
 
-volatile uint32_t	HumedadMaxima;
-volatile uint32_t	HumedadMinima;
-
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -58,7 +55,7 @@ volatile uint32_t	HumedadMinima;
 */
 uint8_t CondicionesInicio ( void )
 {
-	if( GetLluvia() == OFF && GetHumedadSuelo() <= HumedadMinima )
+	if( GetLluvia() == OFF && GetHumedadSuelo() <= config.humMin )
 		return TRUE;
 
 	return FALSE;
@@ -72,7 +69,7 @@ uint8_t CondicionesInicio ( void )
 */
 uint8_t CondicionesFin ( void )
 {
-	if( GetLluvia() == ON || GetHumedadSuelo() >= HumedadMaxima )
+	if( GetLluvia() == ON || GetHumedadSuelo() >= config.humMax )
 		return TRUE;
 
 	return FALSE;

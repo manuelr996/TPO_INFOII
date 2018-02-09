@@ -97,6 +97,8 @@ void SwitchEstados(EstadosGenerales nuevoEstado)
 		btn = NO_KEY;
 		break;
 	}
+
+	GuardarConfiguracion(&config);
 }
 
 /**
@@ -108,6 +110,50 @@ void SwitchEstados(EstadosGenerales nuevoEstado)
  	\param [out] parametros de salida
 	\return tipo y descripcion de retorno
 */
+void CloseEstados(void)
+{
+	if( ESTADOVALVULA == ON )
+	{
+		EV_RIEGO_OFF;
+		TransmitirString( C_REGANDO_O );
+	}
+	ApagarLeds();
+	TimerStop(E_Riego);
+	TimerStop(E_Print);
+}
+
+void InitAutomatico(void)
+{
+	CloseEstados();
+	PrenderLed(VERDE);
+	TransmitirString(C_AUTOMATICO);
+	Display_LCD("Modo Automatico " , RENGLON_1 , 0 );
+	Display_LCD("   Riego: OFF   " , RENGLON_2 , 0 );
+	TimerStart(E_Print,T_Print,PrintHumMin,B_Print);
+	config.ultEst = AUTOMATICO;
+}
+
+void InitManual(void)
+{
+	CloseEstados();
+	PrenderLed(AZUL);
+	TransmitirString(C_MANUAL);
+	Display_LCD("   Modo Manual  " , RENGLON_1 , 0 );
+	Display_LCD("   Riego: OFF   " , RENGLON_2 , 0 );
+	config.ultEst = MANUAL;
+}
+
+void InitTemporizado(void)
+{
+	CloseEstados();
+	PrenderLed(ROJO);
+	PrenderLed(VERDE);
+	TransmitirString(C_TEMPORIZADO);
+	Display_LCD("Modo Temporizado" , RENGLON_1 , 0 );
+	TimerStart(E_Print,T_Print,PrintCurrentTime,B_Print);
+	config.ultEst = TEMPORIZADO;
+}
+
 void InitConfiguracion( void )
 {
 	CloseEstados();
@@ -117,6 +163,7 @@ void InitConfiguracion( void )
 	Display_LCD(" OK p/continuar ", RENGLON_2, 0);
 	PushLCD(0x0D,LCD_CONTROL);
 	EstadoAnterior = Estado;
+	config.ultEst = CONFIGURACION;
 }
 
 void CloseConfiguracion(void)
@@ -150,6 +197,8 @@ void ParsearConfiguracion(const char *src) //recibe las configuraciones en un fo
 
 	SetAlarm(aux);
 
+	GuardarConfiguracion(&config);
+
 	EV_RIEGO_OFF;
 }
 
@@ -168,47 +217,6 @@ void ComponerHumedad(uint8_t pot, char *dest)
 	dest[1] = pot/10 + '0';
 	dest[2] = pot%10 + '0';
 	dest[3] = '\0';
-}
-
-void InitAutomatico(void)
-{
-	CloseEstados();
-	PrenderLed(VERDE);
-	TransmitirString(C_AUTOMATICO);
-	Display_LCD("Modo Automatico " , RENGLON_1 , 0 );
-	Display_LCD("   Riego: OFF   " , RENGLON_2 , 0 );
-	TimerStart(E_Print,T_Print,PrintHumMin,B_Print);
-}
-
-void InitManual(void)
-{
-	CloseEstados();
-	PrenderLed(AZUL);
-	TransmitirString(C_MANUAL);
-	Display_LCD("   Modo Manual  " , RENGLON_1 , 0 );
-	Display_LCD("   Riego: OFF   " , RENGLON_2 , 0 );
-}
-
-void InitTemporizado(void)
-{
-	CloseEstados();
-	PrenderLed(ROJO);
-	PrenderLed(VERDE);
-	TransmitirString(C_TEMPORIZADO);
-	Display_LCD("Modo Temporizado" , RENGLON_1 , 0 );
-	TimerStart(E_Print,T_Print,PrintCurrentTime,B_Print);
-}
-
-void CloseEstados(void)
-{
-	if( ESTADOVALVULA == ON )
-	{
-		EV_RIEGO_OFF;
-		TransmitirString( C_REGANDO_O );
-	}
-	ApagarLeds();
-	TimerStop(E_Riego);
-	TimerStop(E_Print);
 }
 
 void ComponerTemporizadorCorto(const RTC_t *timer, char *dest)

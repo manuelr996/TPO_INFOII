@@ -59,8 +59,6 @@ EstadosTemporizado EstadoTemporizado;
 EstadosAutomatico EstadoAutomatico;
 
 CONFIG_t config;
-
-uint32_t T_Riego;
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -412,8 +410,7 @@ void SetTemporizadorHHD(void)
 		EstadoConfiguracion = HUMEDADMINIMA_U;
 		break;
 	case SALIR:
-		T_Riego = vConfig;
-		vConfig = 0;
+		config.vTempo = vConfig;
 		TimerStop(E_Print);
 		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
 		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
@@ -577,6 +574,11 @@ void SetAlarmaOn(void)
 		EstadoConfiguracion = TEMPORIZADOR_MMU;
 		break;
 	case SALIR:
+		config.estAlrm = vConfig;
+
+		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
+		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
+		EstadoConfiguracion = CERRAR_CONFIGURACION;
 		break;
 	}
 

@@ -36,8 +36,7 @@
  **********************************************************************************************************************************/
 // extern tipo nombreVariable;
 
-extern volatile uint32_t	HumedadMaxima;
-extern volatile uint32_t	HumedadMinima;
+extern CONFIG_t config;
 
 /***********************************************************************************************************************************
  *** PROTOTIPOS DE FUNCIONES GLOBALES
