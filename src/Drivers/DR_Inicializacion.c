@@ -62,7 +62,6 @@ void Inicializacion ( void )
 	RIEGO_AtimeON = RIEGO_AtimeRESET;
 	HumedadSuelo = HumedadSueloRESET;
 
-	CargarConfiguracion(&config);
 
 	InitPLL();			//PLL
 	InitSysTick();		//SysTick
@@ -76,6 +75,11 @@ void Inicializacion ( void )
 	ElectroValvula_Off();
 
 	Ev1SecuenciaTempHumedad(); //Inicia secuencia de conversiones temperatura-humedad
+
+	CargarConfiguracion(&config);
+	TransmitirEstado();
+	TransmitirValvula();
+	TransmitirParametros();
 
 	TimerStart(E_Display,T_Display,MostrarSensores,B_Display);
 }

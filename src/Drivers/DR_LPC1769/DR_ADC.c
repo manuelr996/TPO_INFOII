@@ -33,7 +33,7 @@
  **********************************************************************************************************************************/
 volatile uint8_t 	HumedadSuelo;
 volatile uint32_t	vPotenciometro;
-volatile uint16_t	bufferTemp[ TAMBUFFERTEMP ]={250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250};
+volatile uint16_t	Temperatura = 250;
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -92,6 +92,9 @@ void ADC_IRQHandler( void )
 {
 	uint32_t lectura = AD0GDR;
 	uint32_t conversion;
+	uint16_t promedio;
+
+	static uint16_t bufferTemp[ TAMBUFFERTEMP ] = { 250 , 250 , 250 , 250 , 250 , 250 , 250 , 250 , 250 , 250 };
 	static uint8_t indTemp = 0;
 
 	conversion = ( lectura >> ADDR_RESULTBIT ) & ADDR_RESULTMASK;	//Dejo el dato de la conversion bien expresado
@@ -109,7 +112,22 @@ void ADC_IRQHandler( void )
 			case S_TEMPERATURA:
 				bufferTemp[ indTemp ] = ConvTemp(conversion);		//Cargo la conversion al array buffer				4095_____3300mV    LM35=>   10mV____1ºC				Temperatura = (ADC*330)/4095																					//	 ADC_____x=ADCmV		   ADCmV____x=Temperatura
 				indTemp++;
-				indTemp %= TAMBUFFERTEMP;
+
+				if( indTemp == TAMBUFFERTEMP )
+				{
+					for( indTemp = 0, promedio = 0 ; indTemp < TAMBUFFERTEMP ; indTemp++ )
+						promedio += bufferTemp[indTemp];
+
+					promedio /= TAMBUFFERTEMP;
+
+					if( promedio > Temperatura + DECIMA )
+						Temperatura += DECIMA;
+					else if( promedio < Temperatura - DECIMA )
+						Temperatura -= DECIMA;
+
+					indTemp = 0;
+				}
+
 				break;
 			default:
 				break;

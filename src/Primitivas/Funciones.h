@@ -47,5 +47,5 @@
  **********************************************************************************************************************************/
 void FuncLluvia( void );
 void MostrarSensores( void );
-void ComponerMedicion(char*,uint8_t,uint8_t);
+void ComponerMedicion(char*,uint16_t,uint8_t);
 #endif /* FUNCIONES_H_ */

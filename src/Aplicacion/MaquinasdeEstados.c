@@ -767,6 +767,7 @@ void ConfiguracionFinalizada (void)
 		GuardarConfiguracion(&config);
 		vConfig = 0;
 		CloseConfiguracion();
+		TransmitirParametros();
 	}
 }
 

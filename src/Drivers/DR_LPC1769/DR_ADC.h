@@ -89,6 +89,8 @@
 #define 	S_TEMPERATURA		5 //antes era 1
 
 #define 	TAMBUFFERTEMP		20
+
+#define 	DECIMA				1
 /***********************************************************************************************************************************
  *** MACROS GLOBALES
  **********************************************************************************************************************************/
@@ -121,7 +123,7 @@ typedef struct
 // extern tipo nombreVariable;
 extern volatile uint8_t 	HumedadSuelo;
 extern volatile uint32_t	vPotenciometro;
-extern volatile uint16_t	bufferTemp[ TAMBUFFERTEMP ];
+extern volatile uint16_t	Temperatura;
 /***********************************************************************************************************************************
  *** PROTOTIPOS DE FUNCIONES GLOBALES
  **********************************************************************************************************************************/

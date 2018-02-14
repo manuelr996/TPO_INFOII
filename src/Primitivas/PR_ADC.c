@@ -82,13 +82,6 @@ uint32_t GetPotenciometroHora(void)
 */
 uint16_t GetTemperatura (void)
 {
-	uint8_t i;
-	uint16_t Temperatura = 0;
-	for( i = 0 ; i < TAMBUFFERTEMP ; i++ )
-		Temperatura += bufferTemp[ i ];
-
-	Temperatura /= TAMBUFFERTEMP;
-
 	return Temperatura;
 }
 

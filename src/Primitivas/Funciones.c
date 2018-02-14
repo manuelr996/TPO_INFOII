@@ -99,7 +99,7 @@ void FuncLluvia( void )
 	 }
 }
 
-void ComponerMedicion(char *string, uint8_t med, uint8_t flag)
+void ComponerMedicion(char *string, uint16_t med, uint8_t flag)
 {
 	string[0] = '#';
 	if(flag == temp)
