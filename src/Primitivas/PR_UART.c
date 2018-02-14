@@ -268,6 +268,7 @@ void Mensaje ( void )
 						datosTomados = 0;
 						comandoDatos = 0;
 						ParsearConfiguracion(auxCFG);
+						TransmitirParametros();
 						trama = ESPERANDO_FIN_DE_TRAMA;
 					}
 				}
