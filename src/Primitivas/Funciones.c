@@ -101,7 +101,9 @@ void FuncLluvia( void )
 
 void ComponerMedicion(char *string, uint16_t med, uint8_t flag)
 {
+
 	string[0] = '#';
+
 	if(flag == temp)
 	{
 		string[1] = 't';
@@ -116,9 +118,12 @@ void ComponerMedicion(char *string, uint16_t med, uint8_t flag)
 	else
 	{
 		string[1] = 'h';
-		string[2] = (med/10) + '0';
-		string[3] = (med%10) + '0';
-		string[4] = '$';
+		string[2] = (med/100) +'0' ;
+		med%=100;
+		string[3] = (med/10) +'0';
+		med%=10;
+		string[4] = med+'0';
+		string[5] = '$';
 		string[6] = '\n';
 	}
 }
