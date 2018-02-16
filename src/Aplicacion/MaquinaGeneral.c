@@ -51,6 +51,10 @@ void (*MaquinaConfiguracion[])(void) = {ConfiguracionInicializada  	//INIT_CONFI
 										,SetHoraRiegoHHU			//HORA_RIEGO_HH
 										,SetHoraRiegoMMD			//HORA_RIEGO_MMD
 										,SetHoraRiegoMMU			//HORA_RIEGO_MMU
+										,SetHoraHHD					//HORA_HHD
+										,SetHoraHHU					//HORA_HHU
+										,SetHoraMMD					//HORA_MMD
+										,SetHoraMMU					//HORA_MMU
 										,ConfiguracionFinalizada};	//CERRAR_CONFIGURACION
 
 void (*MaquinaManual[])(void) = {RiegoOff, RiegoOn};

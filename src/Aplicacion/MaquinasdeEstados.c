@@ -50,6 +50,7 @@ EstadosTemporizado EstadoTemporizado;
 EstadosAutomatico EstadoAutomatico;
 
 CONFIG_t config;
+RTC_t aux;
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -473,8 +474,12 @@ void SetAlarmaOn(void)
 		}
 		else
 		{
-			PrintCerrarConfig();
-			EstadoConfiguracion = CERRAR_CONFIGURACION;
+			aux = GetTime();
+			vConfig = ToTimer(&aux, MIN);
+			vUnidad = HrD;
+
+			PrintConfigHora();
+			EstadoConfiguracion = HORA_HHD;
 		}
 		break;
 	case ATRAS:
@@ -626,9 +631,12 @@ void SetHoraRiegoMMU(void)
 	case ADELANTE:
 		config.vAlarm = vConfig;
 		SetAlarm(FromGetTimer(config.vAlarm, MIN));
+		aux = GetTime();
+		vConfig = ToTimer(&aux, MIN);
+		vUnidad = HrD;
 
-		PrintCerrarConfig();
-		EstadoConfiguracion = CERRAR_CONFIGURACION;
+		PrintConfigHora();
+		EstadoConfiguracion = HORA_HHD;
 		break;
 	case ATRAS:
 		vUnidad = MinD;
@@ -645,11 +653,32 @@ void SetHoraRiegoMMU(void)
 
 }
 
-void ConfiguracionFinalizada (void)
+void SetHoraHHD(void)
 {
 	btnConfig = getTecla();
-	if(btnConfig == ATRAS)
+
+	switch(btnConfig)
 	{
+	case SUMAR:
+		if((vConfig+Hr_en_Min*10) < Hs24_en_Min)
+			vConfig += Hr_en_Min*10;
+		else
+			vConfig = Hs24_en_Min;
+		break;
+	case RESTAR:
+		if((vConfig-Hr_en_Min*10) > 0)
+			vConfig -= Hr_en_Min*10;
+		else
+			vConfig = 0;
+		break;
+	case ADELANTE:
+		vUnidad = HrU;
+		EstadoConfiguracion = HORA_HHU;
+		break;
+	case ATRAS:
+
+		SetTime(FromGetTimer(vConfig, MIN));
+
 		if(config.estAlrm)
 		{
 			vUnidad = MinU;
@@ -665,6 +694,130 @@ void ConfiguracionFinalizada (void)
 			PrintPrenderAlarma();
 			EstadoConfiguracion = ALARMA_ON_OFF;
 		}
+		break;
+	case SALIR:
+		SetTime(FromGetTimer(vConfig, MIN));
+		PrintCerrarConfig();
+		EstadoConfiguracion = CERRAR_CONFIGURACION;
+		break;
+	}
+}
+
+void SetHoraHHU(void)
+{
+	btnConfig = getTecla();
+
+	switch(btnConfig)
+	{
+	case SUMAR:
+		if((vConfig+Hr_en_Min) < Hs24_en_Min)
+			vConfig += Hr_en_Min;
+		else
+			vConfig = Hs24_en_Min;
+		break;
+	case RESTAR:
+		if((vConfig-Hr_en_Min) > 0)
+			vConfig -= Hr_en_Min;
+		else
+			vConfig = 0;
+		break;
+	case ADELANTE:
+		vUnidad = MinD;
+		EstadoConfiguracion = HORA_MMD;
+		break;
+	case ATRAS:
+		vUnidad = HrD;
+		EstadoConfiguracion = HORA_HHD;
+		break;
+	case SALIR:
+		SetTime(FromGetTimer(vConfig, MIN));
+		PrintCerrarConfig();
+		EstadoConfiguracion = CERRAR_CONFIGURACION;
+		break;
+	}
+}
+
+void SetHoraMMD(void)
+{
+	btnConfig = getTecla();
+
+	switch(btnConfig)
+	{
+	case SUMAR:
+		if((vConfig+10) < Hs24_en_Min)
+			vConfig += 10;
+		else
+			vConfig = Hs24_en_Min;
+		break;
+	case RESTAR:
+		if((vConfig-10) > 0)
+			vConfig -= 10;
+		else
+			vConfig = 0;
+		break;
+	case ADELANTE:
+		vUnidad = MinU;
+		EstadoConfiguracion = HORA_MMU;
+		break;
+	case ATRAS:
+		vUnidad = HrU;
+		EstadoConfiguracion = HORA_HHU;
+		break;
+	case SALIR:
+		SetTime(FromGetTimer(vConfig, MIN));
+		PrintCerrarConfig();
+		EstadoConfiguracion = CERRAR_CONFIGURACION;
+		break;
+	}
+}
+
+void SetHoraMMU(void)
+{
+	btnConfig = getTecla();
+
+	switch(btnConfig)
+	{
+	case SUMAR:
+		if((vConfig+1) < Hs24_en_Min)
+			vConfig++;
+		else
+			vConfig = Hs24_en_Min;
+		break;
+	case RESTAR:
+		if((vConfig-1) > 0)
+			vConfig--;
+		else
+			vConfig = 0;
+		break;
+	case ADELANTE:
+		SetTime(FromGetTimer(vConfig, MIN));
+
+		PrintCerrarConfig();
+		EstadoConfiguracion = CERRAR_CONFIGURACION;
+		break;
+	case ATRAS:
+		vUnidad = MinD;
+		EstadoConfiguracion = HORA_MMD;
+		break;
+	case SALIR:
+		SetTime(FromGetTimer(vConfig, MIN));
+		PrintCerrarConfig();
+		EstadoConfiguracion = CERRAR_CONFIGURACION;
+		break;
+	}
+}
+
+void ConfiguracionFinalizada (void)
+{
+	btnConfig = getTecla();
+	if(btnConfig == ATRAS)
+	{
+		aux = GetTime();
+		vConfig = ToTimer(&aux, MIN);
+		vUnidad = HrD;
+
+		PrintConfigHora();
+		EstadoConfiguracion = HORA_MMU;
 	}
 	if(btnConfig == ADELANTE)
 	{
@@ -677,10 +830,9 @@ void ConfiguracionFinalizada (void)
 
 ////////////////////////////////TEMPORIZADO////////////////////////////////
 
-
 void AguardandoOk(void)
 {
-	if((btn == B_OK || Alarma() || UartOk) && config.estAlrm)
+	if((btn == B_OK || Alarma() || UartOk))
 	{
 		UartOk = 0;
 		EV_RIEGO_ON;

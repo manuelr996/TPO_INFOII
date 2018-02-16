@@ -81,6 +81,7 @@ void PrintCerrarConfig(void);
 void PrintTempDeRiego(void);
 void PrintPrenderAlarma(void);
 void PrintConfigAlarma(void);
+void PrintConfigHora(void);
 
 void PrintRemainingTime(void);
 void PrintCurrentTime(void);

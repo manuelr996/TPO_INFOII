@@ -130,6 +130,12 @@ void IncrementoTiempo(RTC_t *rtc)
  	\param [out] parametros de salida
 	\return tipo y descripcion de retorno
 */
+
+void SetTime(RTC_t rtc)
+{
+	SetRTCTime(&rtc);
+}
+
 RTC_t GetTime(void)
 {
 	return currentTime;
@@ -164,7 +170,8 @@ uint8_t Alarma(void)
 {
 	uint8_t aux = AlarmBuffer;
 	AlarmBuffer = 0;
-	return aux;
+
+	return (aux && config.estAlrm) ? TRUE : FALSE;
 }
 /**
 	\fn  Nombre de la Funcion

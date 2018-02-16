@@ -81,6 +81,10 @@ typedef enum
 	HORA_RIEGO_HHU,		//Hora Riego - Horas (Unidades)
 	HORA_RIEGO_MMD,		//Hora Riego - Minutos (Decenas)
 	HORA_RIEGO_MMU,		//Hora Riego - Minutos (Unidades)
+	HORA_HHD,
+	HORA_HHU,
+	HORA_MMD,
+	HORA_MMU,
 	CERRAR_CONFIGURACION
 }EstadosConfiguracion;
 
@@ -119,6 +123,10 @@ void SetHoraRiegoHHD(void);
 void SetHoraRiegoHHU(void);
 void SetHoraRiegoMMD(void);
 void SetHoraRiegoMMU(void);
+void SetHoraHHD(void);
+void SetHoraHHU(void);
+void SetHoraMMD(void);
+void SetHoraMMU(void);
 void ConfiguracionFinalizada(void);
 
 void AguardandoOk(void);

@@ -363,6 +363,14 @@ void PrintConfigAlarma(void)
 	Display_LCD( "Hora:           ", RENGLON_2, 0);
 }
 
+void PrintConfigHora(void)
+{
+	PushLCD(0x0D, LCD_CONTROL);
+	TimerStart(E_Print,T_Print,PrintHour,B_Print);
+	Display_LCD(" Configurar Hora ", RENGLON_1, 0);
+	Display_LCD( "Hora:           ", RENGLON_2, 0);
+}
+
 void PrintCerrarConfig(void)
 {
 	TimerStop(E_Print);

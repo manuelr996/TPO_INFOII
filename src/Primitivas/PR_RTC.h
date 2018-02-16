@@ -43,6 +43,7 @@ RTC_t GetAlarm( void );
 void DecrementarTiempo(RTC_t *);
 void IncrementarTiempo(RTC_t *);
 void ActualizarRTC(const char *);
+void SetTime(RTC_t);
 RTC_t GetTime(void);
 RTC_t DiferenciaTiempos(RTC_t *);
 RTC_t FromGetTimer(uint32_t,uint8_t);
