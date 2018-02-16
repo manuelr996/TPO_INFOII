@@ -201,6 +201,16 @@ void PrintHour(void)
 	SetTimer(E_Print,T_Print);
 }
 
+void PrintAlarmaOnOff(void)
+{
+	if( vConfig )
+		Display_LCD("ON ", RENGLON_2, 10);
+	else
+		Display_LCD("OFF", RENGLON_2, 10);
+
+	SetTimer(E_Print,T_Print);
+}
+
 void ConfiguracionInicializada (void)
 {
 	btnConfig = getTecla();
@@ -510,8 +520,8 @@ void SetTemporizadorMMU(void)
 	case ADELANTE:
 		config.vTempo = vConfig;
 		vConfig = config.estAlrm;
-		TimerStop(E_Print);
-
+		//TimerStop(E_Print);
+		TimerStart(E_Print,T_Print,PrintAlarmaOnOff,B_Print);
 		//PushLCD(0x0C, LCD_CONTROL);
 		Display_LCD( " Prender Alarma?", RENGLON_1, 0);
 		if(config.estAlrm)
@@ -554,14 +564,26 @@ void SetAlarmaOn(void)
 			vConfig = 1;
 		break;
 	case ADELANTE:
-		config.vTempo = vConfig;
-		vConfig = config.vAlarm;
-		vUnidad = HrD;
 
-		TimerStart(E_Print,T_Print,PrintHour,B_Print);
-		Display_LCD("   Hora Alarma   ", RENGLON_1, 0);
-		Display_LCD( "Hora:           ", RENGLON_2, 0);
-		EstadoConfiguracion = HORA_RIEGO_HHD;
+		config.estAlrm = vConfig;
+
+		if( vConfig )
+		{
+			vConfig = config.vAlarm;
+			vUnidad = HrD;
+
+			TimerStart(E_Print,T_Print,PrintHour,B_Print);
+			Display_LCD("   Hora Alarma   ", RENGLON_1, 0);
+			Display_LCD( "Hora:           ", RENGLON_2, 0);
+			EstadoConfiguracion = HORA_RIEGO_HHD;
+		}
+		else
+		{
+			TimerStop(E_Print);
+			Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
+			Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
+			EstadoConfiguracion = CERRAR_CONFIGURACION;
+		}
 		break;
 	case ATRAS:
 		config.estAlrm = vConfig;
@@ -610,7 +632,7 @@ void SetHoraRiegoHHD(void)
 	case ATRAS:
 		config.vAlarm = vConfig;
 		vConfig = config.estAlrm;
-		TimerStop(E_Print);
+		TimerStart(E_Print,T_Print,PrintAlarmaOnOff,B_Print);
 
 		Display_LCD( " Prender Alarma?", RENGLON_1, 0);
 		if(config.estAlrm)

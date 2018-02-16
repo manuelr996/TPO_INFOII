@@ -109,6 +109,7 @@ void RiegoAutomaticoOff(void);
 
 void PrintHumedad(void);
 void PrintHour(void);
+void PrintAlarmaOnOff(void);
 void ConfiguracionInicializada(void);
 void SetHumedadMinimaDecenas(void);
 void SetHumedadMinimaUnidades(void);
