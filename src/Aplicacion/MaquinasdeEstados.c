@@ -22,15 +22,6 @@
 #define Hr_en_Seg 	3600
 #define Min_en_Seg	60
 
-#define HrD	 0
-#define HrU	 1
-#define MinD 2
-#define MinU 3
-#define SegU 4
-#define SegD 5
-
-#define Decena 0
-#define Unidad 1
 /***********************************************************************************************************************************
  *** MACROS PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -64,12 +55,6 @@ CONFIG_t config;
  **********************************************************************************************************************************/
 
 uint8_t btnConfig; //lectura del boton en modo configuracion
-uint8_t vUnidad = 0; //variable utilizada para definir la unidad a la hora de editar
-int32_t vConfig = 0; //variable utilizada para almacenar los valores que se cargan en la estructura de configuracion
-char vString[9]; //variable para mostrar valores por el display
-
-RTC_t AlarmTime; //RTC para mostrar la alarma por el display
-RTC_t TemporizadoTime; //RTC para mostrar el temporizador por el display
 /***********************************************************************************************************************************
  *** PROTOTIPO DE FUNCIONES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -120,32 +105,6 @@ void RiegoOff ( void )
 
 /////////////////////////////////AUTOMATICO/////////////////////////////////
 
-void PrintHumMin (void)
-{
-	Display_LCD("Humedad Min=   %", RENGLON_2 , 0 );
-	ComponerHumedad(config.humMin, vString);
-	Display_LCD(vString, RENGLON_2, 12);
-	TimerStart(E_Print,T_Print_largo,PrintHumMax,B_Print);
-}
-
-void PrintHumMax (void)
-{
-	Display_LCD("Humedad Max=   %", RENGLON_2 , 0 );
-	ComponerHumedad(config.humMax, vString);
-	Display_LCD(vString, RENGLON_2, 12);
-	TimerStart(E_Print,T_Print_largo,PrintEstadoAutomatico,B_Print);
-}
-
-void PrintEstadoAutomatico (void)
-{
-	if(EstadoAutomatico == NO_REGANDO)
-		Display_LCD("   Riego: OFF   " , RENGLON_2 , 0 );
-	else
-		Display_LCD("   Riego: ON    " , RENGLON_2 , 0 );
-
-	TimerStart(E_Print,T_Print_largo,PrintHumMin,B_Print);
-}
-
 void RiegoAutomaticoOn( void )
 {
 	EV_RIEGO_ON;
@@ -168,66 +127,20 @@ void RiegoAutomaticoOff( void )
 
 ////////////////////////////////CONFIGURACION///////////////////////////////
 
-void PrintHumedad(void)
-{
-	ComponerHumedad(vConfig,vString);
-	Display_LCD(vString, RENGLON_2, 12);
-
-	if(vUnidad == Decena)
-		MoverCursorLCD(13,RENGLON_2);
-	else
-		MoverCursorLCD(14,RENGLON_2);
-
-	SetTimer(E_Print,T_Print);
-}
-
-void PrintHour(void)
-{
-	AlarmTime = FromGetTimer(vConfig, MIN); //FromGetTimer toma un entero y lo convierte a la estructura rtc
-
-	ComponerTemporizadorCorto(&AlarmTime,vString);
-
-	Display_LCD(vString, RENGLON_2, 10);
-
-	if(vUnidad == HrD)
-		MoverCursorLCD(10,RENGLON_2);
-	else if(vUnidad == HrU)
-		MoverCursorLCD(11,RENGLON_2);
-	else if(vUnidad == MinD)
-		MoverCursorLCD(13,RENGLON_2);
-	else if(vUnidad == MinU)
-		MoverCursorLCD(14,RENGLON_2);
-
-	SetTimer(E_Print,T_Print);
-}
-
-void PrintAlarmaOnOff(void)
-{
-	if( vConfig )
-		Display_LCD("ON ", RENGLON_2, 10);
-	else
-		Display_LCD("OFF", RENGLON_2, 10);
-
-	SetTimer(E_Print,T_Print);
-}
-
 void ConfiguracionInicializada (void)
 {
 	btnConfig = getTecla();
 
 	if(btnConfig == ADELANTE)
 	{
-		Display_LCD(" Humedad Maxima ", RENGLON_1 , 0 );
-		Display_LCD("Humedad Max=   %", RENGLON_2 , 0 );
 		vUnidad = Decena;
 		vConfig = config.humMax;
-		TimerStart(E_Print,T_Print,PrintHumedad,B_Print);
+		PrintConfigHumMax();
 		EstadoConfiguracion = HUMEDADMAXIMA_D;
 	}
 	else if( btnConfig == SALIR )
 	{
-		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
-		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
+		PrintCerrarConfig();
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
 	}
 }
@@ -263,9 +176,7 @@ void SetHumedadMaximaDecenas (void)
 		case SALIR:
 		{
 			config.humMax = vConfig;
-			TimerStop(E_Print);
-			Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
-			Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
+			PrintCerrarConfig();
 			EstadoConfiguracion = CERRAR_CONFIGURACION;
 			break;
 		}
@@ -290,8 +201,7 @@ void SetHumedadMaximaUnidades(void)
 		vConfig = config.humMin;
 		vUnidad = Decena;
 
-		Display_LCD(" Humedad Minima ", RENGLON_1 , 0 );
-		Display_LCD("Humedad Min=   %", RENGLON_2 , 0 );
+		PrintConfigHumMin();
 		EstadoConfiguracion = HUMEDADMINIMA_D;
 		break;
     case ATRAS:
@@ -300,9 +210,8 @@ void SetHumedadMaximaUnidades(void)
     	break;
 	case SALIR:
 		config.humMax = vConfig;
-		TimerStop(E_Print);
-		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
-		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
+
+		PrintCerrarConfig();
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
 		break;
 	}
@@ -335,15 +244,13 @@ void SetHumedadMinimaDecenas (void)
 		config.humMin = vConfig; //cambiamos la variable que estamos editando actualmente
 		vConfig = config.humMax;
 
-    	Display_LCD(" Humedad Maxima ", RENGLON_1, 0);
-    	Display_LCD("Humedad Max=   %", RENGLON_2, 0);
+		PrintConfigHumMax();
     	EstadoConfiguracion = HUMEDADMAXIMA_U;
 		break;
 	case SALIR:
 		config.humMax = vConfig;
-		TimerStop(E_Print);
-		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
-		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
+
+		PrintCerrarConfig();
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
 		break;
 	}
@@ -368,9 +275,7 @@ void SetHumedadMinimaUnidades (void)
     	vConfig = config.vTempo; //la multiplicamos por 60 para obtener los segundos
 		vUnidad = HrD;
 
-		TimerStart(E_Print,T_Print,PrintHour,B_Print);
-		Display_LCD( " Temp. de Riego " , RENGLON_1 , 0 );
-		Display_LCD( "Tiempo=         " , RENGLON_2 , 0 );
+		PrintTempDeRiego();
 		EstadoConfiguracion = TEMPORIZADOR_HHD;
     	break;
     case ATRAS:
@@ -379,9 +284,8 @@ void SetHumedadMinimaUnidades (void)
 		break;
 	case SALIR:
 		config.humMin = vConfig;
-		TimerStop(E_Print);
-		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
-		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
+
+		PrintCerrarConfig();
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
 		break;
     }
@@ -398,12 +302,14 @@ void SetTemporizadorHHD(void)
 		else
 			vConfig = Hs24_en_Min;
 		break;
+
 	case RESTAR:
 		if((vConfig-Hr_en_Min*10) > 0)
 			vConfig -= Hr_en_Min*10;
 		else
 			vConfig = 0;
 		break;
+
 	case ADELANTE:
 		vUnidad = HrU;
 		EstadoConfiguracion = TEMPORIZADOR_HHU;
@@ -413,17 +319,15 @@ void SetTemporizadorHHD(void)
 		vConfig = config.humMin;
 		vUnidad = Unidad;
 
-		Display_LCD(" Humedad Minima ", RENGLON_1 , 0 );
-		Display_LCD("Humedad Min=   %", RENGLON_2 , 0 );
+		PrintConfigHumMin();
 		TimerStart(E_Print,T_Print,PrintHumedad,B_Print);
 
 		EstadoConfiguracion = HUMEDADMINIMA_U;
 		break;
 	case SALIR:
 		config.vTempo = vConfig;
-		TimerStop(E_Print);
-		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
-		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
+
+		PrintCerrarConfig();
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
 		break;
 	}
@@ -521,14 +425,8 @@ void SetTemporizadorMMU(void)
 		config.vTempo = vConfig;
 		vConfig = config.estAlrm;
 		//TimerStop(E_Print);
-		TimerStart(E_Print,T_Print,PrintAlarmaOnOff,B_Print);
-		//PushLCD(0x0C, LCD_CONTROL);
-		Display_LCD( " Prender Alarma?", RENGLON_1, 0);
-		if(config.estAlrm)
-			Display_LCD("Alarma:   ON    ", RENGLON_2, 0);
-		else
-			Display_LCD("Alarma:   OFF   ", RENGLON_2, 0);
 
+		PrintPrenderAlarma();
 		EstadoConfiguracion = ALARMA_ON_OFF;
 		break;
 	case ATRAS:
@@ -537,10 +435,8 @@ void SetTemporizadorMMU(void)
 		break;
 	case SALIR:
 		config.vTempo = vConfig;
-		TimerStop(E_Print);
 
-		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
-		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
+		PrintCerrarConfig();
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
 		break;
 	}
@@ -572,16 +468,12 @@ void SetAlarmaOn(void)
 			vConfig = config.vAlarm;
 			vUnidad = HrD;
 
-			TimerStart(E_Print,T_Print,PrintHour,B_Print);
-			Display_LCD("   Hora Alarma   ", RENGLON_1, 0);
-			Display_LCD( "Hora:           ", RENGLON_2, 0);
+			PrintConfigAlarma();
 			EstadoConfiguracion = HORA_RIEGO_HHD;
 		}
 		else
 		{
-			TimerStop(E_Print);
-			Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
-			Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
+			PrintCerrarConfig();
 			EstadoConfiguracion = CERRAR_CONFIGURACION;
 		}
 		break;
@@ -590,16 +482,13 @@ void SetAlarmaOn(void)
 		vConfig = config.vTempo;
 		vUnidad = MinU;
 
-		TimerStart(E_Print,T_Print,PrintHour,B_Print);
-		Display_LCD( " Temp. de Riego " , RENGLON_1 , 0 );
-		Display_LCD( "Tiempo=         " , RENGLON_2 , 0 );
+		PrintTempDeRiego();
 		EstadoConfiguracion = TEMPORIZADOR_MMU;
 		break;
 	case SALIR:
 		config.estAlrm = vConfig;
 
-		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
-		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
+		PrintCerrarConfig();
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
 		break;
 	}
@@ -632,23 +521,15 @@ void SetHoraRiegoHHD(void)
 	case ATRAS:
 		config.vAlarm = vConfig;
 		vConfig = config.estAlrm;
-		TimerStart(E_Print,T_Print,PrintAlarmaOnOff,B_Print);
 
-		Display_LCD( " Prender Alarma?", RENGLON_1, 0);
-		if(config.estAlrm)
-			Display_LCD("Alarma:   ON    ", RENGLON_2, 0);
-		else
-			Display_LCD("Alarma:   OFF   ", RENGLON_2, 0);
-
+		PrintPrenderAlarma();
 		EstadoConfiguracion = ALARMA_ON_OFF;
 		break;
 	case SALIR:
 		config.vAlarm = vConfig;
 		SetAlarm(FromGetTimer(config.vAlarm, MIN));
 
-		TimerStop(E_Print);
-		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
-		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
+		PrintCerrarConfig();
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
 		break;
 	}
@@ -684,9 +565,7 @@ void SetHoraRiegoHHU(void)
 		config.vAlarm = vConfig;
 		SetAlarm(FromGetTimer(config.vAlarm, MIN));
 
-		TimerStop(E_Print);
-		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
-		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
+		PrintCerrarConfig();
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
 		break;
 	}
@@ -721,9 +600,7 @@ void SetHoraRiegoMMD(void)
 		config.vAlarm = vConfig;
 		SetAlarm(FromGetTimer(config.vAlarm, MIN));
 
-		TimerStop(E_Print);
-		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
-		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
+		PrintCerrarConfig();
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
 		break;
 	}
@@ -750,9 +627,7 @@ void SetHoraRiegoMMU(void)
 		config.vAlarm = vConfig;
 		SetAlarm(FromGetTimer(config.vAlarm, MIN));
 
-		TimerStop(E_Print);
-		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
-		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
+		PrintCerrarConfig();
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
 		break;
 	case ATRAS:
@@ -763,9 +638,7 @@ void SetHoraRiegoMMU(void)
 		config.vAlarm = vConfig;
 		SetAlarm(FromGetTimer(config.vAlarm, MIN));
 
-		TimerStop(E_Print);
-		Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
-		Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
+		PrintCerrarConfig();
 		EstadoConfiguracion = CERRAR_CONFIGURACION;
 		break;
 	}
@@ -777,12 +650,21 @@ void ConfiguracionFinalizada (void)
 	btnConfig = getTecla();
 	if(btnConfig == ATRAS)
 	{
-		vUnidad = MinU;
-		vConfig = config.vAlarm;
-		TimerStart(E_Print,T_Print,PrintHour,B_Print);
-		Display_LCD("   Hora Alarma   ", RENGLON_1, 0);
-		Display_LCD( "Hora:           ", RENGLON_2, 0);
-		EstadoConfiguracion = HORA_RIEGO_MMU;
+		if(config.estAlrm)
+		{
+			vUnidad = MinU;
+			vConfig = config.vAlarm;
+
+			PrintConfigAlarma();
+			EstadoConfiguracion = HORA_RIEGO_MMU;
+		}
+		else
+		{
+			vConfig = config.estAlrm;
+
+			PrintPrenderAlarma();
+			EstadoConfiguracion = ALARMA_ON_OFF;
+		}
 	}
 	if(btnConfig == ADELANTE)
 	{
@@ -794,63 +676,6 @@ void ConfiguracionFinalizada (void)
 }
 
 ////////////////////////////////TEMPORIZADO////////////////////////////////
-
-void PrintRemainingTime (void)
-{
-	TemporizadoTime = FromGetTimer(GetTimer(E_Riego),B_Riego);
-
-	ComponerTemporizador(&TemporizadoTime,vString);
-	//Display_LCD("T_Rest:",RENGLON_2,0);
-	Display_LCD(vString, RENGLON_2, 8);
-
-	SetTimer(E_Print,T_Print);
-}
-
-void PrintCurrentTime(void)
-{
-	TemporizadoTime = GetTime();
-
-	ComponerTemporizador(&TemporizadoTime,vString);
-
-	Display_LCD("Hora:   ",RENGLON_2,0);
-	Display_LCD(vString, RENGLON_2, 8);
-
-	if(config.estAlrm)
-		TimerStart(E_Print,T_Print_largo,PrintAlarm,B_Print);
-	else
-		TimerStart(E_Print,T_Print_largo,PrintTimer,B_Print);
-}
-
-void PrintAlarm(void)
-{
-	RTC_t aux = GetAlarm();
-
-	Display_LCD("Alarma:         ",RENGLON_2,0);
-
-	ComponerTemporizadorCorto(&aux,vString);
-
-	Display_LCD(vString, RENGLON_2, 10);
-
-	TimerStart(E_Print,T_Print_largo,PrintTimer,B_Print);
-}
-
-void PrintStatus(void)
-{
-	Display_LCD("Valvula:   OFF  ", RENGLON_2,0);
-
-	TimerStart(E_Print,T_Print_largo,PrintCurrentTime,B_Print);
-}
-
-void PrintTimer(void)
-{
-	TemporizadoTime = FromGetTimer(config.vTempo, MIN);
-
-	ComponerTemporizadorCorto(&TemporizadoTime,vString);
-	Display_LCD("T_Riego:",RENGLON_2,0);
-	Display_LCD(vString, RENGLON_2, 10);
-
-	TimerStart(E_Print,T_Print_largo,PrintStatus,B_Print);
-}
 
 
 void AguardandoOk(void)

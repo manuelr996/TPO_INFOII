@@ -25,6 +25,8 @@
  */
 
 
+
+
 /***********************************************************************************************************************************
  *** INCLUDES
  **********************************************************************************************************************************/
@@ -49,11 +51,17 @@
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PUBLICAS
  **********************************************************************************************************************************/
-
+uint8_t vUnidad = 0; //variable utilizada para definir la unidad a la hora de editar
+int32_t vConfig = 0; //variable utilizada para almacenar los valores que se cargan en la estructura de configuracion
 /***********************************************************************************************************************************
  *** VARIABLES GLOBALES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
 uint8_t EstadoAnterior;
+
+char vString[9]; //variable para mostrar valores por el display
+
+RTC_t AlarmTime; //RTC para mostrar la alarma por el display
+RTC_t TemporizadoTime; //RTC para mostrar el temporizador por el display
 /***********************************************************************************************************************************
  *** PROTOTIPO DE FUNCIONES PRIVADAS AL MODULO
  **********************************************************************************************************************************/
@@ -241,5 +249,182 @@ void ComponerTemporizador(const RTC_t *timer, char *dest)
 	dest[6] = (timer->Seconds/10) + '0';
 	dest[7] = (timer->Seconds%10) + '0';
 	dest[8] = 0;
+}
+
+//////////////////////////PRINTS AUTOMATICO//////////////////////////////////////////
+void PrintHumMin (void)
+{
+	Display_LCD("Humedad Min=   %", RENGLON_2 , 0 );
+	ComponerHumedad(config.humMin, vString);
+	Display_LCD(vString, RENGLON_2, 12);
+	TimerStart(E_Print,T_Print_largo,PrintHumMax,B_Print);
+}
+
+void PrintHumMax (void)
+{
+	Display_LCD("Humedad Max=   %", RENGLON_2 , 0 );
+	ComponerHumedad(config.humMax, vString);
+	Display_LCD(vString, RENGLON_2, 12);
+	TimerStart(E_Print,T_Print_largo,PrintEstadoAutomatico,B_Print);
+}
+
+void PrintEstadoAutomatico (void)
+{
+	if(EstadoAutomatico == NO_REGANDO)
+		Display_LCD("   Riego: OFF   " , RENGLON_2 , 0 );
+	else
+		Display_LCD("   Riego: ON    " , RENGLON_2 , 0 );
+
+	TimerStart(E_Print,T_Print_largo,PrintHumMin,B_Print);
+}
+
+//////////////////////////PRINTS CONFIGURACION///////////////////////////////////////
+void PrintHumedad(void)
+{
+	ComponerHumedad(vConfig,vString);
+	Display_LCD(vString, RENGLON_2, 12);
+
+	if(vUnidad == Decena)
+		MoverCursorLCD(13,RENGLON_2);
+	else
+		MoverCursorLCD(14,RENGLON_2);
+
+	SetTimer(E_Print,T_Print);
+}
+
+void PrintHour(void)
+{
+	AlarmTime = FromGetTimer(vConfig, MIN); //FromGetTimer toma un entero y lo convierte a la estructura rtc
+
+	ComponerTemporizadorCorto(&AlarmTime,vString);
+
+	Display_LCD(vString, RENGLON_2, 10);
+
+	if(vUnidad == HrD)
+		MoverCursorLCD(10,RENGLON_2);
+	else if(vUnidad == HrU)
+		MoverCursorLCD(11,RENGLON_2);
+	else if(vUnidad == MinD)
+		MoverCursorLCD(13,RENGLON_2);
+	else if(vUnidad == MinU)
+		MoverCursorLCD(14,RENGLON_2);
+
+	SetTimer(E_Print,T_Print);
+}
+
+void PrintAlarmaOnOff(void)
+{
+	if( vConfig )
+		Display_LCD("ON ", RENGLON_2, 10);
+	else
+		Display_LCD("OFF", RENGLON_2, 10);
+
+	SetTimer(E_Print,T_Print);
+}
+
+void PrintConfigHumMin(void)
+{
+	Display_LCD(" Humedad Minima ", RENGLON_1 , 0 );
+	Display_LCD("Humedad Min=   %", RENGLON_2 , 0 );
+	TimerStart(E_Print,T_Print,PrintHumedad,B_Print);
+}
+
+void PrintConfigHumMax(void)
+{
+	Display_LCD(" Humedad Maxima ", RENGLON_1 , 0 );
+	Display_LCD("Humedad Max=   %", RENGLON_2 , 0 );
+	TimerStart(E_Print,T_Print,PrintHumedad,B_Print);
+}
+
+void PrintTempDeRiego(void)
+{
+	PushLCD(0x0D, LCD_CONTROL);
+	TimerStart(E_Print,T_Print,PrintHour,B_Print);
+	Display_LCD( " Temp. de Riego " , RENGLON_1 , 0 );
+	Display_LCD( "Tiempo=         " , RENGLON_2 , 0 );
+}
+
+void PrintPrenderAlarma(void)
+{
+	TimerStart(E_Print,T_Print,PrintAlarmaOnOff,B_Print);
+	PushLCD(0x0C, LCD_CONTROL);
+	Display_LCD( " Prender Alarma?", RENGLON_1, 0);
+	if(config.estAlrm)
+		Display_LCD("Alarma:   ON    ", RENGLON_2, 0);
+	else
+		Display_LCD("Alarma:   OFF   ", RENGLON_2, 0);
+}
+
+void PrintConfigAlarma(void)
+{
+	PushLCD(0x0D, LCD_CONTROL);
+	TimerStart(E_Print,T_Print,PrintHour,B_Print);
+	Display_LCD("   Hora Alarma   ", RENGLON_1, 0);
+	Display_LCD( "Hora:           ", RENGLON_2, 0);
+}
+
+void PrintCerrarConfig(void)
+{
+	TimerStop(E_Print);
+	Display_LCD( "Cerrando config." , RENGLON_1 , 0 );
+	Display_LCD( " Ok p/continuar " , RENGLON_2 , 0 );
+}
+
+//////////////////////////PRINTS TEMPORIZADO/////////////////////////////////////////
+void PrintRemainingTime(void)
+{
+	TemporizadoTime = FromGetTimer(GetTimer(E_Riego),B_Riego);
+
+	ComponerTemporizador(&TemporizadoTime,vString);
+	//Display_LCD("T_Rest:",RENGLON_2,0);
+	Display_LCD(vString, RENGLON_2, 8);
+
+	SetTimer(E_Print,T_Print);
+}
+
+void PrintCurrentTime(void)
+{
+	TemporizadoTime = GetTime();
+
+	ComponerTemporizador(&TemporizadoTime,vString);
+
+	Display_LCD("Hora:   ",RENGLON_2,0);
+	Display_LCD(vString, RENGLON_2, 8);
+
+	if(config.estAlrm)
+		TimerStart(E_Print,T_Print_largo,PrintAlarm,B_Print);
+	else
+		TimerStart(E_Print,T_Print_largo,PrintTimer,B_Print);
+}
+
+void PrintAlarm(void)
+{
+	RTC_t aux = GetAlarm();
+
+	Display_LCD("Alarma:         ",RENGLON_2,0);
+
+	ComponerTemporizadorCorto(&aux,vString);
+
+	Display_LCD(vString, RENGLON_2, 10);
+
+	TimerStart(E_Print,T_Print_largo,PrintTimer,B_Print);
+}
+
+void PrintStatus(void)
+{
+	Display_LCD("Valvula:   OFF  ", RENGLON_2,0);
+
+	TimerStart(E_Print,T_Print_largo,PrintCurrentTime,B_Print);
+}
+
+void PrintTimer(void)
+{
+	TemporizadoTime = FromGetTimer(config.vTempo, MIN);
+
+	ComponerTemporizadorCorto(&TemporizadoTime,vString);
+	Display_LCD("T_Riego:         ",RENGLON_2,0);
+	Display_LCD(vString, RENGLON_2, 10);
+
+	TimerStart(E_Print,T_Print_largo,PrintStatus,B_Print);
 }
 

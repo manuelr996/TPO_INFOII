@@ -101,15 +101,10 @@ extern CONFIG_t config;
 void RiegoOn(void);
 void RiegoOff(void);
 
-void PrintHumMin(void);
-void PrintHumMax(void);
-void PrintEstadoAutomatico(void);
+
 void RiegoAutomaticoOn(void);
 void RiegoAutomaticoOff(void);
 
-void PrintHumedad(void);
-void PrintHour(void);
-void PrintAlarmaOnOff(void);
 void ConfiguracionInicializada(void);
 void SetHumedadMinimaDecenas(void);
 void SetHumedadMinimaUnidades(void);
@@ -127,10 +122,6 @@ void SetHoraRiegoMMU(void);
 void ConfiguracionFinalizada(void);
 
 void AguardandoOk(void);
-void PrintTimer(void);
-void PrintAlarm(void);
-void PrintStatus(void);
-void PrintCurrentTime(void);
 void VolverAguardando(void);
 void RiegoTemporizado(void);
 #endif /* APLICACION_MAQUINASDEESTADOS_H_ */
