@@ -89,15 +89,35 @@ uint16_t GetTemperatura (void)
 //////////////////////Temperatura-Humedad//////////////////////////
 void Ev1SecuenciaTempHumedad ( void )
 {
+
 	CambiarCanal( S_HUMEDAD );
 	DispararConversion();
 	TimerStart( ADCevent , ADCTHtime, Ev2SecuenciaTempHUmedad , ADCbase );
+
 }
 void Ev2SecuenciaTempHUmedad ( void )
 {
 	CambiarCanal( S_TEMPERATURA );
 	DispararConversion();
 	TimerStart( ADCevent , ADCTHtime, Ev1SecuenciaTempHumedad , ADCbase );
+}
+
+void IniciarSecuenciaTH ( void )
+{
+	TimerStart( HumedadEvent , HumedadTime , SecuenciaHumedad , HumedadBase);
+	TimerStart( TemperaturaEvent , TemperaturaTime , SecuenciaTemperatura , TemperaturaBase );
+}
+void SecuenciaHumedad ( void )
+{
+	CambiarCanal( S_HUMEDAD );
+	DispararConversion();
+	SetTimer( HumedadEvent , HumedadTime );
+}
+void SecuenciaTemperatura ( void )
+{
+	CambiarCanal( S_TEMPERATURA );
+	DispararConversion();
+	SetTimer( TemperaturaEvent , TemperaturaTime );
 }
 ////////////////////////POTENCIOMETRO//////////////////////////////
 /**

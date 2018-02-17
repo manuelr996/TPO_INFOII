@@ -102,13 +102,10 @@ void ADC_IRQHandler( void )
 	switch ( (lectura >> CHINBIT) & CHINMASK  )						//Hago un switch con el CHIN (ultimo canal convertido)
 		{
 			case S_HUMEDAD:
+
 				HumedadSuelo = 	 ConvHum(conversion);			//Cargo la conversion al buffer
 				break;
-			/*
-			 * case POTE:
-				vPotenciometro = conversion;						//Cargo la conversion al buffer
-				break;
-			*/
+
 			case S_TEMPERATURA:
 				bufferTemp[ indTemp ] = ConvTemp(conversion);		//Cargo la conversion al array buffer				4095_____3300mV    LM35=>   10mV____1ºC				Temperatura = (ADC*330)/4095																					//	 ADC_____x=ADCmV		   ADCmV____x=Temperatura
 				indTemp++;
@@ -129,6 +126,7 @@ void ADC_IRQHandler( void )
 				}
 
 				break;
+
 			default:
 				break;
 		}

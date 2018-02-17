@@ -22,7 +22,13 @@
 /***********************************************************************************************************************************
  *** DEFINES GLOBALES
  **********************************************************************************************************************************/
+#define 	TemperaturaEvent	9
+#define		TemperaturaBase		DEC
+#define		TemperaturaTime		1
 
+#define 	HumedadEvent		8
+#define		HumedadBase			SEG
+#define		HumedadTime			1
 /***********************************************************************************************************************************
  *** MACROS GLOBALES
  **********************************************************************************************************************************/
@@ -49,4 +55,7 @@ void Ev2SecuenciaTempHUmedad ( void );
 void IniciarPotenciometro(void);
 void DispararPotenciometro (void);
 void DetenerPotenciometro(void);
+void IniciarSecuenciaTH ( void );
+void SecuenciaHumedad ( void );
+void SecuenciaTemperatura ( void );
 #endif /* PRIMITIVAS_PR_ADC_H_ */

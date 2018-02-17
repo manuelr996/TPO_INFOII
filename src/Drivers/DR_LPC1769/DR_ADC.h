@@ -68,7 +68,7 @@
 
 #define 	ADCevent 		0
 #define		ADCbase			DEC
-#define 	ADCTHtime		5
+#define 	ADCTHtime		1
 #define 	ADCPtime		1
 
 #define		STOP			0
@@ -88,7 +88,8 @@
 #define 	S_HUMEDAD 			2
 #define 	S_TEMPERATURA		5 //antes era 1
 
-#define 	TAMBUFFERTEMP		20
+#define 	TAMBUFFERTEMP		10
+#define		TAMBUFFERHUM		10
 
 #define 	DECIMA				1
 /***********************************************************************************************************************************

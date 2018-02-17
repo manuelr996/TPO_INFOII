@@ -129,12 +129,23 @@ void TransmitirParametros ( void )
 	parametros[8] = tiempoAux.Minutes/10 + '0';
 	parametros[9] = tiempoAux.Minutes%10 + '0';
 
-	tiempoAux = GetAlarm();
+	if( config.estAlrm == TRUE )
+	{
+		tiempoAux = GetAlarm();
 
-	parametros[10] = tiempoAux.Hours/10 + '0';
-	parametros[11] = tiempoAux.Hours%10 + '0';
-	parametros[12] = tiempoAux.Minutes/10 + '0';
-	parametros[13] = tiempoAux.Minutes%10 + '0';
+		parametros[10] = tiempoAux.Hours/10 + '0';
+		parametros[11] = tiempoAux.Hours%10 + '0';
+		parametros[12] = tiempoAux.Minutes/10 + '0';
+		parametros[13] = tiempoAux.Minutes%10 + '0';
+	}
+	else
+	{
+		parametros[10] = '8';
+		parametros[11] = '8';
+		parametros[12] = '8';
+		parametros[13] = '8';
+	}
+
 	parametros[14] = '$';
 	parametros[15] = '\r';
 	parametros[16] = '\n';

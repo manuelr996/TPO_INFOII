@@ -66,9 +66,11 @@ void InitRTC (void)
 	//Habilitamos la interrupcion de alarmas en la hora y minuto
 	RTC_AMR = ~(0x7);
 
+	//Habilito la interrupcion por incremento de Segundos
+	RTC_CIIR = IMSEC;
+
 	ISER0 |= (0x1 << 17);
 
-	TimerStart(E_RTC,T_RTC,TimeUpdate,B_RTC); //inicio un timer que refresque los buffers
 }
 
 void TimeUpdate(void)
@@ -84,8 +86,6 @@ void TimeUpdate(void)
 	RTC_ALMIN = Alarm.Minutes;
 	RTC_ALHOUR = Alarm.Hours;
 	RTC_ALSEC = Alarm.Seconds;
-
-	SetTimer(E_RTC,T_RTC);
 }
 
 void RTC_IRQHandler(void)
@@ -95,12 +95,16 @@ void RTC_IRQHandler(void)
 		CLRFailFlag;
 		TransmitirString(C_RTC); //RF: comando de RTC Failure solicita por el puerto UART el envio de la hora actual para re-sincronizar
 		SetRTCTime(&defaultTime); //En el mientras tanto se
-		StandByTimer(E_RTC, PAUSE);
 	}
-	else if (RTC_ILR & 0x2)
+	else if ( RTC_ILR & 0x1 )	//Si interrumpio por incremento
+	{
+		RTC_ILR |= 0x1;
+		TimeUpdate();
+	}
+	else if ( RTC_ILR & 0x2 )	//Si interrumpio por alarma
 	{
 		RTC_ILR |= 0x2;
-		AlarmBuffer = 1;
+		AlarmBuffer = TRUE;
 	}
 }
 
@@ -117,7 +121,6 @@ void SetRTCTime (const RTC_t *rtc)
 	RTC_MONTH = rtc->Month;
 	RTC_YEAR  = rtc->Year;
 
-	StandByTimer(E_RTC, RUN);
 	RTC_CCR = 0x11;		//Encendemos el RTC nuevamente
 }
 

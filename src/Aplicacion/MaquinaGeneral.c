@@ -88,7 +88,7 @@ void MaquinaGeneral (void)
 	switch(Estado)
 	{
 	case RESET_G:
-		btn = B_MANUAL;
+		btn = config.ultEst;
 		break;
 	case CONFIGURACION:
 		MaquinaConfiguracion[EstadoConfiguracion]();

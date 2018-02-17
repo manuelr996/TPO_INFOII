@@ -60,7 +60,6 @@ void Inicializacion ( void )
 	tecla 	= NO_KEY;
 	RIEGO_Ttime = RIEGO_TtimeRESET;
 	RIEGO_AtimeON = RIEGO_AtimeRESET;
-	HumedadSuelo = HumedadSueloRESET;
 
 
 	InitPLL();			//PLL
@@ -74,7 +73,7 @@ void Inicializacion ( void )
 	InitUART0(); 		//UART 0
 	ElectroValvula_Off();
 
-	Ev1SecuenciaTempHumedad(); //Inicia secuencia de conversiones temperatura-humedad
+	Ev1SecuenciaTempHumedad();
 
 	CargarConfiguracion(&config);
 	TransmitirEstado();
