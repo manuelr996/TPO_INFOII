@@ -74,3 +74,17 @@ uint8_t CondicionesFin ( void )
 
 	return FALSE;
 }
+
+void PoolingLluvia ( void )
+{
+	uint8_t nivel;
+
+	nivel = GetPIN(SENSOR_LLUVIA, BAJO);
+
+	if( nivel == FALSE )
+		Lluvia = OFF;
+	if( nivel == TRUE )
+		Lluvia = ON;
+
+	SetTimer(E_Lluvia , T_Lluvia);
+}

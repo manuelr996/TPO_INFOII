@@ -65,7 +65,7 @@ void Inicializacion ( void )
 	InitPLL();			//PLL
 	InitSysTick();		//SysTick
 	InitADC();			//Conversor Analogo/Digital
-	InitExtIntGPIO();  	//Interrupciones de GPIO
+	//InitExtIntGPIO();  	//Interrupciones de GPIO
 	InitRTC();
 	//OWire_Init();		//DS18B20
 	InitInfotronic();  	//Sensores, Teclado, LEDs(placa), Relays
@@ -80,5 +80,6 @@ void Inicializacion ( void )
 	TransmitirValvula();
 	TransmitirParametros();
 
+	TimerStart( E_Lluvia, T_Lluvia, PoolingLluvia , B_Lluvia );
 	TimerStart(E_Display,T_Display,MostrarSensores,B_Display);
 }

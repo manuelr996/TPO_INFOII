@@ -26,7 +26,7 @@
 #define		TemperaturaBase		DEC
 #define		TemperaturaTime		1
 
-#define 	HumedadEvent		8
+#define 	HumedadEvent		8		//No usar, lo use para el pooling de la lluvia
 #define		HumedadBase			SEG
 #define		HumedadTime			1
 /***********************************************************************************************************************************

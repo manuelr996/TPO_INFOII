@@ -128,6 +128,7 @@ void CloseEstados(void)
 	ApagarLeds();
 	TimerStop(E_Riego);
 	TimerStop(E_Print);
+	STOPTITILEO
 }
 
 void InitAutomatico(void)
