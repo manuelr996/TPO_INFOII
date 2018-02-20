@@ -185,7 +185,6 @@ void ParsearConfiguracion(const char *src) //recibe las configuraciones en un fo
 {
 	RTC_t aux = {0}; //aux.DayOfWeek=0; aux.DayofMonth=0; aux.Hours=0; aux.Minutes=0; aux.Month=0; aux.Seconds=0; aux.Year=0;
 
-	EV_RIEGO_ON;
 	config.humMin 		= (src[0] - '0')*10;
 	config.humMin		+= (src[1] - '0');
 	config.humMax 		= (src[2] - '0')*10;
@@ -208,7 +207,6 @@ void ParsearConfiguracion(const char *src) //recibe las configuraciones en un fo
 
 	GuardarConfiguracion(&config);
 
-	EV_RIEGO_OFF;
 }
 
 void ComponerHumedad(uint8_t pot, char *dest)
